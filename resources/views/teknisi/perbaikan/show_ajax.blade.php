@@ -35,7 +35,7 @@
                         <tr>
                             <th>Status</th>
                             <td>
-                                @if($perbaikan->status == 'menunggu')
+                                @if ($perbaikan->status == 'menunggu')
                                     <span class="badge badge-warning">Menunggu</span>
                                 @elseif($perbaikan->status == 'diproses')
                                     <span class="badge badge-primary">Diproses</span>
@@ -81,7 +81,29 @@
                 </div>
             </div>
 
-            @if($perbaikan->status == 'selesai' && $perbaikan->details->count() > 0)
+            @if ($perbaikan->laporan->foto_path)
+                <div class="mb-4">
+                    <h5>Foto Bukti Kerusakan</h5>
+                    <div class="text-center">
+                        <img src="{{ asset($perbaikan->laporan->foto_path) }}" class="img-fluid rounded"
+                            style="max-height: 300px;">
+                        <p class="text-muted mt-2">Foto bukti kerusakan dari pelapor</p>
+                    </div>
+                </div>
+            @endif
+
+            @if ($perbaikan->foto_perbaikan)
+                <div class="mb-4">
+                    <h5>Foto Bukti Perbaikan</h5>
+                    <div class="text-center">
+                        <img src="{{ asset($perbaikan->foto_perbaikan) }}" class="img-fluid rounded"
+                            style="max-height: 300px;">
+                        <p class="text-muted mt-2">Foto setelah perbaikan oleh teknisi</p>
+                    </div>
+                </div>
+            @endif
+
+            @if ($perbaikan->status == 'selesai' && $perbaikan->details->count() > 0)
                 <div class="mb-4">
                     <h5>Detail Tindakan Perbaikan</h5>
                     <table class="table table-bordered">
@@ -95,13 +117,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($perbaikan->details as $detail)
+                            @foreach ($perbaikan->details as $detail)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $detail->tindakan }}</td>
                                     <td>{{ $detail->deskripsi ?? '-' }}</td>
                                     <td>{{ $detail->bahan ?? '-' }}</td>
-                                    <td>{{ $detail->biaya ? 'Rp '.number_format($detail->biaya, 0, ',', '.') : '-' }}</td>
+                                    <td>{{ $detail->biaya ? 'Rp ' . number_format($detail->biaya, 0, ',', '.') : '-' }}
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -37,6 +37,8 @@ use App\Http\Controllers\DashboardSarprasController;
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -285,16 +287,32 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
     // Teknisi
     Route::middleware(['authorize:TKN'])->group(function () {
         Route::get('/dashboard', [DashboardTeknisiController::class, 'index'])->name('teknisi.dashboard'); // Halaman Dashboard Teknisi
-        
-        Route::group(['prefix' => 'teknisi/perbaikan'], function () {
-             Route::get('/', [PerbaikanController::class, 'index'])->name('teknisi.perbaikan.index');
-        Route::get('/riwayat', [PerbaikanController::class, 'riwayat'])->name('teknisi.riwayat.index');
-        Route::post('/list', [PerbaikanController::class, 'list']);
-        Route::post('/list-riwayat', [PerbaikanController::class, 'listRiwayat']);
-        Route::get('/{id}/show_ajax', [PerbaikanController::class, 'show_ajax']);
-        Route::get('/{id}/edit_ajax', [PerbaikanController::class, 'edit_ajax']);
-        Route::put('/{id}/update_ajax', [PerbaikanController::class, 'update_ajax']);
 
+        Route::group(['prefix' => 'teknisi/perbaikan'], function () {
+            Route::get('/', [PerbaikanController::class, 'index'])->name('teknisi.perbaikan.index');
+            Route::get('/riwayat', [PerbaikanController::class, 'riwayat'])->name('teknisi.riwayat.index');
+            Route::post('/list', [PerbaikanController::class, 'list']);
+            Route::post('/list-riwayat', [PerbaikanController::class, 'listRiwayat']);
+            Route::get('/{id}/show_ajax', [PerbaikanController::class, 'show_ajax']);
+            Route::get('/{id}/edit_ajax', [PerbaikanController::class, 'edit_ajax']);
+            Route::put('/{id}/update_ajax', [PerbaikanController::class, 'update_ajax']);
+
+            // Tambahkan route untuk menampilkan foto
+            Route::get('/images/perbaikan/{filename}', function ($filename) {
+                $path = public_path('images/perbaikan/' . $filename);
+
+                if (!File::exists($path)) {
+                    abort(404);
+                }
+
+                $file = File::get($path);
+                $type = File::mimeType($path);
+
+                $response = Response::make($file, 200);
+                $response->header("Content-Type", $type);
+
+                return $response;
+            })->where('filename', '.*')->name('perbaikan.foto');
         });
     });
 });

@@ -1,4 +1,5 @@
-<form action="{{ url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/update_ajax') }}" method="POST" id="form-edit-perbaikan">
+<form action="{{ url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/update_ajax') }}" method="POST"
+    id="form-edit-perbaikan">
     @csrf
     @method('PUT')
     <div class="modal-dialog modal-lg" role="document">
@@ -11,8 +12,10 @@
                 <div class="form-group mb-3">
                     <label>Status</label>
                     <select name="status" id="status" class="form-control" required>
-                        <option value="menunggu" {{ $perbaikan->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-                        <option value="diproses" {{ $perbaikan->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                        <option value="menunggu" {{ $perbaikan->status == 'menunggu' ? 'selected' : '' }}>Menunggu
+                        </option>
+                        <option value="diproses" {{ $perbaikan->status == 'diproses' ? 'selected' : '' }}>Diproses
+                        </option>
                         <option value="selesai" {{ $perbaikan->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
                         <option value="ditolak" {{ $perbaikan->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                     </select>
@@ -23,15 +26,32 @@
                     <textarea name="catatan" class="form-control">{{ $perbaikan->catatan }}</textarea>
                 </div>
 
+                <div class="form-group mb-3">
+                    <label>Foto Perbaikan</label>
+                    <input type="file" name="foto_perbaikan" class="form-control">
+                    <small class="text-muted">Upload foto setelah perbaikan (max 2MB, format: jpeg,png,jpg)</small>
+                    @if ($perbaikan->foto_perbaikan)
+                        <div class="mt-2">
+                            <img src="{{ asset($perbaikan->foto_perbaikan) }}" class="img-thumbnail"
+                                style="max-height: 150px;">
+                            <div class="form-check mt-2">
+                                <input type="checkbox" name="hapus_foto" id="hapus_foto" class="form-check-input">
+                                <label for="hapus_foto" class="form-check-label">Hapus foto saat disimpan</label>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
                 <div id="detail-perbaikan" style="display: {{ $perbaikan->status == 'selesai' ? 'block' : 'none' }};">
                     <h5>Detail Perbaikan</h5>
                     <div id="tindakan-container">
-                        @if($perbaikan->status == 'selesai' && $perbaikan->details->count() > 0)
-                            @foreach($perbaikan->details as $index => $detail)
+                        @if ($perbaikan->status == 'selesai' && $perbaikan->details->count() > 0)
+                            @foreach ($perbaikan->details as $index => $detail)
                                 <div class="tindakan-item mb-3 border p-3">
                                     <div class="form-group">
                                         <label>Tindakan</label>
-                                        <input type="text" name="tindakan[]" class="form-control" value="{{ $detail->tindakan }}" required>
+                                        <input type="text" name="tindakan[]" class="form-control"
+                                            value="{{ $detail->tindakan }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Deskripsi</label>
@@ -41,18 +61,21 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Bahan</label>
-                                                <input type="text" name="bahan[]" class="form-control" value="{{ $detail->bahan }}">
+                                                <input type="text" name="bahan[]" class="form-control"
+                                                    value="{{ $detail->bahan }}">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Biaya (Rp)</label>
-                                                <input type="number" name="biaya[]" class="form-control" value="{{ $detail->biaya }}">
+                                                <input type="number" name="biaya[]" class="form-control"
+                                                    value="{{ $detail->biaya }}">
                                             </div>
                                         </div>
                                     </div>
-                                    @if($index > 0)
-                                        <button type="button" class="btn btn-danger btn-sm mt-2 remove-tindakan">Hapus</button>
+                                    @if ($index > 0)
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm mt-2 remove-tindakan">Hapus</button>
                                     @endif
                                 </div>
                             @endforeach
@@ -83,7 +106,8 @@
                             </div>
                         @endif
                     </div>
-                    <button type="button" id="tambah-tindakan" class="btn btn-secondary btn-sm">Tambah Tindakan</button>
+                    <button type="button" id="tambah-tindakan" class="btn btn-secondary btn-sm">Tambah
+                        Tindakan</button>
                 </div>
             </div>
             <div class="modal-footer">

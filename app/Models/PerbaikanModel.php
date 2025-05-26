@@ -17,7 +17,8 @@ class PerbaikanModel extends Model
         'tanggal_mulai',
         'tanggal_selesai',
         'status',
-        'catatan'
+        'catatan',
+        'foto_perbaikan'
     ];
 
     public function laporan()

@@ -65,10 +65,10 @@ class PerbaikanController extends Controller
         return DataTables::of($perbaikans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($perbaikan) {
-                $btn = '<button onclick="modalAction(\''.url('/teknisi/perbaikan/'.$perbaikan->perbaikan_id.'/edit_ajax').'\')" class="btn btn-primary btn-sm mr-1">
+                $btn = '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/edit_ajax') . '\')" class="btn btn-primary btn-sm mr-1">
                             <i class="fa fa-edit"></i> Proses
                         </button>';
-                $btn .= '<button onclick="modalAction(\''.url('/teknisi/perbaikan/'.$perbaikan->perbaikan_id.'/show_ajax').'\')" class="btn btn-info btn-sm">
+                $btn .= '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">
                             <i class="fa fa-eye"></i> Detail
                         </button>';
                 return $btn;
@@ -97,7 +97,7 @@ class PerbaikanController extends Controller
         return DataTables::of($perbaikans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($perbaikan) {
-                return '<button onclick="modalAction(\''.url('/teknisi/perbaikan/'.$perbaikan->perbaikan_id.'/show_ajax').'\')" class="btn btn-info btn-sm">
+                return '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">
                             <i class="fa fa-eye"></i> Detail
                         </button>';
             })
@@ -151,7 +151,9 @@ class PerbaikanController extends Controller
             'tindakan.*' => 'required_if:status,selesai|string',
             'deskripsi.*' => 'nullable|string',
             'bahan.*' => 'nullable|string',
-            'biaya.*' => 'nullable|numeric'
+            'biaya.*' => 'nullable|numeric',
+            'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+
         ]);
 
         if ($validator->fails()) {
@@ -181,6 +183,21 @@ class PerbaikanController extends Controller
                 'tanggal_selesai' => $request->status == 'selesai' ? now() : null
             ]);
 
+            // Handle upload foto perbaikan
+            if ($request->hasFile('foto_perbaikan')) {
+                $foto = $request->file('foto_perbaikan');
+                $fotoName = time() . '_' . $foto->getClientOriginalName();
+                $foto->move(public_path('images/perbaikan'), $fotoName);
+                $data['foto_perbaikan'] = 'images/perbaikan/' . $fotoName;
+
+                // Hapus foto lama jika ada
+                if ($perbaikan->foto_perbaikan && file_exists(public_path($perbaikan->foto_perbaikan))) {
+                    unlink(public_path($perbaikan->foto_perbaikan));
+                }
+            }
+
+            $perbaikan->update($data);
+
             // Jika selesai, simpan detail perbaikan
             if ($request->status == 'selesai' && $request->tindakan) {
                 // Hapus detail lama jika ada
@@ -205,7 +222,6 @@ class PerbaikanController extends Controller
                 'message' => 'Perbaikan berhasil diupdate',
                 'redirect' => url('/teknisi/perbaikan')
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
