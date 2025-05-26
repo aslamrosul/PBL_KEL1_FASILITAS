@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             PerbaikanSeeder::class,
             PerbaikanDetailSeeder::class,
             FeedbackSeeder::class,
-            KriteriaGDSSSeeder::class,
+            KriteriaSeeder::class,
             RekomendasiMahasiswaSeeder::class,
             RekomendasiDosenSeeder::class,
             RekomendasiTendikSeeder::class,

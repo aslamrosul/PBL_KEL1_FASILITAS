@@ -2,88 +2,108 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Pengguna - Mazer Admin Dashboard</title>
+    
+    <link rel="shortcut icon" href="https://siakad.polinema.ac.id/favicon.jpg" type="image/x-icon">
+     <link rel="shortcut icon" href="{{ asset('dist/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app-dark.css') }}">
+        <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/auth.css') }}">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login Pengguna</title>
-
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('adminlte/plugins/fontawesome-free/css/all.min.css') }}">
-    <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="{{ asset('adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{{ asset('adminlte/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css') }}">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
-    <link rel="shortcut icon" href="https://siakad.polinema.ac.id/favicon.jpg"/>
-
+    <style>
+        .auth-logo img {
+            height: 60px;
+        }
+        .brand-text {
+            font-size: 2.25rem;
+            font-weight: bold;
+        }
+        .brand-text span {
+            color: rgb(41, 205, 255);
+        }
+        .auth-subtitle {
+            font-size: 1rem;
+            margin-bottom: 1.5rem !important;
+        }
+        .auth-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .form-control {
+            padding: 0.5rem 1rem;
+        }
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        .error-text {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+    </style>
 </head>
 
-<body class="hold-transition login-page">
-    <div class="login-box">
-        <div class="card card-outline card-primary">
-            <div class="card-header text-center">
-                <a href="#">
-  <span class="brand-text font-weight-bold" style="font-size: 2.25rem;">
-    SILATAS <span style="color: rgb(41, 205, 255);">POLINEMA</span>
-  </span>
-</a>
-            </div>
-            <div class="card-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                <form action="{{ url('login') }}" method="POST" id="form-login">
-                    @csrf
-                    <div class="input-group mb-3">
-                        <input type="text" id="login" name="login" class="form-control" placeholder="Username or Email">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-user"></span>
-                            </div>
-                        </div>
-                        <small id="error-login" class="error-text text-danger"></small>
+<body>
+    <script src="{{ asset('dist/assets/static/js/initTheme.js') }}"></script>
+    <div id="auth">
+        <div class="row h-100 justify-content-center">
+            <div class="col-lg-5 col-12">
+                <div id="auth-left">
+                    <div class="auth-logo mb-4">
+                        <a href="#">
+                            <span class="brand-text">SILATAS <span>POLINEMA</span></span>
+                        </a>
                     </div>
-                    <div class="input-group mb-3">
-                        <input type="password" id="password" name="password" class="form-control"
-                            placeholder="Password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                    <h1 class="auth-title">Sign In</h1>
+                    <p class="auth-subtitle">Sign in to start your session</p>
+
+                    <form action="{{ url('login') }}" method="POST" id="form-login">
+                        @csrf
+                        <div class="form-group position-relative has-icon-left mb-4">
+                            <input type="text" id="login" name="login" class="form-control form-control-xl" placeholder="Username or Email">
+                            <div class="form-control-icon">
+                                <i class="bi bi-person"></i>
                             </div>
+                            <small id="error-login" class="error-text"></small>
                         </div>
-                        <small id="error-password" class="error-text text-danger"></small>
-                    </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">Remember Me</label>
+                        <div class="form-group position-relative has-icon-left mb-4">
+                            <input type="password" id="password" name="password" class="form-control form-control-xl" placeholder="Password">
+                            <div class="form-control-icon">
+                                <i class="bi bi-shield-lock"></i>
                             </div>
+                            <small id="error-password" class="error-text"></small>
                         </div>
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                        <div class="form-check form-check-lg d-flex align-items-end mb-4">
+                            <input class="form-check-input me-2" type="checkbox" id="remember">
+                            <label class="form-check-label text-gray-600" for="remember">
+                                Remember Me
+                            </label>
                         </div>
+                        <button class="btn btn-primary btn-block btn-lg shadow-lg">Sign In</button>
+                    </form>
+                    <div class="text-center mt-4 text-lg fs-4">
+                        <p class="text-gray-600">Belum punya akun? <a href="{{ route('register') }}" class="font-bold">Daftar disini</a></p>
                     </div>
-                </form>
-                <a href="{{ route('register') }}" class="text-center">Belum punya akun?</a>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{ asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <!-- jquery-validation -->
-    <script src="{{ asset('adminlte/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('adminlte/plugins/jquery-validation/additional-methods.min.js') }}"></script>
-    <!-- SweetAlert2 -->
-    <script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
-    <!-- AdminLTE App -->
-    <script src="{{ asset('adminlte/dist/js/adminlte.min.js') }}"></script>
+    <!-- Scripts -->
+      <script src="{{ asset('dist/assets/static/js/components/dark.js') }}"></script>
+    <script src="{{ asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('dist/assets/compiled/js/app.js') }}"></script>
+    
+    <!-- Additional scripts for validation -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/additional-methods.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $.ajaxSetup({
@@ -122,7 +142,6 @@
                                     title: 'Terjadi Kesalahan',
                                     text: response.message || 'Terjadi kesalahan pada server',
                                 });
-
                             }
                         }
                     });
@@ -131,7 +150,7 @@
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.input-group').append(error);
+                    element.closest('.form-group').append(error);
                 },
                 highlight: function (element) {
                     $(element).addClass('is-invalid');
@@ -143,5 +162,4 @@
         });
     </script>
 </body>
-
 </html>

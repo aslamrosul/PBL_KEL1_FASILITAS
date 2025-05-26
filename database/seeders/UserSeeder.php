@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
             [
                 'nama' => 'Admin Sistem',
                 'username' => 'admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin123'),
                 'email' => 'admin@polinema.ac.id',
                 'level_id' => 1,
                 'profile_photo' => null,

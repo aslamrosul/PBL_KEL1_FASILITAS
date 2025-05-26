@@ -47,7 +47,7 @@
 
                 <!-- Dashboard -->
                 <li class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <a href="{{ route('dashboard') }}" class='sidebar-link'>
+                    <a href="{{ route(strtolower(Auth::user()->level->level_route) . '.dashboard') }}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -74,8 +74,29 @@
                             <li class="submenu-item {{ request()->routeIs('admin.gedung.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.gedung.index') }}">Gedung</a>
                             </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.lantai.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.lantai.index') }}">Lantai</a>
+                            </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.ruang.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.ruang.index') }}">Ruag</a>
+                            </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.kategori.index') }}">Kategori</a>
+                            </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.barang.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.barang.index') }}">Barang</a>
+                            </li>
                             <li class="submenu-item {{ request()->routeIs('admin.fasilitas.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.fasilitas.index') }}">Fasilitas</a>
+                            </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.periode.index') }}">Periode</a>
+                            </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.bobot.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.bobot.index') }}">Bobot Prioritas</a>
+                            </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.kriteria.index') }}">Kriteria</a>
                             </li>
                         </ul>
                     </li>

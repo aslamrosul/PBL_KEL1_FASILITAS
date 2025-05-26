@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->id('level_id');
             $table->string('level_kode', 10);
             $table->string('level_nama', 100);
+            $table->string('level_route', 255)->nullable();
             $table->timestamps();
         });
     }

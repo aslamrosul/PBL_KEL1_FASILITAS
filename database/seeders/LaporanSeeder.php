@@ -30,7 +30,7 @@ class LaporanSeeder extends Seeder
                 'judul' => 'Proyektor Berkedip',
                 'deskripsi' => 'Proyektor di Lab 1 sering berkedip ketika digunakan',
                 'foto_path' => null,
-                'bobot_id' => '',
+                'bobot_id' => null,
                 'status' => 'pending',
                 'alasan_penolakan' => null,
                 'tanggal_selesai' => null

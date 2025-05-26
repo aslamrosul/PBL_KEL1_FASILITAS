@@ -18,8 +18,8 @@
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-menu d-flex">
                             <div class="user-name text-end me-3">
-                                <h6 class="mb-0 text-gray-600">{{ Auth::user()->name ?? 'User' }}</h6>
-                                <p class="mb-0 text-sm text-gray-600">{{ Auth::user()->role ?? 'Guest' }}</p>
+                                <h6 class="mb-0 text-gray-600">{{ Auth::user()->nama ?? 'User' }}</h6>
+                                <p class="mb-0 text-sm text-gray-600">{{ Auth::user()->level->level_nama ?? 'Guest' }}</p>
                             </div>
                             <div class="user-img d-flex align-items-center">
                                 <div class="avatar avatar-md">
@@ -32,8 +32,7 @@
                         <li>
                             <h6 class="dropdown-header">Hello, {{ Auth::user()->first_name ?? 'User' }}!</h6>
                         </li>
-                        {{-- <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
-                        <li><a class="dropdown-item" href="{{ route('settings') }}"><i class="icon-mid bi bi-gear me-2"></i> Settings</a></li> --}}
+                        <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
 
                             <li><a class="dropdown-item" href=""><i class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
                         <li><a class="dropdown-item" href=""><i class="icon-mid bi bi-gear me-2"></i> Settings</a></li>

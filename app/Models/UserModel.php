@@ -24,7 +24,9 @@ class UserModel extends Authenticatable
         'username',
         'password',
         'email',
-        'level_id'
+        'level_id',
+        'profile_photo', // tambahkan kolom profile_photo
+        'remember_token', // tambahkan kolom remember_token
     ];
 
     protected $hidden = [

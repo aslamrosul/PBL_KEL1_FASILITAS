@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\KriteriaGDSSModel;
+use App\Models\KriteriaModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class KriteriaGDSSSeeder extends Seeder
+class KriteriaSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run()
     {
-        KriteriaGDSSModel::insert([
+        KriteriaModel::insert([
             [
                 'kriteria_kode' => 'DMPK',
                 'kriteria_nama' => 'Dampak Akademik',

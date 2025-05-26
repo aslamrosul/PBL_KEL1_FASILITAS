@@ -30,7 +30,7 @@ class UserController extends Controller
         $level = LevelModel::all(); // ambil data level untuk ditampilkan di form
 
 
-        return view('user.index', [
+        return view('admin.user.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'level' => $level,
@@ -74,7 +74,7 @@ class UserController extends Controller
     public function create_ajax()
     {
         $level = LevelModel::all();
-        return view('user.create_ajax', compact('level'));
+        return view('admin.user.create_ajax', compact('level'));
     }
 
     public function store_ajax(Request $request)
@@ -127,7 +127,7 @@ class UserController extends Controller
     {
         $user = UserModel::find($user_id);
         $level = LevelModel::all();
-        return view('user.edit_ajax', compact('user', 'level'));
+        return view('admin.user.edit_ajax', compact('user', 'level'));
     }
 
     public function update_ajax(Request $request, $user_id)
@@ -188,7 +188,7 @@ class UserController extends Controller
     public function confirm_ajax($user_id)
     {
         $user = UserModel::find($user_id);
-        return view('user.confirm_ajax', compact('user'));
+        return view('admin.user.confirm_ajax', compact('user'));
     }
 
     public function delete_ajax($user_id)
@@ -215,12 +215,12 @@ class UserController extends Controller
     public function show_ajax($user_id)
     {
         $user = UserModel::with('level')->find($user_id);
-        return view('user.show_ajax', compact('user'));
+        return view('admin.user.show_ajax', compact('user'));
     }
 
     public function import()
     {
-        return view('user.import');
+        return view('admin.user.import');
     }
 
     public function import_ajax(Request $request)
@@ -353,7 +353,7 @@ class UserController extends Controller
             'title' => 'Laporan Data Pengguna'
         ];
 
-        $pdf = Pdf::loadView('user.export_pdf', $data);
+        $pdf = Pdf::loadView('admin.user.export_pdf', $data);
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();

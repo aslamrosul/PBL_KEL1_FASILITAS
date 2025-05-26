@@ -1,15 +1,45 @@
 <?php
 
-use App\Http\Controllers\Admin\BobotPrioritasController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardAdminController;
-use App\Http\Controllers\Admin\PeriodeController;
-use App\Http\Controllers\Admin\LantaiController;
-use App\Http\Controllers\Admin\GedungController;
-use App\Http\Controllers\Pelapor\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotifikasiController;
+
+
+//Admin Controllers
+use App\Http\Controllers\DashboardAdminController;
+// 
+use App\Http\Controllers\Admin\StatistikTrenController;
+use App\Http\Controllers\Admin\LaporanKerusakanController;
+//  manajemen data
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PeriodeController;
+use App\Http\Controllers\Admin\GedungController;
+use App\Http\Controllers\Admin\LantaiController;
+use App\Http\Controllers\Admin\RuangController;
+use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\BarangController;
+use App\Http\Controllers\Admin\FasilitasController;
+use App\Http\Controllers\Admin\BobotPrioritasController;
+use App\Http\Controllers\Admin\KriteriaController;
+
+
+
+//Pelapor Controllers
+use App\Http\Controllers\DashboardPelaporController;
+use App\Http\Controllers\Pelapor\FeedbackController;
+use App\Http\Controllers\Pelapor\PelaporanKerusakanController;
+
+//Sarpras Controllers
+use App\Http\Controllers\DashboardSarprasController;
+
+//Teknisi Controller
+use App\Http\Controllers\DashboardTeknisiController;
+
+
+
+
 
 
 /*
@@ -40,7 +70,14 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->nam
 Route::middleware(['auth'])->group(function () { //artinya semua route di dalam goup ini harus login dulu
     // masukkan semua route yang perlu autentikasi di sini
     
-    
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
+    Route::get('/notifikasi/read/{id}', [NotifikasiController::class, 'read'])->name('notifikasi.read');
+    Route::get('/notifikasi/read-all', [NotifikasiController::class, 'readAll'])->name('notifikasi.readAll');
+    Route::get('/notifikasi/unread', [NotifikasiController::class, 'unread'])->name('notifikasi.unread');
+    Route::get('/notifikasi/clear', [NotifikasiController::class, 'clear'])->name('notifikasi.clear');
+    Route::get('/notifikasi/clear-all', [NotifikasiController::class, 'clearAll'])->name('notifikasi.clearAll');
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     
     Route::get('/', function () {
@@ -49,14 +86,14 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
      Route::get('/beranda', function () {
         $user = Auth::user();
-        switch ($user->role) {
-            case 'admin':
+        switch ($user->level->level_kode) {
+            case 'ADM':
                 return redirect()->route('admin.dashboard');
-            case 'dosen':
+            case 'MHS,DSN, TNK':
                 return redirect()->route('pelapor.dashboard');
-            case 'mahasiswa':
+            case 'SPR':
                 return redirect()->route('sarpras.dashboard');
-            case 'perusahaan':
+            case 'TKN':
                 return redirect()->route('teknisi.dashboard');
             default:
                 return redirect()->route('login');
@@ -70,7 +107,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('admin.dashboard'); // Halaman Dashboard Admin
         //route user
         Route::group(['prefix' => 'user'], function () {
-            Route::get('/', [UserController::class, 'index']); // menampilkan halaman awal user
+            Route::get('/', [UserController::class, 'index'])->name('admin.user.index');; // menampilkan halaman awal user
             Route::post('/list', [UserController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [UserController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
             Route::post('/ajax', [UserController::class, 'store_ajax']); // Menyimpan data user baru Ajax
@@ -86,7 +123,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
         //route level
         Route::group(['prefix' => 'bobot'], function () {
-            Route::get('/', [BobotPrioritasController::class, 'index']); // menampilkan halaman awal user
+            Route::get('/', [BobotPrioritasController::class, 'index'])->name('admin.bobot.index'); // menampilkan halaman awal user
             Route::post('/list', [BobotPrioritasController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [BobotPrioritasController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
             Route::post('/ajax', [BobotPrioritasController::class, 'store_ajax']); // Menyimpan data user baru Ajax
@@ -101,8 +138,8 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         });
 
         //route gedung
-        Route::group(['prefix' => 'gedung'], function () {
-            Route::get('/', [GedungController::class, 'index']); // menampilkan halaman awal user
+        Route::group(['prefix' => 'gedung'], function (): void {
+            Route::get('/', [GedungController::class, 'index'])->name('admin.gedung.index'); // menampilkan halaman awal user
             Route::post('/list', [GedungController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [GedungController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
             Route::post('/ajax', [GedungController::class, 'store_ajax']); // Menyimpan data user baru Ajax
@@ -119,7 +156,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
         //route lantai
         Route::group(['prefix' => 'lantai'], function () {
-            Route::get('/', [LantaiController::class, 'index']); // menampilkan halaman awal user
+            Route::get('/', [LantaiController::class, 'index'])->name('admin.lantai.index'); // menampilkan halaman awal user
             Route::post('/list', [LantaiController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [LantaiController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
             Route::post('/ajax', [LantaiController::class, 'store_ajax']); // Menyimpan data user baru Ajax
@@ -135,24 +172,24 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
         //route ruang
         Route::group(['prefix' => 'ruang'], function () {
-            Route::get('/', [GedungController::class, 'index']); // menampilkan halaman awal user
-            Route::post('/list', [GedungController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
-            Route::get('/create_ajax', [GedungController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
-            Route::post('/ajax', [GedungController::class, 'store_ajax']); // Menyimpan data user baru Ajax
-            Route::get('/{id}/show_ajax', [GedungController::class, 'show_ajax']); // menampilkan detail user ajax
-            Route::get('/{id}/edit_ajax', [GedungController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
-            Route::put('/{id}/update_ajax', [GedungController::class, 'update_ajax']); // menyimpan perubahan data user ajax
-            Route::get('/{id}/delete_ajax', [GedungController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
-            Route::get('/import', [GedungController::class, 'import']); // ajax form upload excel
-            Route::post('/import_ajax', [GedungController::class, 'import_ajax']); // ajax import excel
-            Route::get('/export_excel', [GedungController::class, 'export_excel']); //export excel
-            Route::get('/export_pdf', [GedungController::class, 'export_pdf']);
+            Route::get('/', [RuangController::class, 'index'])->name('admin.ruang.index');; // menampilkan halaman awal user
+            Route::post('/list', [RuangController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [RuangController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [RuangController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [RuangController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [RuangController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [RuangController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [RuangController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::get('/import', [RuangController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [RuangController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [RuangController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [RuangController::class, 'export_pdf']);
         });
 
 
         //route periode
         Route::group(['prefix' => 'periode'], function () {
-            Route::get('/', [PeriodeController::class, 'index']); // menampilkan halaman awal user
+            Route::get('/', [PeriodeController::class, 'index'])->name('admin.periode.index');; // menampilkan halaman awal user
             Route::post('/list', [PeriodeController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [PeriodeController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
             Route::post('/ajax', [PeriodeController::class, 'store_ajax']); // Menyimpan data user baru Ajax
@@ -165,6 +202,85 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_excel', [PeriodeController::class, 'export_excel']); //export excel
             Route::get('/export_pdf', [PeriodeController::class, 'export_pdf']);
         });
+
+               //route kategori
+        Route::group(['prefix' => 'kategori'], function () {
+            Route::get('/', [KategoriController::class, 'index'])->name('admin.kategori.index');; // menampilkan halaman awal user
+            Route::post('/list', [KategoriController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [KategoriController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [KategoriController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [KategoriController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [KategoriController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [KategoriController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::get('/import', [KategoriController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [KategoriController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [KategoriController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [KategoriController::class, 'export_pdf']);
+        });
+
+                  //route periode
+        Route::group(['prefix' => 'barang'], function () {
+            Route::get('/', [BarangController::class, 'index'])->name('admin.barang.index');; // menampilkan halaman awal user
+            Route::post('/list', [BarangController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [BarangController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [BarangController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [BarangController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::get('/import', [BarangController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [BarangController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [BarangController::class, 'export_pdf']);
+        });
+
+                  //route fasilitas
+        Route::group(['prefix' => 'fasilitas'], function () {
+            Route::get('/', [FasilitasController::class, 'index'])->name('admin.fasilitas.index');; // menampilkan halaman awal user
+            Route::post('/list', [FasilitasController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [FasilitasController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [FasilitasController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [FasilitasController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [FasilitasController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [FasilitasController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [FasilitasController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::get('/import', [FasilitasController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [FasilitasController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [FasilitasController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [FasilitasController::class, 'export_pdf']);
+        });
+
+                   //route kriteria
+        Route::group(['prefix' => 'kriteria'], function () {
+            Route::get('/', [KriteriaController::class, 'index'])->name('admin.kriteria.index');; // menampilkan halaman awal user
+            Route::post('/list', [KriteriaController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [KriteriaController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [KriteriaController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [KriteriaController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [KriteriaController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [KriteriaController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [KriteriaController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::get('/import', [KriteriaController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [KriteriaController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [KriteriaController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [KriteriaController::class, 'export_pdf']);
+        });
+
+
+
+             Route::group(['prefix' => 'laporan'], function () {
+            Route::get('/', [PeriodeController::class, 'index'])->name('admin.laporan.index');; // menampilkan halaman awal user
+           
+        });
+
+             Route::group(['prefix' => 'statistik'], function () {
+            Route::get('/', [PeriodeController::class, 'index'])->name('admin.statistik.index');; // menampilkan halaman awal user
+            
+        });
+
+       
+
     });
 
     // Pelapor Mahasiswa, Dosen, Tenga Kependidikan
