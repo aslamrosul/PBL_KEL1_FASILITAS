@@ -14,7 +14,7 @@ class PerbaikanSeeder extends Seeder
      * Run the database seeds.
      */
     // database/seeders/PerbaikanSeeder.php
-public function run()
+    public function run()
     {
         PerbaikanModel::insert([
             [
@@ -22,17 +22,19 @@ public function run()
                 'teknisi_id' => 6,
                 'tanggal_mulai' => Carbon::now(),
                 'tanggal_selesai' => null,
+                'tanggal_ditolak' => null,
                 'status' => 'selesai',
                 'catatan' => 'Periksa power supply'
             ],
         ]);
 
-         PerbaikanModel::insert([
+        PerbaikanModel::insert([
             [
                 'laporan_id' => 2,
                 'teknisi_id' => 6,
                 'tanggal_mulai' => Carbon::now(),
                 'tanggal_selesai' => null,
+                'tanggal_ditolak' => null,
                 'status' => 'diproses',
                 'catatan' => 'Periksa power supply'
             ],

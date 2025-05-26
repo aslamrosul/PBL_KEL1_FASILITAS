@@ -147,14 +147,23 @@ class PerbaikanController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:menunggu,diproses,selesai,ditolak',
-            'catatan' => 'nullable|string',
+            'catatan' => 'required_if:status,ditolak|nullable|string',
+            'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'tindakan.*' => 'required_if:status,selesai|string',
             'deskripsi.*' => 'nullable|string',
             'bahan.*' => 'nullable|string',
-            'biaya.*' => 'nullable|numeric',
-            'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-
+            'biaya.*' => 'nullable|numeric'
+        ], [
+            'catatan.required_if' => 'Catatan wajib diisi ketika status ditolak',
+            'tindakan.*.required_if' => 'Tindakan wajib diisi ketika status selesai'
         ]);
+
+        // Hapus validasi tindakan jika status bukan selesai
+        if ($request->status != 'selesai') {
+            $validator->sometimes('tindakan.*', 'nullable', function () {
+                return true;
+            });
+        }
 
         if ($validator->fails()) {
             return response()->json([
@@ -176,15 +185,15 @@ class PerbaikanController extends Controller
 
         DB::beginTransaction();
         try {
-            // Update perbaikan
-            $perbaikan->update([
+            $data = [
                 'status' => $request->status,
                 'catatan' => $request->catatan,
-                'tanggal_selesai' => $request->status == 'selesai' ? now() : null
-            ]);
+                'tanggal_selesai' => $request->status == 'selesai' ? now() : null,
+                'tanggal_ditolak' => $request->status == 'ditolak' ? now() : null
+            ];
 
-            // Handle upload foto perbaikan
-            if ($request->hasFile('foto_perbaikan')) {
+            // Handle upload foto perbaikan (hanya untuk status selesai)
+            if ($request->status == 'selesai' && $request->hasFile('foto_perbaikan')) {
                 $foto = $request->file('foto_perbaikan');
                 $fotoName = time() . '_' . $foto->getClientOriginalName();
                 $foto->move(public_path('images/perbaikan'), $fotoName);
@@ -194,6 +203,14 @@ class PerbaikanController extends Controller
                 if ($perbaikan->foto_perbaikan && file_exists(public_path($perbaikan->foto_perbaikan))) {
                     unlink(public_path($perbaikan->foto_perbaikan));
                 }
+            }
+
+            // Jika status ditolak, hapus foto perbaikan jika ada
+            if ($request->status == 'ditolak' && $perbaikan->foto_perbaikan) {
+                if (file_exists(public_path($perbaikan->foto_perbaikan))) {
+                    unlink(public_path($perbaikan->foto_perbaikan));
+                }
+                $data['foto_perbaikan'] = null;
             }
 
             $perbaikan->update($data);
@@ -219,7 +236,7 @@ class PerbaikanController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Perbaikan berhasil diupdate',
+                'message' => 'Status perbaikan berhasil diupdate',
                 'redirect' => url('/teknisi/perbaikan')
             ]);
         } catch (\Exception $e) {

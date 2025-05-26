@@ -1,7 +1,18 @@
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Detail Perbaikan</h5>
+        <div
+            class="modal-header bg-{{ $perbaikan->status == 'ditolak' ? 'danger' : ($perbaikan->status == 'selesai' ? 'success' : 'primary') }} text-white">
+            <h5 class="modal-title">Detail Perbaikan
+                @if ($perbaikan->status == 'menunggu')
+                    <span class="badge bg-warning">Menunggu</span>
+                @elseif($perbaikan->status == 'diproses')
+                    <span class="badge bg-primary">Diproses</span>
+                @elseif($perbaikan->status == 'selesai')
+                    <span class="badge bg-success">Selesai</span>
+                @elseif($perbaikan->status == 'ditolak')
+                    <span class="badge bg-danger">Ditolak</span>
+                @endif
+            </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -81,6 +92,14 @@
                 </div>
             </div>
 
+             @if($perbaikan->status == 'ditolak')
+                <div class="alert alert-danger">
+                    <h5><i class="fas fa-times-circle"></i> Alasan Penolakan</h5>
+                    <p class="mb-0">{{ $perbaikan->catatan }}</p>
+                    <p class="mb-0 mt-2"><small>Tanggal ditolak: {{ $perbaikan->tanggal_ditolak }}</small></p>
+                </div>
+            @endif
+            
             @if ($perbaikan->laporan->foto_path)
                 <div class="mb-4">
                     <h5>Foto Bukti Kerusakan</h5>

@@ -11,11 +11,18 @@ class PerbaikanModel extends Model
 
     protected $table = 't_perbaikan';
     protected $primaryKey = 'perbaikan_id';
+    
+    protected $dates = [
+    'tanggal_mulai',
+    'tanggal_selesai',
+    'tanggal_ditolak' // Tambahkan ini
+];
     protected $fillable = [
         'laporan_id',
         'teknisi_id',
         'tanggal_mulai',
         'tanggal_selesai',
+         'tanggal_ditolak',
         'status',
         'catatan',
         'foto_perbaikan'
