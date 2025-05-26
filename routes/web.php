@@ -294,7 +294,6 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         Route::get('/{id}/show_ajax', [PerbaikanController::class, 'show_ajax']);
         Route::get('/{id}/edit_ajax', [PerbaikanController::class, 'edit_ajax']);
         Route::put('/{id}/update_ajax', [PerbaikanController::class, 'update_ajax']);
-                Route::get('/dddd', [PerbaikanController::class, 'riwayat'])->name('teknisi.riwayat.index');
 
         });
     });

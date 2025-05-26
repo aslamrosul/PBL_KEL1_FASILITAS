@@ -22,5 +22,15 @@ class PerbaikanDetailSeeder extends Seeder
                 'biaya' => 350000
             ],
         ]);
+
+        PerbaikanDetailModel::insert([
+            [
+                'perbaikan_id' => 2,
+                'tindakan' => 'Ganti power supply',
+                'deskripsi' => 'Power supply komputer diganti dengan yang baru',
+                'bahan' => 'Power supply 500W',
+                'biaya' => 350000
+            ],
+        ]);
     }
 }

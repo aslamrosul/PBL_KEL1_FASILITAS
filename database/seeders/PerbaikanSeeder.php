@@ -22,6 +22,17 @@ public function run()
                 'teknisi_id' => 6,
                 'tanggal_mulai' => Carbon::now(),
                 'tanggal_selesai' => null,
+                'status' => 'selesai',
+                'catatan' => 'Periksa power supply'
+            ],
+        ]);
+
+         PerbaikanModel::insert([
+            [
+                'laporan_id' => 2,
+                'teknisi_id' => 6,
+                'tanggal_mulai' => Carbon::now(),
+                'tanggal_selesai' => null,
                 'status' => 'diproses',
                 'catatan' => 'Periksa power supply'
             ],
