@@ -36,11 +36,7 @@ use App\Http\Controllers\DashboardSarprasController;
 
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
-
-
-
-
-
+use App\Http\Controllers\Teknisi\PerbaikanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +65,7 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->nam
 
 Route::middleware(['auth'])->group(function () { //artinya semua route di dalam goup ini harus login dulu
     // masukkan semua route yang perlu autentikasi di sini
-    
+
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/notifikasi/read/{id}', [NotifikasiController::class, 'read'])->name('notifikasi.read');
     Route::get('/notifikasi/read-all', [NotifikasiController::class, 'readAll'])->name('notifikasi.readAll');
@@ -79,12 +75,12 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    
+
     Route::get('/', function () {
         return redirect()->to(url('/beranda'));
     });
 
-     Route::get('/beranda', function () {
+    Route::get('/beranda', function () {
         $user = Auth::user();
         switch ($user->level->level_kode) {
             case 'ADM':
@@ -100,7 +96,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         }
     })->name('beranda');
 
- 
+
 
 
     Route::middleware(['authorize:ADM'])->group(function () {
@@ -203,7 +199,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [PeriodeController::class, 'export_pdf']);
         });
 
-               //route kategori
+        //route kategori
         Route::group(['prefix' => 'kategori'], function () {
             Route::get('/', [KategoriController::class, 'index'])->name('admin.kategori.index');; // menampilkan halaman awal user
             Route::post('/list', [KategoriController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
@@ -219,7 +215,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [KategoriController::class, 'export_pdf']);
         });
 
-                  //route periode
+        //route periode
         Route::group(['prefix' => 'barang'], function () {
             Route::get('/', [BarangController::class, 'index'])->name('admin.barang.index');; // menampilkan halaman awal user
             Route::post('/list', [BarangController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
@@ -235,7 +231,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [BarangController::class, 'export_pdf']);
         });
 
-                  //route fasilitas
+        //route fasilitas
         Route::group(['prefix' => 'fasilitas'], function () {
             Route::get('/', [FasilitasController::class, 'index'])->name('admin.fasilitas.index');; // menampilkan halaman awal user
             Route::post('/list', [FasilitasController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
@@ -251,7 +247,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [FasilitasController::class, 'export_pdf']);
         });
 
-                   //route kriteria
+        //route kriteria
         Route::group(['prefix' => 'kriteria'], function () {
             Route::get('/', [KriteriaController::class, 'index'])->name('admin.kriteria.index');; // menampilkan halaman awal user
             Route::post('/list', [KriteriaController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
@@ -269,28 +265,37 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
 
 
-             Route::group(['prefix' => 'laporan'], function () {
+        Route::group(['prefix' => 'laporan'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.laporan.index');; // menampilkan halaman awal user
-           
+
         });
 
-             Route::group(['prefix' => 'statistik'], function () {
+        Route::group(['prefix' => 'statistik'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.statistik.index');; // menampilkan halaman awal user
-            
+
         });
-
-       
-
     });
 
     // Pelapor Mahasiswa, Dosen, Tenga Kependidikan
-    Route::middleware(['authorize:MHS,DSN,TNK'])->group(function () {
-
-    });
+    Route::middleware(['authorize:MHS,DSN,TNK'])->group(function () {});
 
     // Sarana Prasarana
     Route::middleware(['authorize:SPR'])->group(function () {});
 
     // Teknisi
-    Route::middleware(['authorize:TKN'])->group(function () {});
+    Route::middleware(['authorize:TKN'])->group(function () {
+        Route::get('/dashboard', [DashboardTeknisiController::class, 'index'])->name('teknisi.dashboard'); // Halaman Dashboard Teknisi
+        
+        Route::group(['prefix' => 'teknisi/perbaikan'], function () {
+             Route::get('/', [PerbaikanController::class, 'index'])->name('teknisi.perbaikan.index');
+        Route::get('/riwayat', [PerbaikanController::class, 'riwayat'])->name('teknisi.riwayat.index');
+        Route::post('/list', [PerbaikanController::class, 'list']);
+        Route::post('/list-riwayat', [PerbaikanController::class, 'listRiwayat']);
+        Route::get('/{id}/show_ajax', [PerbaikanController::class, 'show_ajax']);
+        Route::get('/{id}/edit_ajax', [PerbaikanController::class, 'edit_ajax']);
+        Route::put('/{id}/update_ajax', [PerbaikanController::class, 'update_ajax']);
+                Route::get('/dddd', [PerbaikanController::class, 'riwayat'])->name('teknisi.riwayat.index');
+
+        });
+    });
 });
