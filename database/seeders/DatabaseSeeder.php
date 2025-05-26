@@ -12,6 +12,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+
+        $this->call([
+             LevelSeeder::class,
+            UserSeeder::class,
+            GedungSeeder::class,
+            LantaiSeeder::class,
+            RuangSeeder::class,
+            KategoriSeeder::class,
+            BarangSeeder::class,
+            FasilitasSeeder::class,
+            PeriodeSeeder::class,
+            BobotPrioritasSeeder::class,
+            LaporanSeeder::class,
+            LaporanHistorySeeder::class,
+            PerbaikanSeeder::class,
+            PerbaikanDetailSeeder::class,
+            FeedbackSeeder::class,
+            KriteriaGDSSSeeder::class,
+            RekomendasiMahasiswaSeeder::class,
+            RekomendasiDosenSeeder::class,
+            RekomendasiTendikSeeder::class,
+            RekomendasiGDSSSeeder::class,
+        ]);
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([
