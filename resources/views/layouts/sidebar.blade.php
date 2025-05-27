@@ -4,7 +4,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
                     <a href="index.html"><span class="brand-text font-weight-bold">
-                            SILATAS <span style="color: rgb(41, 205, 255);">POLINEMA</span>
+                            FixIT <span style="color: rgb(41, 205, 255);">POLINEMA</span>
                         </span></a>
                 </div>
                 <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
@@ -78,7 +78,7 @@
                                 <a href="{{ route('admin.lantai.index') }}">Lantai</a>
                             </li>
                             <li class="submenu-item {{ request()->routeIs('admin.ruang.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.ruang.index') }}">Ruag</a>
+                                <a href="{{ route('admin.ruang.index') }}">Ruang</a>
                             </li>
                             <li class="submenu-item {{ request()->routeIs('admin.kategori.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.kategori.index') }}">Kategori</a>
