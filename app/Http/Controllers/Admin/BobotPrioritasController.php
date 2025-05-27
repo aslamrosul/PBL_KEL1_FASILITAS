@@ -59,6 +59,7 @@ class BobotPrioritasController extends Controller
         $validator = Validator::make($request->all(), [
             'skor_min' => 'required|integer|min:0',
             'skor_max' => 'required|integer|min:0|gte:skor_min',
+            'tindakan' => 'required|string|max:100',
         ]);
 
         if ($validator->fails()) {
@@ -80,7 +81,8 @@ class BobotPrioritasController extends Controller
         try {
             $bobot->update([
                 'skor_min' => $request->skor_min,
-                'skor_max' => $request->skor_max
+                'skor_max' => $request->skor_max,
+                'tindakan' => $request->tindakan
             ]);
 
             return response()->json([
