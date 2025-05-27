@@ -98,6 +98,9 @@
                             <li class="submenu-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.kriteria.index') }}">Kriteria</a>
                             </li>
+                            <li class="submenu-item {{ request()->routeIs('admin.klasifikasi.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.klasifikasi.index') }}">Klasifikasi</a>
+                            </li>
                         </ul>
                     </li>
 
