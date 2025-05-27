@@ -307,6 +307,13 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [KlasifikasiController::class, 'export_pdf']);
         });
 
+        //Bobot Prioritas edit skor
+        Route::prefix('bobot-prioritas')->group(function () {
+            Route::get('/', [BobotPrioritasController::class, 'index'])->name('bobot-prioritas.index');
+            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('bobot-prioritas.list');
+            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('bobot-prioritas.edit_ajax');
+            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('bobot-prioritas.update_ajax');
+        });
 
         Route::group(['prefix' => 'laporan'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.laporan.index');; // menampilkan halaman awal user
