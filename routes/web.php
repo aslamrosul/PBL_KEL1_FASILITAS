@@ -102,7 +102,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
 
     Route::middleware(['authorize:ADM'])->group(function () {
-        Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('admin.dashboard'); // Halaman Dashboard Admin
+        Route::get('/admin/dashboard', [DashboardAdminController::class, 'index'])->name('admin.dashboard'); // Halaman Dashboard Admin
         //route user
         Route::group(['prefix' => 'user'], function () {
             Route::get('/', [UserController::class, 'index'])->name('admin.user.index');; // menampilkan halaman awal user
