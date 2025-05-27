@@ -290,7 +290,6 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [KriteriaController::class, 'export_pdf']);
         });
 
-
         //route klasifikasi
         Route::group(['prefix' => 'klasifikasi'], function () {
             Route::get('/', [KlasifikasiController::class, 'index'])->name('admin.klasifikasi.index');; // menampilkan halaman awal user

@@ -12,9 +12,4 @@ class KriteriaModel extends Model
     protected $table = 'm_kriteria_gdss';
     protected $primaryKey = 'kriteria_id';
     protected $fillable = ['kriteria_kode', 'kriteria_nama', 'bobot'];
-
-    // public function rekomendasiMahasiswa()
-    // {
-    //     return $this->hasMany(RekomendasiMahasiswaModel::class, 'kriteria_id');
-    // }
 }
