@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\FasilitasController;
 use App\Http\Controllers\Admin\BobotPrioritasController;
 use App\Http\Controllers\Admin\KriteriaController;
-
+use App\Http\Controllers\Admin\KlasifikasiController;
 
 
 //Pelapor Controllers
@@ -290,14 +290,22 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_pdf', [KriteriaController::class, 'export_pdf']);
         });
 
-        //Bobot Prioritas edit skor
-        Route::prefix('bobot-prioritas')->group(function () {
-            Route::get('/', [BobotPrioritasController::class, 'index'])->name('bobot-prioritas.index');
-            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('bobot-prioritas.list');
-            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('bobot-prioritas.edit_ajax');
-            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('bobot-prioritas.update_ajax');
+        //route klasifikasi
+        Route::group(['prefix' => 'klasifikasi'], function () {
+            Route::get('/', [KlasifikasiController::class, 'index'])->name('admin.klasifikasi.index');; // menampilkan halaman awal user
+            Route::post('/list', [KlasifikasiController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [KlasifikasiController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [KlasifikasiController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [KlasifikasiController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [KlasifikasiController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [KlasifikasiController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [KlasifikasiController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::delete('/{id}/delete_ajax', [KlasifikasiController::class, 'delete_ajax']);
+            Route::get('/import', [KlasifikasiController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [KlasifikasiController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [KlasifikasiController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [KlasifikasiController::class, 'export_pdf']);
         });
-
 
 
         Route::group(['prefix' => 'laporan'], function () {

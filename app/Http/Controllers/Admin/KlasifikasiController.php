@@ -3,29 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\KriteriaModel;
+use App\Models\KlasifikasiModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class KriteriaController extends Controller
+class KlasifikasiController extends Controller
 {
     public function index()
     {
         $breadcrumb = (object) [
-            'title' => 'Daftar Kriteria',
-            'list' => ['Home', 'Kriteria']
+            'title' => 'Daftar Klasifikasi',
+            'list' => ['Home', 'Klasifikasi']
         ];
 
         $page = (object) [
-            'title' => 'Daftar kriteria yang terdaftar dalam sistem'
+            'title' => 'Daftar klasifikasi yang terdaftar dalam sistem'
         ];
 
-        $activeMenu = 'kriteria';
+        $activeMenu = 'klasifikasi';
 
-        return view('admin.kriteria.index', [
+        return view('admin.klasifikasi.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu
@@ -34,14 +34,14 @@ class KriteriaController extends Controller
 
     public function list(Request $request)
     {
-        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot');
+        $klasifikasis = KlasifikasiModel::select('klasifikasi_id', 'klasifikasi_kode', 'klasifikasi_nama');
 
-        return DataTables::of($kriterias)
+        return DataTables::of($klasifikasis)
             ->addIndexColumn()
-            ->addColumn('aksi', function ($kriteria) {
-                $showUrl = url('/kriteria/' . $kriteria->kriteria_id . '/show_ajax');
-                $editUrl = url('/kriteria/' . $kriteria->kriteria_id . '/edit_ajax');
-                $deleteUrl = url('/kriteria/' . $kriteria->kriteria_id . '/delete_ajax');
+            ->addColumn('aksi', function ($klasifikasi) {
+                $showUrl = url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/show_ajax');
+                $editUrl = url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/edit_ajax');
+                $deleteUrl = url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/delete_ajax');
 
                 return '
                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
@@ -61,15 +61,14 @@ class KriteriaController extends Controller
 
     public function create_ajax()
     {
-        return view('admin.kriteria.create_ajax');
+        return view('admin.klasifikasi.create_ajax');
     }
 
     public function store_ajax(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kriteria_kode' => 'required|string|max:10|unique:m_kriteria_gdss,kriteria_kode',
-            'kriteria_nama' => 'required|string|max:100',
-            'bobot' => 'required|numeric|between:0,1',
+            'klasifikasi_kode' => 'required|string|max:10|unique:m_klasifikasi,klasifikasi_kode',
+            'klasifikasi_nama' => 'required|string|max:100'
         ]);
 
         if ($validator->fails()) {
@@ -81,13 +80,13 @@ class KriteriaController extends Controller
         }
 
         try {
-            $kriteria = KriteriaModel::create($request->all());
+            $klasifikasi = KlasifikasiModel::create($request->all());
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil ditambahkan',
-                'id' => $kriteria->kriteria_id,
-                'kriteria_nama' => $kriteria->kriteria_nama
+                'id' => $klasifikasi->klasifikasi_id,
+                'klasifikasi_nama' => $klasifikasi->klasifikasi_nama
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -97,18 +96,17 @@ class KriteriaController extends Controller
         }
     }
 
-    public function edit_ajax($kriteria_id)
+    public function edit_ajax($klasifikasi_id)
     {
-        $kriteria = KriteriaModel::find($kriteria_id);
-        return view('admin.kriteria.edit_ajax', compact('kriteria'));
+        $klasifikasi = KlasifikasiModel::find($klasifikasi_id);
+        return view('admin.klasifikasi.edit_ajax', compact('klasifikasi'));
     }
 
-    public function update_ajax(Request $request, $kriteria_id)
+    public function update_ajax(Request $request, $klasifikasi_id)
     {
         $validator = Validator::make($request->all(), [
-            'kriteria_kode' => 'required|string|max:10|unique:m_kriteria_gdss,kriteria_kode,' . $kriteria_id . ',kriteria_id',
-            'kriteria_nama' => 'required|string|max:100',
-            'bobot' => 'required|numeric|between:0,1',
+            'klasifikasi_kode' => 'required|string|max:10|unique:m_klasifikasi,klasifikasi_kode,' . $klasifikasi_id . ',klasifikasi_id',
+            'klasifikasi_nama' => 'required|string|max:100'
         ]);
 
         if ($validator->fails()) {
@@ -119,8 +117,8 @@ class KriteriaController extends Controller
             ]);
         }
 
-        $kriteria = KriteriaModel::find($kriteria_id);
-        if (!$kriteria) {
+        $klasifikasi = KlasifikasiModel::find($klasifikasi_id);
+        if (!$klasifikasi) {
             return response()->json([
                 'status' => false,
                 'message' => 'Data tidak ditemukan'
@@ -128,13 +126,13 @@ class KriteriaController extends Controller
         }
 
         try {
-            $kriteria->update($request->all());
+            $klasifikasi->update($request->all());
 
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil diupdate',
-                'id' => $kriteria->kriteria_id,
-                'kriteria_nama' => $kriteria->kriteria_nama
+                'id' => $klasifikasi->klasifikasi_id,
+                'klasifikasi_nama' => $klasifikasi->klasifikasi_nama
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -144,18 +142,18 @@ class KriteriaController extends Controller
         }
     }
 
-    public function confirm_ajax($kriteria_id)
+    public function confirm_ajax($klasifikasi_id)
     {
-        $kriteria = KriteriaModel::find($kriteria_id);
-        return view('admin.kriteria.confirm_ajax', compact('kriteria'));
+        $klasifikasi = KlasifikasiModel::find($klasifikasi_id);
+        return view('admin.klasifikasi.confirm_ajax', compact('klasifikasi'));
     }
 
-    public function delete_ajax($kriteria_id)
+    public function delete_ajax($klasifikasi_id)
     {
-        $kriteria = KriteriaModel::find($kriteria_id);
+        $klasifikasi = KlasifikasiModel::find($klasifikasi_id);
 
-        if ($kriteria) {
-            $kriteria->delete();
+        if ($klasifikasi) {
+            $klasifikasi->delete();
             return response()->json([
                 'status' => true,
                 'message' => 'Data berhasil dihapus'
@@ -168,35 +166,35 @@ class KriteriaController extends Controller
         ]);
     }
 
-    public function show_ajax($kriteria_id)
+    public function show_ajax($klasifikasi_id)
     {
-        $kriteria = KriteriaModel::find($kriteria_id);
-        return view('admin.kriteria.show_ajax', compact('kriteria'));
+        $klasifikasi = KlasifikasiModel::find($klasifikasi_id);
+        return view('admin.klasifikasi.show_ajax', compact('klasifikasi'));
     }
 
     public function import()
     {
-        return view('admin.kriteria.import');
+        return view('admin.klasifikasi.import');
     }
 
     public function import_ajax(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'file_kriteria' => ['required', 'mimes:xlsx', 'max:1024']
+                'file_klasifikasi' => ['required', 'mimes:xlsx', 'max:1024']
             ];
 
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
+                    'status'   => false,
+                    'message'  => 'Validasi Gagal',
                     'msgField' => $validator->errors()
                 ]);
             }
 
-            $file = $request->file('file_kriteria');
+            $file = $request->file('file_klasifikasi');
             $reader = IOFactory::createReader('Xlsx');
             $reader->setReadDataOnly(true);
             $spreadsheet = $reader->load($file->getRealPath());
@@ -208,16 +206,15 @@ class KriteriaController extends Controller
                 foreach ($data as $baris => $value) {
                     if ($baris > 1) {
                         $insert[] = [
-                            'kriteria_kode' => trim($value['A']),
-                            'kriteria_nama' => trim($value['B']),
-                            'bobot' => floatval($value['C']),
+                            'klasifikasi_kode' => trim($value['A']),
+                            'klasifikasi_nama' => trim($value['B']),
                             'created_at' => now(),
                         ];
                     }
                 }
 
                 if (count($insert) > 0) {
-                    KriteriaModel::insertOrIgnore($insert);
+                    KlasifikasiModel::insertOrIgnore($insert);
                 }
 
                 return response()->json([
@@ -237,35 +234,33 @@ class KriteriaController extends Controller
 
     public function export_excel()
     {
-        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot')->get();
+        $klasifikasis = KlasifikasiModel::select('klasifikasi_id', 'klasifikasi_kode', 'klasifikasi_nama')->get();
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Kode Kriteria');
-        $sheet->setCellValue('C1', 'Nama Kriteria');
-        $sheet->setCellValue('D1', 'Bobot');
-        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        $sheet->setCellValue('B1', 'Kode Klasifikasi');
+        $sheet->setCellValue('C1', 'Nama Klasifikasi');
+        $sheet->getStyle('A1:C1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
-        foreach ($kriterias as $kriteria) {
+        foreach ($klasifikasis as $klasifikasi) {
             $sheet->setCellValue('A' . $baris, $no);
-            $sheet->setCellValue('B' . $baris, $kriteria->kriteria_kode);
-            $sheet->setCellValue('C' . $baris, $kriteria->kriteria_nama);
-            $sheet->setCellValue('D' . $baris, $kriteria->bobot);
+            $sheet->setCellValue('B' . $baris, $klasifikasi->klasifikasi_kode);
+            $sheet->setCellValue('C' . $baris, $klasifikasi->klasifikasi_nama);
             $no++;
             $baris++;
         }
 
-        foreach (range('A', 'D') as $columnID) {
+        foreach (range('A', 'C') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        $sheet->setTitle('Data Kriteria');
+        $sheet->setTitle('Data Klasifikasi');
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $filename = 'Data_Kriteria_' . date('Y-m-d_H-i-s') . '.xlsx';
+        $filename = 'Data_Klasifikasi_' . date('Y-m-d_H-i-s') . '.xlsx';
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -277,18 +272,18 @@ class KriteriaController extends Controller
 
     public function export_pdf()
     {
-        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot')->get();
+        $klasifikasis = KlasifikasiModel::select('klasifikasi_id', 'klasifikasi_kode', 'klasifikasi_nama')->get();
 
         $data = [
-            'kriterias' => $kriterias,
-            'title' => 'Laporan Data Kriteria'
+            'klasifikasis' => $klasifikasis,
+            'title' => 'Laporan Data Klasifikasi'
         ];
 
-        $pdf = Pdf::loadView('admin.kriteria.export_pdf', $data);
+        $pdf = Pdf::loadView('admin.klasifikasi.export_pdf', $data);
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();
 
-        return $pdf->stream('Data Kriteria ' . date('Y-m-d H-i-s') . '.pdf');
+        return $pdf->stream('Data Klasifikasi ' . date('Y-m-d H-i-s') . '.pdf');
     }
 }
