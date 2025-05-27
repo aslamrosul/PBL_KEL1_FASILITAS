@@ -68,15 +68,20 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->nam
 Route::middleware(['auth'])->group(function () { //artinya semua route di dalam goup ini harus login dulu
     // masukkan semua route yang perlu autentikasi di sini
 
+    Route::group(['prefix' => 'profile'], function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
+    });
+
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/notifikasi/read/{id}', [NotifikasiController::class, 'read'])->name('notifikasi.read');
     Route::get('/notifikasi/read-all', [NotifikasiController::class, 'readAll'])->name('notifikasi.readAll');
     Route::get('/notifikasi/unread', [NotifikasiController::class, 'unread'])->name('notifikasi.unread');
     Route::get('/notifikasi/clear', [NotifikasiController::class, 'clear'])->name('notifikasi.clear');
     Route::get('/notifikasi/clear-all', [NotifikasiController::class, 'clearAll'])->name('notifikasi.clearAll');
-
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/', function () {
         return redirect()->to(url('/beranda'));
