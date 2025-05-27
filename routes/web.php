@@ -69,11 +69,11 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
     // masukkan semua route yang perlu autentikasi di sini
 
     Route::group(['prefix' => 'profile'], function () {
-    Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
-    Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
+        Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
+        Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
     });
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
@@ -89,7 +89,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
     Route::get('/beranda', function () {
         $user = Auth::user();
-          switch ($user->level->level_kode) {
+        switch ($user->level->level_kode) {
             case 'ADM':
                 return redirect()->route('admin.dashboard');
             case 'MHS,DSN, TNK':
@@ -288,6 +288,14 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::post('/import_ajax', [KriteriaController::class, 'import_ajax']); // ajax import excel
             Route::get('/export_excel', [KriteriaController::class, 'export_excel']); //export excel
             Route::get('/export_pdf', [KriteriaController::class, 'export_pdf']);
+        });
+
+        //Bobot Prioritas edit skor
+        Route::prefix('bobot-prioritas')->group(function () {
+            Route::get('/', [BobotPrioritasController::class, 'index'])->name('bobot-prioritas.index');
+            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('bobot-prioritas.list');
+            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('bobot-prioritas.edit_ajax');
+            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('bobot-prioritas.update_ajax');
         });
 
 
