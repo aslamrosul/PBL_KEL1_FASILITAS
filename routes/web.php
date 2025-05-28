@@ -70,12 +70,13 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
     // masukkan semua route yang perlu autentikasi di sini
 
 // Profile Routes
-    Route::group(['prefix' => 'profile'], function () {
-        Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
-        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
-        Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
-        Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
+Route::prefix('profile')->group(function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/show_ajax', [ProfileController::class, 'show_ajax'])->name('profile.show_ajax');
+    Route::get('/edit_ajax', [ProfileController::class, 'edit_ajax'])->name('profile.edit_ajax');
+    Route::post('/update_ajax', [ProfileController::class, 'update_ajax'])->name('profile.update_ajax');
+    Route::get('/edit_password_ajax', [ProfileController::class, 'edit_password_ajax'])->name('profile.edit_password_ajax');
+    Route::post('/update_password_ajax', [ProfileController::class, 'update_password_ajax'])->name('profile.update_password_ajax');
 });
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
