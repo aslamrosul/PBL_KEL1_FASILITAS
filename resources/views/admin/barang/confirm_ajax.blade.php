@@ -21,7 +21,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-warning">
+                    <div class="alert alert-primary">
                         Apakah Anda yakin ingin menghapus data barang berikut?
                     </div>
                     <table class="table table-sm table-bordered">

@@ -36,6 +36,7 @@ use App\Http\Controllers\DashboardSarprasController;
 
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
+use App\Http\Controllers\Sarpras\LaporanSarprasController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -68,13 +69,14 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->nam
 Route::middleware(['auth'])->group(function () { //artinya semua route di dalam goup ini harus login dulu
     // masukkan semua route yang perlu autentikasi di sini
 
+// Profile Routes
     Route::group(['prefix' => 'profile'], function () {
         Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
         Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('/update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/update-photo', [ProfileController::class, 'updatePhoto'])->name('profile.update.photo');
-    });
+});
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/notifikasi/read/{id}', [NotifikasiController::class, 'read'])->name('notifikasi.read');
@@ -309,10 +311,10 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
 
         //Bobot Prioritas edit skor
         Route::prefix('bobot-prioritas')->group(function () {
-            Route::get('/', [BobotPrioritasController::class, 'index'])->name('bobot-prioritas.index');
-            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('bobot-prioritas.list');
-            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('bobot-prioritas.edit_ajax');
-            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('bobot-prioritas.update_ajax');
+            Route::get('/', [BobotPrioritasController::class, 'index'])->name('admin.bobot-prioritas.index');
+            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('admin.bobot-prioritas.list');
+            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('admin.bobot-prioritas.edit_ajax');
+            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('admin.bobot-prioritas.update_ajax');
         });
 
         Route::group(['prefix' => 'laporan'], function () {
@@ -338,6 +340,23 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         Route::prefix('sarpras')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardSarprasController::class, 'index'])->name('sarpras.dashboard');
         });
+
+        //route laporan kerusakan
+       // Route untuk Sarana Prasarana (Sarpras)
+Route::prefix('sarpras')->group(function() {
+    // Route untuk manajemen laporan kerusakan
+    Route::prefix('laporan')->group(function() {
+        Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan');
+        Route::get('list', [LaporanSarprasController::class, 'list'])->name('sarpras.laporan.list');
+        Route::get('{id}', [LaporanSarprasController::class, 'show'])->name('sarpras.laporan.show');
+        Route::get('{id}/edit', [LaporanSarprasController::class, 'edit'])->name('sarpras.laporan.edit');
+        Route::put('{id}', [LaporanSarprasController::class, 'update'])->name('sarpras.laporan.update');
+        Route::get('{id}/prioritas', [LaporanSarprasController::class, 'updatePrioritas'])->name('sarpras.laporan.prioritas');
+        Route::post('{id}/prioritas', [LaporanSarprasController::class, 'storePrioritas'])->name('sarpras.laporan.storePrioritas');
+        Route::post('{laporan_id}/assign', [LaporanSarprasController::class, 'assignTeknisi'])->name('sarpras.laporan.assign');
+        Route::get('export', [LaporanSarprasController::class, 'exportPdf'])->name('sarpras.laporan.export');
+    });
+});
     });
 
     // Teknisi

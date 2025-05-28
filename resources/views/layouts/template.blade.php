@@ -13,6 +13,7 @@
     <!-- DataTables CSS -->
     <link rel="stylesheet"
         href="{{ asset('dist/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('dist/assets/css/pages/datatables.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css" rel="stylesheet">
 
@@ -21,7 +22,7 @@
 
 <body>
     <script src="{{ asset('dist/assets/static/js/initTheme.js') }}"></script>
-  
+
     <div id="app">
         <!-- Sidebar -->
         @include('layouts.sidebar')
@@ -50,6 +51,15 @@
     <!-- jQuery must be loaded first -->
     <script src="{{ asset('dist/assets/extensions/jquery/jquery.min.js') }}"></script>
 
+    <!-- Bootstrap JS -->
+    Harus 2 kali
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap 5 -->
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Other scripts -->
     <script src="{{ asset('dist/assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
@@ -63,8 +73,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
 
-    <!-- Bootstrap 5 -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <!-- Correct CSRF Token Setup -->
     <script>
