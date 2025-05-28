@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use Carbon\Carbon;
 
 use App\Models\PerbaikanDetailModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -19,7 +20,9 @@ class PerbaikanDetailSeeder extends Seeder
                 'tindakan' => 'Ganti power supply',
                 'deskripsi' => 'Power supply komputer diganti dengan yang baru',
                 'bahan' => 'Power supply 500W',
-                'biaya' => 350000
+                'biaya' => 350000,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
 
@@ -29,7 +32,9 @@ class PerbaikanDetailSeeder extends Seeder
                 'tindakan' => 'Ganti power supply',
                 'deskripsi' => 'Power supply komputer diganti dengan yang baru',
                 'bahan' => 'Power supply 500W',
-                'biaya' => 350000
+                'biaya' => 350000,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

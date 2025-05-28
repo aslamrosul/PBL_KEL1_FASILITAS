@@ -1,8 +1,9 @@
 <?php
 
 namespace Database\Seeders;
-
+use Carbon\Carbon;
 use App\Models\FasilitasModel;
+use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,9 @@ class FasilitasSeeder extends Seeder
                 'fasilitas_nama' => 'Komputer 1 Lab 1',
                 'keterangan' => 'PC Intel Core i5',
                 'status' => 'baik',
-                'tahun_pengadaan' => '2020'
+                'tahun_pengadaan' => '2020',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'ruang_id' => 1,
@@ -32,7 +35,9 @@ class FasilitasSeeder extends Seeder
                 'fasilitas_nama' => 'Proyektor Lab 1',
                 'keterangan' => 'Proyektor Epson',
                 'status' => 'baik',
-                'tahun_pengadaan' => '2021'
+                'tahun_pengadaan' => '2021',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'ruang_id' => 3,
@@ -41,7 +46,9 @@ class FasilitasSeeder extends Seeder
                 'fasilitas_nama' => 'Access Point Kelas A',
                 'keterangan' => 'TP-Link EAP245',
                 'status' => 'baik',
-                'tahun_pengadaan' => '2022'
+                'tahun_pengadaan' => '2022',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

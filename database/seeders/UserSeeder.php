@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use Carbon\Carbon;
 
 use Illuminate\Database\Seeder;
 use App\Models\UserModel;
@@ -18,6 +19,8 @@ class UserSeeder extends Seeder
                 'email' => 'admin@polinema.ac.id',
                 'level_id' => 1,
                 'profile_photo' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'nama' => 'Mahasiswa Contoh',
@@ -26,6 +29,8 @@ class UserSeeder extends Seeder
                 'email' => 'mahasiswa@polinema.ac.id',
                 'level_id' => 2,
                 'profile_photo' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         
             [
@@ -35,6 +40,8 @@ class UserSeeder extends Seeder
                 'email' => 'dosen@polinema.ac.id',
                 'level_id' => 3,
                 'profile_photo' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
                 [
                 'nama' => 'Citra Tendik',
@@ -43,6 +50,8 @@ class UserSeeder extends Seeder
                 'email' => 'tendik@example.com',
                 'level_id' => 4, // Tenaga Kependidikan
                 'profile_photo' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
 
             ],
             [
@@ -52,6 +61,8 @@ class UserSeeder extends Seeder
                 'email' => 'sarpras@example.com',
                 'level_id' => 5, // Sarpras
                 'profile_photo' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'nama' => 'Teknisi Contoh',
@@ -60,6 +71,8 @@ class UserSeeder extends Seeder
                 'email' => 'teknisi@polinema.ac.id',
                 'level_id' => 6,
                 'profile_photo' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
 
         ]);

@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use Carbon\Carbon;
 
 use App\Models\RekomendasiTendikModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -22,7 +23,9 @@ class RekomendasiTendikSeeder extends Seeder
                     'KRSK' => 60,
                     'KTS' => 50
                 ]),
-                'skor_total' => 70.0
+                'skor_total' => 70.0,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

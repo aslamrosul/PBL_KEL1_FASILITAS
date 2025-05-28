@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use Carbon\Carbon;
 
 use App\Models\RekomendasiMahasiswaModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -22,7 +23,9 @@ class RekomendasiMahasiswaSeeder extends Seeder
                     'KRSK' => 70,
                     'KTS' => 60
                 ]),
-                'skor_total' => 80.0
+                'skor_total' => 80.0,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

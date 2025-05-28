@@ -24,7 +24,9 @@ class PerbaikanSeeder extends Seeder
                 'tanggal_selesai' => null,
                 'tanggal_ditolak' => null,
                 'status' => 'selesai',
-                'catatan' => 'Periksa power supply'
+                'catatan' => 'Periksa power supply',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
 
@@ -36,7 +38,9 @@ class PerbaikanSeeder extends Seeder
                 'tanggal_selesai' => null,
                 'tanggal_ditolak' => null,
                 'status' => 'diproses',
-                'catatan' => 'Periksa power supply'
+                'catatan' => 'Periksa power supply',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

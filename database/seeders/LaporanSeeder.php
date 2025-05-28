@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\LaporanModel;
+use Carbon\Carbon;
 
 use Illuminate\Database\Seeder;
 
@@ -21,7 +22,9 @@ class LaporanSeeder extends Seeder
                 'bobot_id' => 1,
                 'status' => 'diproses',
                 'alasan_penolakan' => null,
-                'tanggal_selesai' => null
+                'tanggal_selesai' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
             [
                 'user_id' => 3,
@@ -33,7 +36,9 @@ class LaporanSeeder extends Seeder
                 'bobot_id' => null,
                 'status' => 'pending',
                 'alasan_penolakan' => null,
-                'tanggal_selesai' => null
+                'tanggal_selesai' => null,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

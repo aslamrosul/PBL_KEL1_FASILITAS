@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+use Carbon\Carbon;
 
 use App\Models\RekomendasiGDSSModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,7 +21,9 @@ class RekomendasiGDSSSeeder extends Seeder
                 'rekom_dosen' => json_encode(['skor' => 75, 'kriteria' => ['DMPK' => 85, 'JMH' => 75, 'KRSK' => 65, 'KTS' => 55]]),
                 'rekom_tendik' => json_encode(['skor' => 70, 'kriteria' => ['DMPK' => 80, 'JMH' => 70, 'KRSK' => 60, 'KTS' => 50]]),
                 'skor_final' => 75.0,
-                'bobot_id' => 1
+                'bobot_id' => 1,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }

@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
+use Carbon\Carbon;
 use App\Models\FeedbackModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,7 +17,9 @@ class FeedbackSeeder extends Seeder
             [
                 'laporan_id' => 1,
                 'rating' => 4,
-                'komentar' => 'Perbaikan cukup cepat, tapi masih ada sedikit masalah'
+                'komentar' => 'Perbaikan cukup cepat, tapi masih ada sedikit masalah',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
         ]);
     }
