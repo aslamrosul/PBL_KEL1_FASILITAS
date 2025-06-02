@@ -34,6 +34,8 @@ use App\Http\Controllers\Pelapor\LaporanPelaporController;
 
 //Sarpras Controllers
 use App\Http\Controllers\DashboardSarprasController;
+use App\Http\Controllers\Sarpras\RekomendasiController;
+use App\Http\Controllers\RiwayatController;
 
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
@@ -359,6 +361,8 @@ Route::prefix('profile')->group(function () {
     Route::middleware(['authorize:SPR'])->group(function () {
         Route::prefix('sarpras')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardSarprasController::class, 'index'])->name('sarpras.dashboard');
+            Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi.index');
+            Route::get('/riwayat', [RiwayatController::class, 'index'])->name('sarpras.riwayat.index');
         });
 
         //route laporan kerusakan
