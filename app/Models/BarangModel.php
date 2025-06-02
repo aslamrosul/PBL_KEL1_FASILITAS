@@ -11,11 +11,16 @@ class BarangModel extends Model
 
     protected $table = 'm_barang';
     protected $primaryKey = 'barang_id';
-    protected $fillable = ['kategori_id', 'barang_kode', 'barang_nama'];
+    protected $fillable = ['kategori_id','klasifikasi_id', 'barang_kode', 'barang_nama'];
 
+    
     public function kategori()
     {
         return $this->belongsTo(KategoriModel::class, 'kategori_id');
+    }
+    public function klasifikasi()
+    {
+        return $this->belongsTo(KlasifikasiModel::class, 'klasifikasi_id');
     }
 
     public function fasilitas()

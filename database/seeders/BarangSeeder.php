@@ -14,11 +14,11 @@ class BarangSeeder extends Seeder
     public function run()
     {
         BarangModel::insert([
-            ['kategori_id' => 1, 'barang_kode' => 'PC', 'barang_nama' => 'Komputer'],
-            ['kategori_id' => 1, 'barang_kode' => 'PRJ', 'barang_nama' => 'Proyektor'],
-            ['kategori_id' => 2, 'barang_kode' => 'KRS', 'barang_nama' => 'Kursi'],
-            ['kategori_id' => 3, 'barang_kode' => 'WIFI', 'barang_nama' => 'Access Point WiFi'],
-            ['kategori_id' => 4, 'barang_kode' => 'ACSP', 'barang_nama' => 'AC Split'],
+            ['kategori_id' => 1, 'klasifikasi_id' => 1, 'barang_kode' => 'PC', 'barang_nama' => 'Komputer'],
+            ['kategori_id' => 1, 'klasifikasi_id' => 1, 'barang_kode' => 'PRJ', 'barang_nama' => 'Proyektor'],
+            ['kategori_id' => 2, 'klasifikasi_id' => 2, 'barang_kode' => 'KRS', 'barang_nama' => 'Kursi'],
+            ['kategori_id' => 3, 'klasifikasi_id' => 3, 'barang_kode' => 'WIFI', 'barang_nama' => 'Access Point WiFi'],
+            ['kategori_id' => 1, 'klasifikasi_id' => 3, 'barang_kode' => 'ACSP', 'barang_nama' => 'AC Split'],
         ]);
     }
 }

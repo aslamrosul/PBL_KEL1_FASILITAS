@@ -22,6 +22,18 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group mb-3">
+                       <label class="form-label">Klasifikasi Barang</label>
+                       <select name="klasifikasi_id" id="klasifikasi_id" class="form-select" required>
+                           <option value="">- Pilih Klasifikasi -</option>
+                           @foreach($klasifikasi as $ks)
+                               <option {{ $ks->klasifikasi_id == $barang->klasifikasi_id ? 'selected' : '' }} value="{{ $ks->klasifikasi_id }}">
+                                   {{ $ks->klasifikasi_nama }}
+                               </option>
+                           @endforeach
+                       </select>
+                       <small id="error-klasifikasi_id" class="error-text form-text text-danger"></small>
+                   </div>
+                    <div class="form-group mb-3">
                         <label class="form-label">Kategori Barang</label>
                         <select name="kategori_id" id="kategori_id" class="form-select" required>
                             <option value="">- Pilih Kategori -</option>
