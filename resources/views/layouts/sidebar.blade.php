@@ -192,13 +192,6 @@
                             <span>Riwayat Laporan</span>
                         </a>
                     </li>
-                    //status
-                    <li class="sidebar-item {{ request()->routeIs('pelapor.status.*') ? 'active' : '' }}">
-                        <a href="{{ route('pelapor.status.index') }}" class='sidebar-link'>
-                            <i class="bi bi-check-circle"></i>
-                            <span>Status Laporan</span>
-                        </a>
-                    </li>
                 @endif
 
                 <!-- Menu untuk Sarana Prasarana (SPR) -->
