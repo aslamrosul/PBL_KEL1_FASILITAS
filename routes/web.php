@@ -341,7 +341,7 @@ Route::prefix('profile')->group(function () {
         });
 
                Route::prefix('laporan-pelapor')->group(function() {
-        Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan');
+        Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan.index');
         Route::get('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
         Route::get('{id}', [LaporanPelaporController::class, 'show'])->name('pelapor.laporan.show');
         Route::get('{id}/edit', [LaporanPelaporController::class, 'edit'])->name('pelapor.laporan.edit');
@@ -350,6 +350,8 @@ Route::prefix('profile')->group(function () {
         Route::post('{id}/prioritas', [LaporanPelaporController::class, 'storePrioritas'])->name('pelapor.laporan.storePrioritas');
         Route::post('{laporan_id}/assign', [LaporanPelaporController::class, 'assignTeknisi'])->name('pelapor.laporan.assign');
         Route::get('export', [LaporanPelaporController::class, 'exportPdf'])->name('pelapor.laporan.export');
+                    Route::get('/riwayat', [LaporanPelaporController::class, 'riwayat'])->name(name: 'pelapor.riwayat.index');
+
     });
     });
 
@@ -384,7 +386,7 @@ Route::prefix('sarpras')->group(function() {
         });
         Route::group(['prefix' => 'teknisi/perbaikan'], function () {
             Route::get('/', [PerbaikanController::class, 'index'])->name('teknisi.perbaikan.index');
-            Route::get('/riwayat', [PerbaikanController::class, 'riwayat'])->name('teknisi.riwayat.index');
+            Route::get('/riwayat', [PerbaikanController::class, 'riwayat'])->name(name: 'teknisi.riwayat.index');
             Route::post('/list', [PerbaikanController::class, 'list']);
             Route::post('/list-riwayat', [PerbaikanController::class, 'listRiwayat']);
             Route::get('/{id}/show_ajax', [PerbaikanController::class, 'show_ajax']);

@@ -64,12 +64,7 @@
                                     <span>Manajemen User</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.periode.index') }}" class='sidebar-link'>
-                                    <i class="bi bi-calendar"></i>
-                                    <span>Manajemen Periode</span>
-                                </a>
-                            </li>
+                           
                      
                             <li
                                 class="sidebar-item has-sub
@@ -168,12 +163,6 @@
                         </a>
                     </li>
 
-                    <li class="sidebar-item {{ request()->routeIs('pelapor.fasilitas.*') ? 'active' : '' }}">
-                        <a href="{{ route('pelapor.fasilitas.index') }}" class='sidebar-link'>
-                            <i class="bi bi-list-check"></i>
-                            <span>Daftar Fasilitas</span>
-                        </a>
-                    </li>
                 @endif
 
                 <!-- Menu untuk Sarana Prasarana (SPR) -->
