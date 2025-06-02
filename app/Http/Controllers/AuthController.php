@@ -62,12 +62,26 @@ class AuthController extends Controller
 
     public function register()
     {
-        $levels = LevelModel::select('level_id', 'level_nama')->get();
+        $levels = LevelModel::select('level_id', 'level_nama')
+            ->whereIn('level_kode', ['MHS', 'DSN', 'TNK'])
+            ->get();
+
         return view('auth.register', compact('levels'));
     }
 
     public function postRegister(Request $request)
     {
+        $allowedRoles = ['MHS', 'DSN', 'TNK'];
+        $level = LevelModel::find($request->level_id);
+
+        // Jika level tidak valid atau bukan level yang diizinkan
+        if (!$level || !in_array($level->level_kode, $allowedRoles)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Level tidak diizinkan untuk registrasi.',
+                'msgField' => ['level_id' => ['Level tidak valid.']],
+            ]);
+        }
         $rules = [
             'level_id' => 'required|exists:m_level,level_id',
             'username' => 'required|string|min:3|unique:m_user,username',

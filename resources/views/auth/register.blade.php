@@ -85,7 +85,7 @@
                         <div class="form-group position-relative has-icon-left mb-4">
                             <input type="text" name="nama" class="form-control form-control-xl" placeholder="Nama Lengkap" required>
                             <div class="form-control-icon">
-                                <i class="bi bi-id-card"></i>
+                                <i class="bi bi-person-fill"></i>
                             </div>
                         </div>
 
