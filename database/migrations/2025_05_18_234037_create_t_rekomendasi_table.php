@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('t_rekomendasi_gdss', function (Blueprint $table) {
-            $table->id('rekom_gdss_id');
+        Schema::create('t_rekomendasi', function (Blueprint $table) {
+            $table->id('rekomendasi_id');
             $table->unsignedBigInteger(column: 'laporan_id');
             $table->json('rekom_mahasiswa')->nullable(); // {skor: 85, kriteria: {...}}
             $table->json('rekom_dosen')->nullable();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('t_rekomendasi_gdss');
+        Schema::dropIfExists('t_rekomendasi');
     }
 };

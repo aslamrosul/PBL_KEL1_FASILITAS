@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RekomendasiGDSSModel extends Model
+class RekomendasiModel extends Model
 {
     use HasFactory;
 
-    protected $table = 't_rekomendasi_gdss';
-    protected $primaryKey = 'rekom_gdss_id';
+    protected $table = 't_rekomendasi';
+    protected $primaryKey = 'rekomendasi_id';
     protected $fillable = [
         'laporan_id',
         'rekom_mahasiswa',

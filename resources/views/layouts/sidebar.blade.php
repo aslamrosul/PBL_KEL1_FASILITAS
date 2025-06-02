@@ -135,7 +135,7 @@
                 @endif
 
                 <!-- Menu untuk Pelapor (Mahasiswa/Dosen/Tendik) -->
-                @if(Auth::user()->level->level_kode === 'MHS,DSN,TNK')
+              @if(Auth::user()->level->level_kode === 'DSN' || Auth::user()->level->level_kode === 'MHS' || Auth::user()->level->level_kode === 'TNK')
                     <li class="sidebar-title">Pelaporan</li>
 
                     <li class="sidebar-item {{ request()->routeIs('pelapor.laporan.*') ? 'active' : '' }}">

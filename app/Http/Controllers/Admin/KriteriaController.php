@@ -67,7 +67,7 @@ class KriteriaController extends Controller
     public function store_ajax(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kriteria_kode' => 'required|string|max:10|unique:m_kriteria_gdss,kriteria_kode',
+            'kriteria_kode' => 'required|string|max:10|unique:m_kriteria,kriteria_kode',
             'kriteria_nama' => 'required|string|max:100',
             'bobot' => 'required|numeric|between:0,1',
         ]);
@@ -106,7 +106,7 @@ class KriteriaController extends Controller
     public function update_ajax(Request $request, $kriteria_id)
     {
         $validator = Validator::make($request->all(), [
-            'kriteria_kode' => 'required|string|max:10|unique:m_kriteria_gdss,kriteria_kode,' . $kriteria_id . ',kriteria_id',
+            'kriteria_kode' => 'required|string|max:10|unique:m_kriteria,kriteria_kode,' . $kriteria_id . ',kriteria_id',
             'kriteria_nama' => 'required|string|max:100',
             'bobot' => 'required|numeric|between:0,1',
         ]);

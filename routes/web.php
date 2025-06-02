@@ -10,8 +10,9 @@ use App\Http\Controllers\NotifikasiController;
 //Admin Controllers
 use App\Http\Controllers\DashboardAdminController;
 // 
+use App\Http\Controllers\Admin\LaporanAdminController;
 use App\Http\Controllers\Admin\StatistikTrenController;
-use App\Http\Controllers\Admin\LaporanKerusakanController;
+
 //  manajemen data
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PeriodeController;
@@ -29,7 +30,7 @@ use App\Http\Controllers\Admin\KlasifikasiController;
 //Pelapor Controllers
 use App\Http\Controllers\DashboardPelaporController;
 use App\Http\Controllers\Pelapor\FeedbackController;
-use App\Http\Controllers\Pelapor\PelaporanKerusakanController;
+use App\Http\Controllers\Pelapor\LaporanPelaporController;
 
 //Sarpras Controllers
 use App\Http\Controllers\DashboardSarprasController;
@@ -95,7 +96,11 @@ Route::prefix('profile')->group(function () {
         switch ($user->level->level_kode) {
             case 'ADM':
                 return redirect()->route('admin.dashboard');
-            case 'MHS,DSN, TNK':
+            case 'MHS':
+                return redirect()->route('pelapor.dashboard');
+             case 'DSN':
+                return redirect()->route('pelapor.dashboard');
+             case 'TNK':
                 return redirect()->route('pelapor.dashboard');
             case 'SPR':
                 return redirect()->route('sarpras.dashboard');
@@ -334,6 +339,18 @@ Route::prefix('profile')->group(function () {
         Route::prefix('pelapor')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardPelaporController::class, 'index'])->name('pelapor.dashboard');
         });
+
+               Route::prefix('laporan')->group(function() {
+        Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan');
+        Route::get('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
+        Route::get('{id}', [LaporanPelaporController::class, 'show'])->name('pelapor.laporan.show');
+        Route::get('{id}/edit', [LaporanPelaporController::class, 'edit'])->name('pelapor.laporan.edit');
+        Route::put('{id}', [LaporanPelaporController::class, 'update'])->name('pelapor.laporan.update');
+        Route::get('{id}/prioritas', [LaporanPelaporController::class, 'updatePrioritas'])->name('pelapor.laporan.prioritas');
+        Route::post('{id}/prioritas', [LaporanPelaporController::class, 'storePrioritas'])->name('pelapor.laporan.storePrioritas');
+        Route::post('{laporan_id}/assign', [LaporanPelaporController::class, 'assignTeknisi'])->name('pelapor.laporan.assign');
+        Route::get('export', [LaporanPelaporController::class, 'exportPdf'])->name('pelapor.laporan.export');
+    });
     });
 
     // Sarana Prasarana

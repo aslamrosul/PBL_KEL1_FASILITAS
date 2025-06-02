@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('bobot_id');
             $table->string('bobot_kode', 10)->unique(); // HIGH, MED, LOW
             $table->string('bobot_nama', 20); // High Priority
-            $table->integer('skor_min')->comment('Nilai minimal GDSS');
-            $table->integer('skor_max')->comment('Nilai maksimal GDSS');
+            $table->integer('skor_min')->comment('Nilai minimal ');
+            $table->integer('skor_max')->comment('Nilai maksimal ');
             $table->text('tindakan')->nullable(); // "Perbaikan <24 jam"
             $table->timestamps();
         });
