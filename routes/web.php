@@ -323,12 +323,12 @@ Route::prefix('profile')->group(function () {
             Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('admin.bobot-prioritas.update_ajax');
         });
 
-        Route::group(['prefix' => 'laporan'], function () {
+        Route::group(['prefix' => 'laporan-admin'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.laporan.index');; // menampilkan halaman awal user
 
         });
 
-        Route::group(['prefix' => 'statistik'], function () {
+        Route::group(['prefix' => 'statistik-admin'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.statistik.index');; // menampilkan halaman awal user
 
         });
@@ -340,7 +340,7 @@ Route::prefix('profile')->group(function () {
             Route::get('/', [DashboardPelaporController::class, 'index'])->name('pelapor.dashboard');
         });
 
-               Route::prefix('laporan')->group(function() {
+               Route::prefix('laporan-pelapor')->group(function() {
         Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan');
         Route::get('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
         Route::get('{id}', [LaporanPelaporController::class, 'show'])->name('pelapor.laporan.show');
@@ -363,7 +363,7 @@ Route::prefix('profile')->group(function () {
        // Route untuk Sarana Prasarana (Sarpras)
 Route::prefix('sarpras')->group(function() {
     // Route untuk manajemen laporan kerusakan
-    Route::prefix('laporan')->group(function() {
+    Route::prefix('laporan-sarpras')->group(function() {
         Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan');
         Route::get('list', [LaporanSarprasController::class, 'list'])->name('sarpras.laporan.list');
         Route::get('{id}', [LaporanSarprasController::class, 'show'])->name('sarpras.laporan.show');

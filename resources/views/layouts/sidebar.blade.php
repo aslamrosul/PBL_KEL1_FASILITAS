@@ -64,30 +64,27 @@
                                     <span>Manajemen User</span>
                                 </a>
                             </li>
-
-                            <li class="sidebar-item has-sub
-                                                    {{
-                    request()->routeIs('admin.fasilitas.*') ||
+                            <li class="sidebar-item {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.periode.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-calendar"></i>
+                                    <span>Manajemen Periode</span>
+                                </a>
+                            </li>
+                     
+                            <li
+                                class="sidebar-item has-sub
+                                                                                                                                        {{
                     request()->routeIs('admin.gedung.*') ||
                     request()->routeIs('admin.lantai.*') ||
-                    request()->routeIs('admin.ruang.*') ||
-                    request()->routeIs('admin.klasifikasi.*') ||
-                    request()->routeIs('admin.kategori.*') ||
-                    request()->routeIs('admin.barang.*') ||
-                    request()->routeIs('admin.periode.*') ||
-                    request()->routeIs('admin.bobot-prioritas.*') ||
-                    request()->routeIs('admin.kriteria.*')
+                    request()->routeIs('admin.ruang.*')
                     ? 'active'
                     : ''
-                                                    }}">
+                                                                                                                                        }}">
                                 <a href="#" class='sidebar-link'>
-                                    <i class="bi bi-building"></i>
-                                    <span>Manajemen Fasilitas</span>
+                                    <i class="bi bi-map"></i>
+                                    <span>Manajemen Lokasi</span>
                                 </a>
                                 <ul class="submenu">
-                                    <li class="submenu-item {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.periode.index') }}">Periode</a>
-                                    </li>
                                     <li class="submenu-item {{ request()->routeIs('admin.gedung.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.gedung.index') }}">Gedung</a>
                                     </li>
@@ -97,6 +94,26 @@
                                     <li class="submenu-item {{ request()->routeIs('admin.ruang.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.ruang.index') }}">Ruang</a>
                                     </li>
+                                </ul>
+                            </li>
+                            <li
+                                class="sidebar-item has-sub
+                                                                                                                                        {{
+                    request()->routeIs('admin.fasilitas.*') ||
+                    request()->routeIs('admin.klasifikasi.*') ||
+                    request()->routeIs('admin.kategori.*') ||
+                    request()->routeIs('admin.barang.*') ||
+                    request()->routeIs('admin.bobot-prioritas.*') ||
+                    request()->routeIs('admin.kriteria.*')
+                    ? 'active'
+                    : ''
+                                                                                                                                        }}">
+                                <a href="#" class='sidebar-link'>
+                                    <i class="bi bi-gear"></i>
+                                    <span>Manajemen Fasilitas</span>
+                                </a>
+                                <ul class="submenu">
+
                                     <li class="submenu-item {{ request()->routeIs('admin.klasifikasi.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.klasifikasi.index') }}">Klasifikasi</a>
                                     </li>
@@ -109,13 +126,12 @@
                                     <li class="submenu-item {{ request()->routeIs('admin.fasilitas.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.fasilitas.index') }}">Fasilitas</a>
                                     </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.bobot-prioritas.*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.bobot-prioritas.index') }}">Bobot Prioritas</a>
-                                    </li>
                                     <li class="submenu-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.kriteria.index') }}">Kriteria</a>
                                     </li>
-                                    
+                                    <li class="submenu-item {{ request()->routeIs('admin.bobot-prioritas.*') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.bobot-prioritas.index') }}">Bobot Prioritas</a>
+                                    </li>
                                 </ul>
                             </li>
 
@@ -135,7 +151,7 @@
                 @endif
 
                 <!-- Menu untuk Pelapor (Mahasiswa/Dosen/Tendik) -->
-              @if(Auth::user()->level->level_kode === 'DSN' || Auth::user()->level->level_kode === 'MHS' || Auth::user()->level->level_kode === 'TNK')
+                @if(Auth::user()->level->level_kode === 'DSN' || Auth::user()->level->level_kode === 'MHS' || Auth::user()->level->level_kode === 'TNK')
                     <li class="sidebar-title">Pelaporan</li>
 
                     <li class="sidebar-item {{ request()->routeIs('pelapor.laporan.*') ? 'active' : '' }}">

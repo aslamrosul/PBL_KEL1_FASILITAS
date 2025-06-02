@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 class DashboardAdminController extends Controller
 {
+
+    // ada fungsi statistik tren & statistik feedback pengguna
   public function index()
     {
         $breadcrumb = (object) [
