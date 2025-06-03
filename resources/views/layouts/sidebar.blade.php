@@ -166,13 +166,6 @@
                                     <span>Laporan Kerusakan</span>
                                 </a>
                             </li>
-
-                            <li class="sidebar-item {{ request()->routeIs('admin.statistik.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.statistik.index') }}" class='sidebar-link'>
-                                    <i class="bi bi-bar-chart-line"></i>
-                                    <span>Statistik</span>
-                                </a>
-                            </li>
                 @endif
 
                 <!-- Menu untuk Pelapor (Mahasiswa/Dosen/Tendik) -->

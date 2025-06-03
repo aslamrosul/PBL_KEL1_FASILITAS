@@ -327,9 +327,14 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         });
 
         Route::group(['prefix' => 'laporan-admin'], function () {
-            Route::get('/', [PeriodeController::class, 'index'])->name('admin.laporan.index');; // menampilkan halaman awal user
-
+            Route::get('/', [LaporanAdminController::class, 'index'])->name('admin.laporan.index');
+            Route::post('/list', [LaporanAdminController::class, 'list'])->name('admin.laporan.list'); // datatables
+            // Optional: AJAX modal actions
+            Route::get('/{laporan_id}/show_ajax', [LaporanAdminController::class, 'show_ajax'])->name('laporan.show_ajax');
+            Route::get('/{laporan_id}/edit_ajax', [LaporanAdminController::class, 'edit_ajax'])->name('laporan.edit_ajax');
+            Route::put('/{laporan_id}/update_status', [LaporanAdminController::class, 'update_status'])->name('admin.laporan.update_status');
         });
+
 
         Route::group(['prefix' => 'statistik-admin'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.statistik.index');; // menampilkan halaman awal user
