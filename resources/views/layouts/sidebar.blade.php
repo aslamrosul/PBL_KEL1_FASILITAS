@@ -180,7 +180,7 @@
                     <li class="sidebar-title">Pelaporan</li>
 
                     <li class="sidebar-item {{ request()->routeIs('pelapor.laporan.*') ? 'active' : '' }}">
-                        <a href="{{ route('index') }}" class='sidebar-link'>
+                        <a href="{{ route('pelapor.laporan.index') }}" class='sidebar-link'>
                             <i class="bi bi-file-earmark-plus"></i>
                             <span>Buat Laporan</span>
                         </a>

@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\KlasifikasiController;
 use App\Http\Controllers\DashboardPelaporController;
 use App\Http\Controllers\Pelapor\FeedbackController;
 use App\Http\Controllers\Pelapor\LaporanPelaporController;
+use App\Http\Controllers\Pelapor\RiwayatPelaporController;
 
 //Sarpras Controllers
 use App\Http\Controllers\DashboardSarprasController;
@@ -72,15 +73,15 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->nam
 Route::middleware(['auth'])->group(function () { //artinya semua route di dalam goup ini harus login dulu
     // masukkan semua route yang perlu autentikasi di sini
 
-// Profile Routes
-Route::prefix('profile')->group(function () {
-    Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
-    Route::get('/show_ajax', [ProfileController::class, 'show_ajax'])->name('profile.show_ajax');
-    Route::get('/edit_ajax', [ProfileController::class, 'edit_ajax'])->name('profile.edit_ajax');
-    Route::post('/update_ajax', [ProfileController::class, 'update_ajax'])->name('profile.update_ajax');
-    Route::get('/edit_password_ajax', [ProfileController::class, 'edit_password_ajax'])->name('profile.edit_password_ajax');
-    Route::post('/update_password_ajax', [ProfileController::class, 'update_password_ajax'])->name('profile.update_password_ajax');
-});
+    // Profile Routes
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+        Route::get('/show_ajax', [ProfileController::class, 'show_ajax'])->name('profile.show_ajax');
+        Route::get('/edit_ajax', [ProfileController::class, 'edit_ajax'])->name('profile.edit_ajax');
+        Route::post('/update_ajax', [ProfileController::class, 'update_ajax'])->name('profile.update_ajax');
+        Route::get('/edit_password_ajax', [ProfileController::class, 'edit_password_ajax'])->name('profile.edit_password_ajax');
+        Route::post('/update_password_ajax', [ProfileController::class, 'update_password_ajax'])->name('profile.update_password_ajax');
+    });
 
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/notifikasi/read/{id}', [NotifikasiController::class, 'read'])->name('notifikasi.read');
@@ -100,9 +101,9 @@ Route::prefix('profile')->group(function () {
                 return redirect()->route('admin.dashboard');
             case 'MHS':
                 return redirect()->route('pelapor.dashboard');
-             case 'DSN':
+            case 'DSN':
                 return redirect()->route('pelapor.dashboard');
-             case 'TNK':
+            case 'TNK':
                 return redirect()->route('pelapor.dashboard');
             case 'SPR':
                 return redirect()->route('sarpras.dashboard');
@@ -342,19 +343,23 @@ Route::prefix('profile')->group(function () {
             Route::get('/', [DashboardPelaporController::class, 'index'])->name('pelapor.dashboard');
         });
 
-               Route::prefix('pelapor/laporan')->group(function() {
-        Route::get('/', [LaporanPelaporController::class, 'index'])->name('index');
-        Route::post('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
-        Route::get('{id}/show_ajax', [LaporanPelaporController::class, 'show_ajax'])->name('pelapor.laporan.show');
-        Route::get('{id}/edit_ajax', [LaporanPelaporController::class, 'edit_ajax'])->name('pelapor.laporan.edit');
-        Route::put('{id}', [LaporanPelaporController::class, 'update'])->name('pelapor.laporan.edit');
-        Route::get('{id}/prioritas', [LaporanPelaporController::class, 'updatePrioritas'])->name('pelapor.laporan.prioritas');
-        Route::post('{id}/prioritas', [LaporanPelaporController::class, 'storePrioritas'])->name('pelapor.laporan.storePrioritas');
-        Route::post('{laporan_id}/assign', [LaporanPelaporController::class, 'assignTeknisi'])->name('pelapor.laporan.assign');
-        Route::get('export', [LaporanPelaporController::class, 'exportPdf'])->name('pelapor.laporan.export');
-                    Route::get('/riwayat', [LaporanPelaporController::class, 'riwayat'])->name(name: 'pelapor.riwayat.index');
-
-    });
+        Route::prefix('pelapor/laporan')->group(function () {
+            Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan.index');
+            Route::post('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
+            Route::get('{id}/show_ajax', [LaporanPelaporController::class, 'show_ajax'])->name('pelapor.laporan.show');
+            Route::get('/create_ajax', [LaporanPelaporController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/store_ajax', [LaporanPelaporController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/edit_ajax', [LaporanPelaporController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [LaporanPelaporController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/confirm_ajax', [LaporanPelaporController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::delete('/{id}/delete_ajax', [LaporanPelaporController::class, 'delete_ajax']);
+            Route::get('/import', [LaporanPelaporController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [LaporanPelaporController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [LaporanPelaporController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [LaporanPelaporController::class, 'export_pdf']);
+            Route::get('/riwayat', [RiwayatPelaporController::class, 'index'])->name('pelapor.riwayat.index');
+            Route::post('/riwayat/list', [RiwayatPelaporController::class, 'list'])->name('pelapor.riwayat.list');
+        });
     });
 
     // Sarana Prasarana
@@ -366,21 +371,21 @@ Route::prefix('profile')->group(function () {
         });
 
         //route laporan kerusakan
-       // Route untuk Sarana Prasarana (Sarpras)
-Route::prefix('sarpras')->group(function() {
-    // Route untuk manajemen laporan kerusakan
-    Route::prefix('laporan-sarpras')->group(function() {
-        Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan');
-        Route::get('list', [LaporanSarprasController::class, 'list'])->name('sarpras.laporan.list');
-        Route::get('{id}', [LaporanSarprasController::class, 'show'])->name('sarpras.laporan.show');
-        Route::get('{id}/edit', [LaporanSarprasController::class, 'edit'])->name('sarpras.laporan.edit');
-        Route::put('{id}', [LaporanSarprasController::class, 'update'])->name('sarpras.laporan.update');
-        Route::get('{id}/prioritas', [LaporanSarprasController::class, 'updatePrioritas'])->name('sarpras.laporan.prioritas');
-        Route::post('{id}/prioritas', [LaporanSarprasController::class, 'storePrioritas'])->name('sarpras.laporan.storePrioritas');
-        Route::post('{laporan_id}/assign', [LaporanSarprasController::class, 'assignTeknisi'])->name('sarpras.laporan.assign');
-        Route::get('export', [LaporanSarprasController::class, 'exportPdf'])->name('sarpras.laporan.export');
-    });
-});
+        // Route untuk Sarana Prasarana (Sarpras)
+        Route::prefix('sarpras')->group(function () {
+            // Route untuk manajemen laporan kerusakan
+            Route::prefix('laporan-sarpras')->group(function () {
+                Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan');
+                Route::get('list', [LaporanSarprasController::class, 'list'])->name('sarpras.laporan.list');
+                Route::get('{id}', [LaporanSarprasController::class, 'show'])->name('sarpras.laporan.show');
+                Route::get('{id}/edit', [LaporanSarprasController::class, 'edit'])->name('sarpras.laporan.edit');
+                Route::put('{id}', [LaporanSarprasController::class, 'update'])->name('sarpras.laporan.update');
+                Route::get('{id}/prioritas', [LaporanSarprasController::class, 'updatePrioritas'])->name('sarpras.laporan.prioritas');
+                Route::post('{id}/prioritas', [LaporanSarprasController::class, 'storePrioritas'])->name('sarpras.laporan.storePrioritas');
+                Route::post('{laporan_id}/assign', [LaporanSarprasController::class, 'assignTeknisi'])->name('sarpras.laporan.assign');
+                Route::get('export', [LaporanSarprasController::class, 'exportPdf'])->name('sarpras.laporan.export');
+            });
+        });
     });
 
     // Teknisi

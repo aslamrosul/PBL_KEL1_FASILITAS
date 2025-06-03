@@ -50,6 +50,18 @@ class FasilitasSeeder extends Seeder
                  'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+             
+            [
+                'ruang_id' => 2,
+                'barang_id' => 5,
+                'fasilitas_kode' => 'AC-R102-01',
+                'fasilitas_nama' => 'AC Ruang Kelas B',
+                'keterangan' => 'AC Daikin 1 PK',
+                'status' => 'baik',
+                'tahun_pengadaan' => '2020',
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ]);
     }
 }

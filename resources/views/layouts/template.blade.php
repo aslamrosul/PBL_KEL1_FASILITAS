@@ -54,7 +54,7 @@
     <!-- Bootstrap JS -->
     Harus 2 kali
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Bootstrap 5 -->
     <!-- SweetAlert2 -->
@@ -72,8 +72,30 @@
     <!-- jQuery Validation -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+{{-- script badge status --}}
+    <script>
+        function renderStatusBadge(status) {
+            let badgeClass = '';
+            switch (status.toLowerCase()) {
+                case 'pending':
+                    badgeClass = 'badge bg-warning text-dark';
+                    break;
+                case 'diproses':
+                    badgeClass = 'badge bg-info text-white';
+                    break;
+                case 'selesai':
+                    badgeClass = 'badge bg-success';
+                    break;
+                case 'ditolak':
+                    badgeClass = 'badge bg-danger';
+                    break;
+                default:
+                    badgeClass = 'badge bg-secondary';
+            }
+            return `<span class="${badgeClass}">${status}</span>`;
+        }
 
-
+    </script>
 
     <!-- Correct CSRF Token Setup -->
     <script>
