@@ -43,8 +43,8 @@ class RiwayatPelaporController extends Controller
             ->addColumn('aksi', function ($laporan) {
                 $showUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/show_ajax');
                 return '
-                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                        <i class="fa fa-eye"></i> Detail
+                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm " title="Lihat Laporan">
+                        <i class="fa fa-eye"></i> 
                     </button>
                 ';
             })

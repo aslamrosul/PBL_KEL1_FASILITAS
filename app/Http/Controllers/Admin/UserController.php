@@ -38,38 +38,38 @@ class UserController extends Controller
         ]);
     }
 
-    public function list(Request $request)
-    {
-        $users = UserModel::select('user_id', 'username', 'nama', 'email', 'level_id')
-            ->with('level');
+public function list(Request $request)
+{
+    $users = UserModel::select('user_id', 'username', 'nama', 'email', 'level_id')
+        ->with('level');
 
-        // Filter data user berdasarkan level_id
-        if ($request->level_id) {
-            $users->where('level_id', $request->level_id);
-        }
-
-        return DataTables::of($users)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($user) {
-                $showUrl = url('/user/' . $user->user_id . '/show_ajax');
-                $editUrl = url('/user/' . $user->user_id . '/edit_ajax');
-                $deleteUrl = url('/user/' . $user->user_id . '/delete_ajax');
-
-                return '
-                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                        <i class="fa fa-eye"></i> Detail
-                    </button>
-                    <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                        <i class="fa fa-edit"></i> Edit
-                    </button>
-                    <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
-                        <i class="fa fa-trash"></i> Hapus
-                    </button>
-                ';
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
+    // Filter data user berdasarkan level_id
+    if ($request->level_id) {
+        $users->where('level_id', $request->level_id);
     }
+
+    return DataTables::of($users)
+        ->addIndexColumn()
+        ->addColumn('aksi', function ($user) {
+            $showUrl = url('/user/' . $user->user_id . '/show_ajax');
+            $editUrl = url('/user/' . $user->user_id . '/edit_ajax');
+            $deleteUrl = url('/user/' . $user->user_id . '/delete_ajax');
+
+            return '
+                <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
+                    <i class="fa fa-eye"></i>
+                </button>
+                <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
+                    <i class="fa fa-edit"></i>
+                </button>
+                <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash"></i>
+                </button>
+            ';
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+}
 
     public function create_ajax()
     {

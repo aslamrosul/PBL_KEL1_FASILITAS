@@ -361,6 +361,22 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
                 Route::post('/riwayat/list', [RiwayatPelaporController::class, 'list'])->name('pelapor.riwayat.list');
             });
         });
+<<<<<<< HEAD
+=======
+
+        Route::prefix('pelapor/feedback')->group(function () {
+            Route::get('/', [FeedbackController::class, 'index'])->name('pelapor.feedback.index');
+            Route::post('/list', [FeedbackController::class, 'list'])->name('pelapor.feedback.list');
+            Route::get('/{id}/show_ajax', [FeedbackController::class, 'show_ajax'])->name('pelapor.feedback.show');
+            Route::get('/create_ajax', [FeedbackController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/store_ajax', [FeedbackController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/edit_ajax', [FeedbackController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [FeedbackController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/confirm_ajax', [FeedbackController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::delete('/{id}/delete_ajax', [FeedbackController::class, 'delete_ajax']);
+        });
+    });
+>>>>>>> a6360b211d1187f26971c0c52854948025d8d8fa
 
     // Sarana Prasarana
     Route::middleware(['authorize:SPR'])->group(function () {
@@ -385,6 +401,38 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
                 Route::post('{laporan_id}/assign', [LaporanSarprasController::class, 'assignTeknisi'])->name('sarpras.laporan.assign');
                 Route::get('export', [LaporanSarprasController::class, 'exportPdf'])->name('sarpras.laporan.export');
             });
+        });
+
+        // Route untuk rekomendasi
+        Route::prefix('sarpras/rekomendasi')->group(function () {
+            Route::get('/', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi.index');
+            Route::post('/list', [RekomendasiController::class, 'list'])->name('sarpras.rekomendasi.list');
+            Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show_ajax'])->name('sarpras.rekomendasi.show');
+            Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
+            Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
+        });
+        Route::prefix('sarpras/rekomendasi-mahasiswa')->group(function () {
+            Route::get('/', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi-mahasiswa.index');
+            Route::post('/list', [RekomendasiController::class, 'list'])->name('sarpras.rekomendasi-mahasiswa.list');
+            Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show_ajax'])->name('sarpras.rekomendasi.show');
+            Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
+            Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
+        });
+        Route::prefix('sarpras/rekomendasi-dosen')->group(function () {
+
+            Route::get('/', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi-dosen.index');
+            Route::post('/list', [RekomendasiController::class, 'list'])->name('sarpras.rekomendasi-dosen.list');
+            Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show_ajax'])->name('sarpras.rekomendasi.show');
+            Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
+            Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
+        });
+        Route::prefix('sarpras/rekomendasi-tendik')->group(function () {
+            // Rekomendasi Sarpras
+            Route::get('/', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi-tendik.index');
+            Route::post('/list', [RekomendasiController::class, 'list'])->name('sarpras.rekomendasi-tendik.list');
+            Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show_ajax'])->name('sarpras.rekomendasi.show');
+            Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
+            Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
         });
     });
 

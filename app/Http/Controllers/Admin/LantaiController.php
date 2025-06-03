@@ -48,14 +48,14 @@ class LantaiController extends Controller
                 $deleteUrl = url('/lantai/' . $lantai->lantai_id . '/delete_ajax');
 
                 return '
-                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                        <i class="fa fa-eye"></i> Detail
+                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">
+                        <i class="fa fa-eye"></i>  
                     </button>
-                    <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                        <i class="fa fa-edit"></i> Edit
+                    <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm" title="Edit Periode">
+                        <i class="fa fa-edit"></i>  
                     </button>
-                    <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
-                        <i class="fa fa-trash"></i> Hapus
+                    <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm" title="Hapus Periode">
+                        <i class="fa fa-trash"></i>  
                     </button>
                 ';
             })
