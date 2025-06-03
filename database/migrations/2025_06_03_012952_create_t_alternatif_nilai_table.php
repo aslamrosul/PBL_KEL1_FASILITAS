@@ -22,7 +22,7 @@ return new class extends Migration
             // Foreign key constraints
             $table->foreign('fasilitas_id')->references('fasilitas_id')->on('m_fasilitas')->onDelete('cascade');
 
-            $table->foreign('kriteria_id')->references('kriteria_id')->on('m_kriteria_gdss')->onDelete('cascade');
+            $table->foreign('kriteria_id')->references('kriteria_id')->on('m_kriteria')->onDelete('cascade');
 
             $table->foreign('periode_id')->references('periode_id')->on('m_periode')->onDelete('set null');
 

@@ -54,6 +54,7 @@
                 <th>Kode Kriteria</th>
                 <th>Nama Kriteria</th>
                 <th>Bobot</th>
+                <th>Jenis Kriteria</th>
             </tr>
         </thead>
         <tbody>
