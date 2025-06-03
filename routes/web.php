@@ -327,9 +327,14 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         });
 
         Route::group(['prefix' => 'laporan-admin'], function () {
-            Route::get('/', [PeriodeController::class, 'index'])->name('admin.laporan.index');; // menampilkan halaman awal user
-
+            Route::get('/', [LaporanAdminController::class, 'index'])->name('admin.laporan.index');
+            Route::post('/list', [LaporanAdminController::class, 'list'])->name('admin.laporan.list'); // datatables
+            // Optional: AJAX modal actions
+            Route::get('/{laporan_id}/show_ajax', [LaporanAdminController::class, 'show_ajax'])->name('laporan.show_ajax');
+            Route::get('/{laporan_id}/edit_ajax', [LaporanAdminController::class, 'edit_ajax'])->name('laporan.edit_ajax');
+            Route::put('/{laporan_id}/update_status', [LaporanAdminController::class, 'update_status'])->name('admin.laporan.update_status');
         });
+
 
         Route::group(['prefix' => 'statistik-admin'], function () {
             Route::get('/', [PeriodeController::class, 'index'])->name('admin.statistik.index');; // menampilkan halaman awal user
@@ -343,22 +348,23 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/', [DashboardPelaporController::class, 'index'])->name('pelapor.dashboard');
         });
 
-        Route::prefix('pelapor/laporan')->group(function () {
-            Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan.index');
-            Route::post('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
-            Route::get('{id}/show_ajax', [LaporanPelaporController::class, 'show_ajax'])->name('pelapor.laporan.show');
-            Route::get('/create_ajax', [LaporanPelaporController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
-            Route::post('/store_ajax', [LaporanPelaporController::class, 'store_ajax']); // Menyimpan data user baru Ajax
-            Route::get('/{id}/edit_ajax', [LaporanPelaporController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
-            Route::put('/{id}/update_ajax', [LaporanPelaporController::class, 'update_ajax']); // menyimpan perubahan data user ajax
-            Route::get('/{id}/confirm_ajax', [LaporanPelaporController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
-            Route::delete('/{id}/delete_ajax', [LaporanPelaporController::class, 'delete_ajax']);
-            Route::get('/import', [LaporanPelaporController::class, 'import']); // ajax form upload excel
-            Route::post('/import_ajax', [LaporanPelaporController::class, 'import_ajax']); // ajax import excel
-            Route::get('/export_excel', [LaporanPelaporController::class, 'export_excel']); //export excel
-            Route::get('/export_pdf', [LaporanPelaporController::class, 'export_pdf']);
-            Route::get('/riwayat', [RiwayatPelaporController::class, 'index'])->name('pelapor.riwayat.index');
-            Route::post('/riwayat/list', [RiwayatPelaporController::class, 'list'])->name('pelapor.riwayat.list');
+            Route::prefix('pelapor/laporan')->group(function () {
+                Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan.index');
+                Route::post('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
+                Route::get('{id}/show_ajax', [LaporanPelaporController::class, 'show_ajax'])->name('pelapor.laporan.show_ajax');
+                Route::get('/create_ajax', [LaporanPelaporController::class, 'create_ajax'])->name('pelapor.laporan.create_ajax');
+                Route::post('/store_ajax', [LaporanPelaporController::class, 'store_ajax'])->name('pelapor.laporan.store_ajax');
+                Route::get('/{id}/edit_ajax', [LaporanPelaporController::class, 'edit_ajax'])->name('pelapor.laporan.edit_ajax');; //Menampilkan halaman form edit user ajax
+                Route::put('/{id}/update_ajax', [LaporanPelaporController::class, 'update_ajax'])->name('pelapor.laporan.update_ajax');; // menyimpan perubahan data user ajax
+                Route::get('/{id}/confirm_ajax', [LaporanPelaporController::class, 'confirm_ajax'])->name('pelapor.laporan.confirm_ajax');; //untuk tampilkan form confirm delete user ajax
+                Route::delete('/{id}/delete_ajax', [LaporanPelaporController::class, 'delete_ajax'])->name('pelapor.laporan.delete_ajax');;
+                Route::get('/import', [LaporanPelaporController::class, 'import'])->name('pelapor.laporan.import');
+                Route::post('/import_ajax', [LaporanPelaporController::class, 'import_ajax'])->name('pelapor.laporan.import_ajax');
+                Route::get('/export_excel', [LaporanPelaporController::class, 'export_excel'])->name('pelapor.laporan.export_excel'); //export excel
+                Route::get('/export_pdf', [LaporanPelaporController::class, 'export_pdf'])->name('pelapor.laporan.export_pdf');
+                Route::get('/riwayat', [RiwayatPelaporController::class, 'index'])->name('pelapor.riwayat.index');
+                Route::post('/riwayat/list', [RiwayatPelaporController::class, 'list'])->name('pelapor.riwayat.list');
+            });
         });
 
         Route::prefix('pelapor/feedback')->group(function () {
@@ -462,4 +468,3 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             })->where('filename', '.*')->name('perbaikan.foto');
         });
     });
-});
