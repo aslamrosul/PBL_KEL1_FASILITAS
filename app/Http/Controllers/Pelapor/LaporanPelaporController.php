@@ -41,6 +41,7 @@ class LaporanPelaporController extends Controller
     {
         if ($request->ajax()) {
             $laporan = LaporanModel::where('user_id', Auth::id())
+                ->where('status', '!=', 'selesai') // hindari laporan yang sudah selesai
                 ->with(['periode', 'fasilitas', 'bobotPrioritas'])
                 ->select('t_laporan.*');
 
@@ -51,10 +52,15 @@ class LaporanPelaporController extends Controller
                     $editUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/edit_ajax');
                     $deleteUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/confirm_ajax');
 
-                    return '
-                        <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                            <i class="fa fa-eye"></i> Detail
-                        </button>
+                    $buttons = '
+                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
+                        <i class="fa fa-eye"></i> Detail
+                    </button>
+                ';
+
+                    // Tampilkan Edit dan Hapus hanya jika status bukan "diproses"
+                    if ($laporan->status !== 'diproses') {
+                        $buttons .= '
                         <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
                             <i class="fa fa-edit"></i> Edit
                         </button>
@@ -62,6 +68,9 @@ class LaporanPelaporController extends Controller
                             <i class="fa fa-trash"></i> Hapus
                         </button>
                     ';
+                    }
+
+                    return $buttons;
                 })
                 ->rawColumns(['aksi'])
                 ->make(true);
@@ -384,4 +393,5 @@ class LaporanPelaporController extends Controller
 
         return $pdf->stream('Data Laporan ' . date('Y-m-d H-i-s') . '.pdf');
     }
+
 }
