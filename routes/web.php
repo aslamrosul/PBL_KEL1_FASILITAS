@@ -386,16 +386,14 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         // Route untuk Sarana Prasarana (Sarpras)
         Route::prefix('sarpras')->group(function () {
             // Route untuk manajemen laporan kerusakan
-            Route::prefix('laporan-sarpras')->group(function () {
-                Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan');
-                Route::get('list', [LaporanSarprasController::class, 'list'])->name('sarpras.laporan.list');
-                Route::get('{id}', [LaporanSarprasController::class, 'show'])->name('sarpras.laporan.show');
-                Route::get('{id}/edit', [LaporanSarprasController::class, 'edit'])->name('sarpras.laporan.edit');
-                Route::put('{id}', [LaporanSarprasController::class, 'update'])->name('sarpras.laporan.update');
-                Route::get('{id}/prioritas', [LaporanSarprasController::class, 'updatePrioritas'])->name('sarpras.laporan.prioritas');
-                Route::post('{id}/prioritas', [LaporanSarprasController::class, 'storePrioritas'])->name('sarpras.laporan.storePrioritas');
-                Route::post('{laporan_id}/assign', [LaporanSarprasController::class, 'assignTeknisi'])->name('sarpras.laporan.assign');
-                Route::get('export', [LaporanSarprasController::class, 'exportPdf'])->name('sarpras.laporan.export');
+            Route::prefix('laporan')->group(function () {
+                Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan.index');
+                Route::post('/list',[LaporanSarprasController::class, 'list'] )->name('laporan.list');
+                Route::get('/{id}/show_ajax', [LaporanSarprasController::class, 'show_ajax'] )->name('laporan.show');
+                Route::get('/{id}/assign_ajax', [LaporanSarprasController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
+                Route::post('/{id}/assign',[LaporanSarprasController::class, 'assign']  )->name('laporan.assign');
+                Route::get('/export_excel', [LaporanSarprasController::class, 'export_excel'] )->name('laporan.export_excel');
+                Route::get('/export_pdf',[LaporanSarprasController::class, 'export_pdf']  )->name('laporan.export_pdf');
             });
         });
 

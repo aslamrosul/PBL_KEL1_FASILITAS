@@ -199,7 +199,7 @@
                             <li class="sidebar-title">Sarana Prasarana</li>
 
                             <li class="sidebar-item {{ request()->routeIs('sarpras.laporan.*') ? 'active' : '' }}">
-                                <a href="{{ route('sarpras.laporan') }}" class='sidebar-link'>
+                                <a href="{{ route('sarpras.laporan.index') }}" class='sidebar-link'>
                                     <i class="bi bi-inboxes"></i>
                                     <span>Kelola Laporan</span>
                                 </a>

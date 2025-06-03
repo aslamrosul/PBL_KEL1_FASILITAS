@@ -53,19 +53,19 @@ class LaporanPelaporController extends Controller
                     $deleteUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/confirm_ajax');
 
                     $buttons = '
-                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                        <i class="fa fa-eye"></i> Detail
+                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm " title="Lihat Laporan">
+                        <i class="fa fa-eye"></i> 
                     </button>
                 ';
 
                     // Tampilkan Edit dan Hapus hanya jika status bukan "diproses"
                     if ($laporan->status !== 'diproses') {
                         $buttons .= '
-                        <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                            <i class="fa fa-edit"></i> Edit
+                        <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm " title="Edit Laporan">
+                            <i class="fa fa-edit"></i> 
                         </button>
-                        <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
-                            <i class="fa fa-trash"></i> Hapus
+                        <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm " title="Hapus Laporan">
+                            <i class="fa fa-trash"></i> 
                         </button>
                     ';
                     }
