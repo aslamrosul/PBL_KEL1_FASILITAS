@@ -361,8 +361,6 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
                 Route::post('/riwayat/list', [RiwayatPelaporController::class, 'list'])->name('pelapor.riwayat.list');
             });
         });
-<<<<<<< HEAD
-=======
 
         Route::prefix('pelapor/feedback')->group(function () {
             Route::get('/', [FeedbackController::class, 'index'])->name('pelapor.feedback.index');
@@ -376,7 +374,6 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::delete('/{id}/delete_ajax', [FeedbackController::class, 'delete_ajax']);
         });
     });
->>>>>>> a6360b211d1187f26971c0c52854948025d8d8fa
 
     // Sarana Prasarana
     Route::middleware(['authorize:SPR'])->group(function () {
@@ -468,4 +465,3 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             })->where('filename', '.*')->name('perbaikan.foto');
         });
     });
-});

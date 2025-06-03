@@ -45,12 +45,10 @@ class LaporanPelaporController extends Controller
     {
         if ($request->ajax()) {
             $laporan = LaporanModel::where('user_id', Auth::id())
-<<<<<<< HEAD
+
                 ->with(['periode', 'fasilitas', 'user', 'Gedung', 'Lantai', 'Ruang', 'Barang'])
-=======
                 ->where('status', '!=', 'selesai') // hindari laporan yang sudah selesai
                 ->with(['periode', 'fasilitas', 'bobotPrioritas'])
->>>>>>> a6360b211d1187f26971c0c52854948025d8d8fa
                 ->select('t_laporan.*');
 
             return DataTables::of($laporan)
