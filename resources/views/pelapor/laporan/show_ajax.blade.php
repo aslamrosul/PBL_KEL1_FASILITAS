@@ -15,11 +15,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Periode</label>
-                <p>{{ $laporan->periode->nama_periode ?? '-' }}</p>
+                <p>{{ $laporan->periode->periode_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Fasilitas</label>
-                <p>{{ $laporan->fasilitas->nama_fasilitas ?? '-' }}</p>
+                <p>{{ $laporan->fasilitas->fasilitas_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Prioritas</label>

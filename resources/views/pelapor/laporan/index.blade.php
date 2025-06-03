@@ -67,8 +67,8 @@
                 columns: [
                     { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                     { data: "judul", className: "", orderable: true, searchable: true },
-                    { data: "periode.nama_periode", className: "", orderable: true, searchable: true },
-                    { data: "fasilitas.nama_fasilitas", className: "", orderable: true, searchable: true },
+                    { data: "periode.periode_nama", className: "", orderable: true, searchable: true },
+                    { data: "fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true },
                     { data: "status", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]

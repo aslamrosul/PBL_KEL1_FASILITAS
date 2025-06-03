@@ -21,7 +21,7 @@
                     </div>
                     <div class="form-group">
                         <label>Periode</label>
-                        <p class="form-control-static">{{ $laporan->periode->nama_periode }}</p>
+                        <p class="form-control-static">{{ $laporan->periode->periode_nama }}</p>
                     </div>
                     <div class="form-group">
                         <label>Fasilitas</label>

@@ -340,12 +340,12 @@ Route::prefix('profile')->group(function () {
             Route::get('/', [DashboardPelaporController::class, 'index'])->name('pelapor.dashboard');
         });
 
-               Route::prefix('laporan-pelapor')->group(function() {
-        Route::get('/', [LaporanPelaporController::class, 'index'])->name('pelapor.laporan.index');
-        Route::get('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
-        Route::get('{id}', [LaporanPelaporController::class, 'show'])->name('pelapor.laporan.show');
-        Route::get('{id}/edit', [LaporanPelaporController::class, 'edit'])->name('pelapor.laporan.edit');
-        Route::put('{id}', [LaporanPelaporController::class, 'update'])->name('pelapor.laporan.update');
+               Route::prefix('pelapor/laporan')->group(function() {
+        Route::get('/', [LaporanPelaporController::class, 'index'])->name('index');
+        Route::post('list', [LaporanPelaporController::class, 'list'])->name('pelapor.laporan.list');
+        Route::get('{id}/show_ajax', [LaporanPelaporController::class, 'show_ajax'])->name('pelapor.laporan.show');
+        Route::get('{id}/edit_ajax', [LaporanPelaporController::class, 'edit_ajax'])->name('pelapor.laporan.edit');
+        Route::put('{id}', [LaporanPelaporController::class, 'update'])->name('pelapor.laporan.edit');
         Route::get('{id}/prioritas', [LaporanPelaporController::class, 'updatePrioritas'])->name('pelapor.laporan.prioritas');
         Route::post('{id}/prioritas', [LaporanPelaporController::class, 'storePrioritas'])->name('pelapor.laporan.storePrioritas');
         Route::post('{laporan_id}/assign', [LaporanPelaporController::class, 'assignTeknisi'])->name('pelapor.laporan.assign');

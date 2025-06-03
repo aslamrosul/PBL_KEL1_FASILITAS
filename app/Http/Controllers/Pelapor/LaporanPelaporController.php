@@ -70,9 +70,9 @@ class LaporanPelaporController extends Controller
 
     public function create_ajax()
     {
-        $periode = PeriodeModel::select('periode_id', 'nama_periode')->get();
-        $fasilitas = FasilitasModel::select('fasilitas_id', 'nama_fasilitas')->get();
-        $bobot = BobotPrioritasModel::select('bobot_id', 'nama_bobot')->get();
+        $periode = PeriodeModel::select('periode_id', 'periode_nama')->get();
+        $fasilitas = FasilitasModel::select('fasilitas_id', 'fasilitas_nama')->get();
+        $bobot = BobotPrioritasModel::select('bobot_id', 'bobot_nama')->get();
         return view('pelapor.laporan.create_ajax', compact('periode', 'fasilitas', 'bobot'));
     }
 
@@ -137,9 +137,9 @@ class LaporanPelaporController extends Controller
                 'message' => 'Data tidak ditemukan'
             ]);
         }
-        $periode = PeriodeModel::select('periode_id', 'nama_periode')->get();
-        $fasilitas = FasilitasModel::select('fasilitas_id', 'nama_fasilitas')->get();
-        $bobot = BobotPrioritasModel::select('bobot_id', 'nama_bobot')->get();
+        $periode = PeriodeModel::select('periode_id', 'periode_nama')->get();
+        $fasilitas = FasilitasModel::select('fasilitas_id', 'fasilitas_nama')->get();
+        $bobot = BobotPrioritasModel::select('bobot_id', 'bobot_nama')->get();
         return view('pelapor.laporan.edit_ajax', compact('laporan', 'periode', 'fasilitas', 'bobot'));
     }
 
@@ -340,9 +340,9 @@ class LaporanPelaporController extends Controller
             $sheet->setCellValue('A' . $baris, $no);
             $sheet->setCellValue('B' . $baris, $item->judul);
             $sheet->setCellValue('C' . $baris, $item->deskripsi);
-            $sheet->setCellValue('D' . $baris, $item->periode->nama_periode ?? '-');
-            $sheet->setCellValue('E' . $baris, $item->fasilitas->nama_fasilitas ?? '-');
-            $sheet->setCellValue('F' . $baris, $item->bobotPrioritas->nama_bobot ?? '-');
+            $sheet->setCellValue('D' . $baris, $item->periode->periode_nama ?? '-');
+            $sheet->setCellValue('E' . $baris, $item->fasilitas->fasilitas_nama ?? '-');
+            $sheet->setCellValue('F' . $baris, $item->bobotPrioritas->bobot_nama ?? '-');
             $sheet->setCellValue('G' . $baris, $item->status);
             $sheet->setCellValue('H' . $baris, $item->tanggal_lapor);
             $no++;

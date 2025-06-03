@@ -37,6 +37,10 @@
                             <th>Bobot:</th>
                             <td>{{ $kriteria->bobot }}</td>
                         </tr>
+                        <tr>
+                            <th>Jenis:</th>
+                            <td>{{ $kriteria->kriteria_jenis }}</td>
+                        </tr>
                     </table>
                 </div>
                 <div class="modal-footer">

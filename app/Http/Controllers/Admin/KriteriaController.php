@@ -34,7 +34,7 @@ class KriteriaController extends Controller
 
     public function list(Request $request)
     {
-        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot');
+        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot','kriteria_jenis');
 
         return DataTables::of($kriterias)
             ->addIndexColumn()
@@ -70,6 +70,7 @@ class KriteriaController extends Controller
             'kriteria_kode' => 'required|string|max:10|unique:m_kriteria,kriteria_kode',
             'kriteria_nama' => 'required|string|max:100',
             'bobot' => 'required|numeric|between:0,1',
+            'kriteria_jenis' => 'required|in:benefit,cost',
         ]);
 
         if ($validator->fails()) {
@@ -109,6 +110,7 @@ class KriteriaController extends Controller
             'kriteria_kode' => 'required|string|max:10|unique:m_kriteria,kriteria_kode,' . $kriteria_id . ',kriteria_id',
             'kriteria_nama' => 'required|string|max:100',
             'bobot' => 'required|numeric|between:0,1',
+            'kriteria_jenis' => 'required|in:benefit,cost',
         ]);
 
         if ($validator->fails()) {
@@ -211,6 +213,7 @@ class KriteriaController extends Controller
                             'kriteria_kode' => trim($value['A']),
                             'kriteria_nama' => trim($value['B']),
                             'bobot' => floatval($value['C']),
+                            'kriteria_jenis' => strtolower(trim($value['D'])) === 'benefit' ? 'benefit' : 'cost',
                             'created_at' => now(),
                         ];
                     }
@@ -246,7 +249,8 @@ class KriteriaController extends Controller
         $sheet->setCellValue('B1', 'Kode Kriteria');
         $sheet->setCellValue('C1', 'Nama Kriteria');
         $sheet->setCellValue('D1', 'Bobot');
-        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        $sheet->setCellValue('E1', 'Jenis Kriteria');
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
@@ -255,11 +259,12 @@ class KriteriaController extends Controller
             $sheet->setCellValue('B' . $baris, $kriteria->kriteria_kode);
             $sheet->setCellValue('C' . $baris, $kriteria->kriteria_nama);
             $sheet->setCellValue('D' . $baris, $kriteria->bobot);
+            $sheet->setCellValue('E' . $baris, ucfirst($kriteria->kriteria_jenis));
             $no++;
             $baris++;
         }
 
-        foreach (range('A', 'D') as $columnID) {
+        foreach (range('A', 'E') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -277,7 +282,7 @@ class KriteriaController extends Controller
 
     public function export_pdf()
     {
-        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot')->get();
+        $kriterias = KriteriaModel::select('kriteria_id', 'kriteria_kode', 'kriteria_nama', 'bobot', 'kriteria_jenis')->get();
 
         $data = [
             'kriterias' => $kriterias,

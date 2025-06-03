@@ -28,6 +28,7 @@
                             <th>Kode Kriteria</th>
                             <th>Nama Kriteria</th>
                             <th>Bobot</th>
+                            <th>Jenis Kriteria</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -78,6 +79,7 @@
                     { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                     { data: "kriteria_kode", className: "", orderable: true, searchable: true },
                     { data: "kriteria_nama", className: "", orderable: true, searchable: true },
+                    { data: "kriteria_jenis", className: "", orderable: true, searchable: true },
                     { data: "bobot", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]

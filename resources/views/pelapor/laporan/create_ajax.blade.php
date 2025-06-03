@@ -22,7 +22,7 @@
                     <select class="form-control" id="periode_id" name="periode_id" required>
                         <option value="">Pilih Periode</option>
                         @foreach ($periode as $item)
-                            <option value="{{ $item->periode_id }}">{{ $item->nama_periode }}</option>
+                            <option value="{{ $item->periode_id }}">{{ $item->periode_nama }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback"></div>
@@ -32,7 +32,7 @@
                     <select class="form-control" id="fasilitas_id" name="fasilitas_id" required>
                         <option value="">Pilih Fasilitas</option>
                         @foreach ($fasilitas as $item)
-                            <option value="{{ $item->fasilitas_id }}">{{ $item->nama_fasilitas }}</option>
+                            <option value="{{ $item->fasilitas_id }}">{{ $item->fasilitas_nama }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback"></div>

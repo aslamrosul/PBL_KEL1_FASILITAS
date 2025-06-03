@@ -64,7 +64,7 @@ class LaporanSarprasController extends Controller
                 return $laporan->user->nama;
             })
             ->addColumn('periode', function ($laporan) {
-                return $laporan->periode->nama_periode;
+                return $laporan->periode->periode_nama;
             })
             ->addColumn('fasilitas', function ($laporan) {
                 return $laporan->fasilitas->fasilitas_nama ?? '-';

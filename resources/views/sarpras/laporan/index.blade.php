@@ -24,7 +24,7 @@
                     <select class="form-control" id="periode_id" name="periode_id">
                         <option value="">Semua Periode</option>
                         @foreach($periodes as $periode)
-                            <option value="{{ $periode->periode_id }}">{{ $periode->nama_periode }}</option>
+                            <option value="{{ $periode->periode_id }}">{{ $periode->periode_nama }}</option>
                         @endforeach
                     </select>
                 </div>

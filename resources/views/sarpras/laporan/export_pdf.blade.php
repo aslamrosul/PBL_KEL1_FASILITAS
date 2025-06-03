@@ -67,7 +67,7 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $laporan->judul }}</td>
                 <td>{{ $laporan->user->nama }}</td>
-                <td>{{ $laporan->periode->nama_periode }}</td>
+                <td>{{ $laporan->periode->periode_nama }}</td>
                 <td>{{ $laporan->fasilitas->fasilitas_nama ?? '-' }}</td>
                 <td>{{ $laporan->bobotPrioritas->bobot_nama ?? '-' }}</td>
                 <td>

@@ -27,11 +27,11 @@
                     <table class="table table-sm table-bordered">
                         <tr>
                             <th>Kode Periode:</th>
-                            <td>{{ $periode->kode_periode }}</td>
+                            <td>{{ $periode->periode_kode }}</td>
                         </tr>
                         <tr>
                             <th>Nama Periode:</th>
-                            <td>{{ $periode->nama_periode }}</td>
+                            <td>{{ $periode->periode_nama }}</td>
                         </tr>
                         <tr>
                             <th>Tanggal Mulai:</th>

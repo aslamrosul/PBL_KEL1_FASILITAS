@@ -34,7 +34,7 @@ class PeriodeController extends Controller
 
     public function list(Request $request)
     {
-        $periodes = PeriodeModel::select('periode_id', 'kode_periode', 'nama_periode', 'tanggal_mulai', 'tanggal_selesai', 'is_aktif');
+        $periodes = PeriodeModel::select('periode_id', 'periode_kode', 'periode_nama', 'tanggal_mulai', 'tanggal_selesai', 'is_aktif');
 
         return DataTables::of($periodes)
             ->addIndexColumn()
@@ -70,8 +70,8 @@ class PeriodeController extends Controller
     public function store_ajax(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kode_periode' => 'required|string|max:10|unique:m_periode,kode_periode',
-            'nama_periode' => 'required|string|max:100',
+            'periode_kode' => 'required|string|max:10|unique:m_periode,periode_kode',
+            'periode_nama' => 'required|string|max:100',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'is_aktif' => 'required|boolean'
@@ -97,7 +97,7 @@ class PeriodeController extends Controller
                 'status' => true,
                 'message' => 'Data berhasil ditambahkan',
                 'id' => $periode->periode_id,
-                'nama_periode' => $periode->nama_periode
+                'periode_nama' => $periode->periode_nama
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -116,8 +116,8 @@ class PeriodeController extends Controller
     public function update_ajax(Request $request, $periode_id)
     {
         $validator = Validator::make($request->all(), [
-            'kode_periode' => 'required|string|max:10|unique:m_periode,kode_periode,' . $periode_id . ',periode_id',
-            'nama_periode' => 'required|string|max:100',
+            'periode_kode' => 'required|string|max:10|unique:m_periode,periode_kode,' . $periode_id . ',periode_id',
+            'periode_nama' => 'required|string|max:100',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'is_aktif' => 'required|boolean'
@@ -151,7 +151,7 @@ class PeriodeController extends Controller
                 'status' => true,
                 'message' => 'Data berhasil diupdate',
                 'id' => $periode->periode_id,
-                'nama_periode' => $periode->nama_periode
+                'periode_nama' => $periode->periode_nama
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -231,15 +231,15 @@ class PeriodeController extends Controller
             if (count($data) > 1) {
                 foreach ($data as $baris => $value) {
                     if ($baris > 1) {
-                        $kode_periode = trim($value['A']);
-                        $nama_periode = trim($value['B']);
+                        $periode_kode = trim($value['A']);
+                        $periode_nama = trim($value['B']);
                         $tanggal_mulai = trim($value['C']);
                         $tanggal_selesai = trim($value['D']);
                         $is_aktif = strtolower(trim($value['E'])) === 'aktif' ? 1 : 0;
 
                         $insert[] = [
-                            'kode_periode' => $kode_periode,
-                            'nama_periode' => $nama_periode,
+                            'periode_kode' => $periode_kode,
+                            'periode_nama' => $periode_nama,
                             'tanggal_mulai' => $tanggal_mulai,
                             'tanggal_selesai' => $tanggal_selesai,
                             'is_aktif' => $is_aktif,
@@ -292,8 +292,8 @@ class PeriodeController extends Controller
         $baris = 2;
         foreach ($periodes as $periode) {
             $sheet->setCellValue('A' . $baris, $no);
-            $sheet->setCellValue('B' . $baris, $periode->kode_periode);
-            $sheet->setCellValue('C' . $baris, $periode->nama_periode);
+            $sheet->setCellValue('B' . $baris, $periode->periode_kode);
+            $sheet->setCellValue('C' . $baris, $periode->periode_nama);
             $sheet->setCellValue('D' . $baris, $periode->tanggal_mulai);
             $sheet->setCellValue('E' . $baris, $periode->tanggal_selesai);
             $sheet->setCellValue('F' . $baris, $periode->is_aktif ? 'Aktif' : 'Tidak Aktif');
