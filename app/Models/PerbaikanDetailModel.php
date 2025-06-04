@@ -15,8 +15,6 @@ class PerbaikanDetailModel extends Model
         'perbaikan_id',
         'tindakan',
         'deskripsi',
-        'bahan',
-        'biaya'
     ];
 
     public function perbaikan()

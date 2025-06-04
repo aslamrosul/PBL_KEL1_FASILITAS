@@ -86,7 +86,6 @@ class PerbaikanController extends Controller
             ->make(true);
     }
 
-    // DataTables untuk riwayat perbaikan
     public function listRiwayat(Request $request)
     {
         $perbaikans = PerbaikanModel::select('perbaikan_id', 'laporan_id', 'teknisi_id', 'tanggal_mulai', 'tanggal_selesai', 'status', 'catatan')
@@ -108,7 +107,6 @@ class PerbaikanController extends Controller
             ->make(true);
     }
 
-    // Menampilkan form edit perbaikan
     public function edit_ajax($perbaikan_id)
     {
         $perbaikan = PerbaikanModel::with(['laporan', 'teknisi', 'details'])
@@ -125,7 +123,6 @@ class PerbaikanController extends Controller
         return view('teknisi.perbaikan.edit_ajax', compact('perbaikan'));
     }
 
-    // Menampilkan detail perbaikan
     public function show_ajax($perbaikan_id)
     {
         $perbaikan = PerbaikanModel::with(['laporan', 'teknisi', 'details'])
@@ -142,37 +139,8 @@ class PerbaikanController extends Controller
         return view('teknisi.perbaikan.show_ajax', compact('perbaikan'));
     }
 
-    // Update status perbaikan
     public function update_ajax(Request $request, $perbaikan_id)
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:menunggu,diproses,selesai,ditolak',
-            'catatan' => 'required_if:status,ditolak|nullable|string',
-            'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'tindakan.*' => 'required_if:status,selesai|string',
-            'deskripsi.*' => 'nullable|string',
-            'bahan.*' => 'nullable|string',
-            'biaya.*' => 'nullable|numeric'
-        ], [
-            'catatan.required_if' => 'Catatan wajib diisi ketika status ditolak',
-            'tindakan.*.required_if' => 'Tindakan wajib diisi ketika status selesai'
-        ]);
-
-        // Hapus validasi tindakan jika status bukan selesai
-        if ($request->status != 'selesai') {
-            $validator->sometimes('tindakan.*', 'nullable', function () {
-                return true;
-            });
-        }
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         $perbaikan = PerbaikanModel::where('teknisi_id', auth()->user()->user_id)
             ->find($perbaikan_id);
 
@@ -183,17 +151,44 @@ class PerbaikanController extends Controller
             ], 404);
         }
 
+        // Hanya izinkan perubahan ke status 'selesai' dari 'menunggu' atau 'diproses'
+        if ($request->status !== 'selesai' || !in_array($perbaikan->status, ['menunggu', 'diproses'])) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Hanya dapat mengubah status ke Selesai dari status Menunggu atau Diproses'
+            ], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:selesai',
+            'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'tindakan.*' => 'required|string',
+            'deskripsi.*' => 'nullable|string',
+            'total_biaya' => 'required|numeric|min:0'
+        ], [
+            'tindakan.*.required' => 'Tindakan wajib diisi ketika status selesai',
+            'total_biaya.required' => 'Total biaya wajib diisi ketika status selesai'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
         DB::beginTransaction();
         try {
             $data = [
                 'status' => $request->status,
                 'catatan' => $request->catatan,
-                'tanggal_selesai' => $request->status == 'selesai' ? now() : null,
-                'tanggal_ditolak' => $request->status == 'ditolak' ? now() : null
+                'tanggal_selesai' => now(),
+                'total_biaya' => $request->total_biaya
             ];
 
-            // Handle upload foto perbaikan (hanya untuk status selesai)
-            if ($request->status == 'selesai' && $request->hasFile('foto_perbaikan')) {
+            // Handle upload foto perbaikan
+            if ($request->hasFile('foto_perbaikan')) {
                 $foto = $request->file('foto_perbaikan');
                 $fotoName = time() . '_' . $foto->getClientOriginalName();
                 $foto->move(public_path('images/perbaikan'), $fotoName);
@@ -205,31 +200,16 @@ class PerbaikanController extends Controller
                 }
             }
 
-            // Jika status ditolak, hapus foto perbaikan jika ada
-            if ($request->status == 'ditolak' && $perbaikan->foto_perbaikan) {
-                if (file_exists(public_path($perbaikan->foto_perbaikan))) {
-                    unlink(public_path($perbaikan->foto_perbaikan));
-                }
-                $data['foto_perbaikan'] = null;
-            }
-
             $perbaikan->update($data);
 
-            // Jika selesai, simpan detail perbaikan
-            if ($request->status == 'selesai' && $request->tindakan) {
-                // Hapus detail lama jika ada
-                PerbaikanDetailModel::where('perbaikan_id', $perbaikan_id)->delete();
-
-                // Simpan detail baru
-                foreach ($request->tindakan as $key => $tindakan) {
-                    PerbaikanDetailModel::create([
-                        'perbaikan_id' => $perbaikan_id,
-                        'tindakan' => $tindakan,
-                        'deskripsi' => $request->deskripsi[$key] ?? null,
-                        'bahan' => $request->bahan[$key] ?? null,
-                        'biaya' => $request->biaya[$key] ?? null
-                    ]);
-                }
+            // Simpan detail perbaikan
+            PerbaikanDetailModel::where('perbaikan_id', $perbaikan_id)->delete();
+            foreach ($request->tindakan as $key => $tindakan) {
+                PerbaikanDetailModel::create([
+                    'perbaikan_id' => $perbaikan_id,
+                    'tindakan' => $tindakan,
+                    'deskripsi' => $request->deskripsi[$key] ?? null,
+                ]);
             }
 
             DB::commit();
@@ -248,7 +228,6 @@ class PerbaikanController extends Controller
         }
     }
 
-    // Helper untuk menampilkan badge status
     private function getStatusBadge($status)
     {
         switch ($status) {
@@ -264,4 +243,5 @@ class PerbaikanController extends Controller
                 return '<span class="badge badge-secondary">Unknown</span>';
         }
     }
+
 }
