@@ -137,7 +137,10 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_excel', [UserController::class, 'export_excel']); //export excel
             Route::get('/export_pdf', [UserController::class, 'export_pdf']);
         });
-
+Route::prefix('admin')->group(function () {
+    Route::get('/dashboard/damage-categories', [DashboardAdminController::class, 'getDamageCategories'])->name('admin.dashboard.damage-categories');
+    Route::get('/dashboard/priority-stats', [DashboardAdminController::class, 'getPriorityStats'])->name('admin.dashboard.priority-stats');
+});
         //route level
         Route::group(['prefix' => 'bobot'], function () {
             Route::get('/', [BobotPrioritasController::class, 'index'])->name('admin.bobot.index'); // menampilkan halaman awal user
@@ -434,6 +437,10 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
             Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
         });
+        Route::prefix('sarpras')->group(function () {
+    Route::get('/dashboard/yearly-trend', [DashboardSarprasController::class, 'getYearlyTrend'])->name('sarpras.dashboard.yearly-trend');
+    Route::get('/dashboard/priority-facilities', [DashboardSarprasController::class, 'getPriorityFacilities'])->name('sarpras.dashboard.priority-facilities');
+});
     });
 
     // Teknisi
