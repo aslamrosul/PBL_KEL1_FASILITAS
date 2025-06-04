@@ -58,39 +58,14 @@
                 @if(Auth::user()->level->level_kode === 'ADM')
                             <li class="sidebar-title">Administrator</li>
 
-                            <li
-                                class="sidebar-item has-sub
-                                                                                                                                                                                                                {{
-                    request()->routeIs('admin.user.*') ||
-                    request()->routeIs('admin.mahasiswa.*') ||
-                    request()->routeIs('admin.dosen.*') ||
-                    request()->routeIs('admin.tendik.*') ||
-                    request()->routeIs('admin.sarpras.*') ||
-                    request()->routeIs(patterns: 'admin.teknisi.*')
-                    ? 'active'
-                    : ''
-                                                                                                                                                                                                                }}">
-                                <a href="#" class='sidebar-link'>
-                                    <i class="bi bi-people-fill"></i>
+                          
+                             <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.user.index') }}" class='sidebar-link'>
+                                     <i class="bi bi-people-fill"></i>
                                     <span>Manajemen User</span>
                                 </a>
-                                <ul class="submenu">
-                                    <li class="submenu-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.user.index') }}">Admin</a>
-                                    </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.pelapor.*') ? 'active' : '' }}">
-                                        <a href="#">Pelapor</a>
-                                    </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.sarpras.*') ? 'active' : '' }}">
-                                        <a href="#">Sarana Prasarana</a>
-                                    </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.teknisi.*') ? 'active' : '' }}">
-                                        <a href="#">Teknisi</a>
-                                    </li>
-                                </ul>
                             </li>
-
-
+                            
 
                             <li
                                 class="sidebar-item has-sub
