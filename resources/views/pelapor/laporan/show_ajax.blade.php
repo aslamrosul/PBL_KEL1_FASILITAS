@@ -3,15 +3,7 @@
         <div class="modal-header">
             <h5 class="modal-title">Detail Laporan</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                @if($laporan->status === 'SELESAI' && !$laporan->feedback && $laporan->user_id == Auth::id())
-                    <a href="{{ route('pelapor.feedback.create', $laporan->laporan_id) }}" class="btn btn-primary">
-                        <i class="bi bi-star-fill me-1"></i> Beri Umpan Balik
-                    </a>
-                @elseif($laporan->feedback)
-                    <a href="{{ route('pelapor.feedback.show', $laporan->laporan_id) }}" class="btn btn-outline-primary">
-                        <i class="bi bi-star-fill me-1"></i> Lihat Umpan Balik
-                    </a>
-                @endif
+
         </div>
         <div class="modal-body">
             <div class="mb-3">
@@ -56,6 +48,15 @@
             @endif
         </div>
         <div class="modal-footer">
+            @if($laporan->status === 'selesai' && !$laporan->feedback && $laporan->user_id == Auth::id())
+                <a href="{{ route('pelapor.feedback.create', $laporan->laporan_id) }}" class="btn btn-primary">
+                    <i class="bi bi-star-fill me-1"></i> Beri Umpan Balik
+                </a>
+            @elseif($laporan->feedback)
+                <a href="{{ route('pelapor.feedback.show', $laporan->laporan_id) }}" class="btn btn-outline-primary">
+                    <i class="bi bi-star-fill me-1"></i> Lihat Umpan Balik
+                </a>
+            @endif
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
         </div>
     </div>

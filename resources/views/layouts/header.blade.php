@@ -24,7 +24,8 @@
                             </div>
                             <div class="user-img d-flex align-items-center">
                                 <div class="avatar avatar-md">
-                                   <img src="{{ asset(Auth::user()->profile_photo ? Auth::user()->profile_photo : 'dist/assets/compiled/jpg/1.jpg') }}">
+                                    <img
+                                        src="{{ asset(Auth::user()->profile_photo ? Auth::user()->profile_photo : 'dist/assets/compiled/jpg/1.jpg') }}">
 
                                 </div>
                             </div>
@@ -37,7 +38,8 @@
                         </li>
                         <li><a class="dropdown-item" href="{{ route('profile.index') }}"><i
                                     class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
-                        <li><a class="dropdown-item" href="javascript:modalAction('{{ route('profile.edit_ajax') }}')"><i
+                        <li><a class="dropdown-item"
+                                href="javascript:modalAction('{{ route('profile.edit_ajax') }}')"><i
                                     class="icon-mid bi bi-pencil-square me-2"></i> Edit Profile</a></li>
 
                         <li><a class="dropdown-item" href=""><i class="icon-mid bi bi-gear me-2"></i> Settings</a></li>
@@ -49,7 +51,7 @@
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout
                             </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">
                                 @csrf
                             </form>
                         </li>

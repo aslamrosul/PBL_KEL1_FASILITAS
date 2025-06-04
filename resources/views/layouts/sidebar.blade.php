@@ -60,7 +60,7 @@
 
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                    {{
+                                                                                                                                                                                                                {{
                     request()->routeIs('admin.user.*') ||
                     request()->routeIs('admin.mahasiswa.*') ||
                     request()->routeIs('admin.dosen.*') ||
@@ -69,7 +69,7 @@
                     request()->routeIs(patterns: 'admin.teknisi.*')
                     ? 'active'
                     : ''
-                                                                                                                                                                                                    }}">
+                                                                                                                                                                                                                }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-people-fill"></i>
                                     <span>Manajemen User</span>
@@ -94,14 +94,14 @@
 
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                    {{
+                                                                                                                                                                                                                {{
                     request()->routeIs('admin.periode.*') ||
                     request()->routeIs('admin.gedung.*') ||
                     request()->routeIs('admin.lantai.*') ||
                     request()->routeIs(patterns: 'admin.ruang.*')
                     ? 'active'
                     : ''
-                                                                                                                                                                                                    }}">
+                                                                                                                                                                                                                }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-map"></i>
                                     <span>Manajemen Lokasi</span>
@@ -123,7 +123,7 @@
                             </li>
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                    {{
+                                                                                                                                                                                                                {{
                     request()->routeIs('admin.fasilitas.*') ||
                     request()->routeIs('admin.klasifikasi.*') ||
                     request()->routeIs('admin.kategori.*') ||
@@ -132,7 +132,7 @@
                     request()->routeIs('admin.kriteria.*')
                     ? 'active'
                     : ''
-                                                                                                                                                                                                    }}">
+                                                                                                                                                                                                                }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-gear"></i>
                                     <span>Manajemen Fasilitas</span>
@@ -185,10 +185,16 @@
                             <span>Buat Laporan</span>
                         </a>
                     </li>
-                    <li class="sidebar-item {{ request()->routeIs('pelapor.feedback.*') ? 'active' : '' }}">
+                    {{-- <li class="sidebar-item {{ request()->routeIs('pelapor.feedback.*') ? 'active' : '' }}">
                         <a href="{{ route('pelapor.feedback.index') }}" class='sidebar-link'>
                             <i class="bi bi-chat-dots"></i>
                             <span>Feedback Laporan</span>
+                        </a>
+                    </li> --}}
+                    <li class="sidebar-item {{ request()->routeIs('pelapor.riwayat.*') ? 'active' : '' }}">
+                        <a href="{{ route('pelapor.riwayat.index') }}" class='sidebar-link'>
+                            <i class="bi bi-clock-history"></i>
+                            <span>Riwayat Laporan</span>
                         </a>
                     </li>
 
@@ -208,14 +214,14 @@
 
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                    {{
+                                                                                                                                                                                                                {{
                     request()->routeIs('sarpras.rekomendasi.*') ||
                     request()->routeIs('sarpras.rekomendasi-mahasiswa.*') ||
                     request()->routeIs('sarpras.rekomendasi-dosen.*') ||
                     request()->routeIs(patterns: 'sarpras.rekomendasi-tendik.*')
                     ? 'active'
                     : ''
-                                                                                                                                                                                                    }}">
+                                                                                                                                                                                                                }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-lightbulb"></i>
                                     <span>Rekomendasi Laporan</span>

@@ -364,13 +364,13 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         Route::prefix('pelapor/feedback')->group(function () {
             Route::get('/', [FeedbackController::class, 'index'])->name('pelapor.feedback.index');
             Route::post('/list', [FeedbackController::class, 'list'])->name('pelapor.feedback.list');
-            Route::get('/{id}/show_ajax', [FeedbackController::class, 'show_ajax'])->name('pelapor.feedback.show');
-            Route::get('/create_ajax', [FeedbackController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
-            Route::post('/store_ajax', [FeedbackController::class, 'store_ajax']); // Menyimpan data user baru Ajax
-            Route::get('/{id}/edit_ajax', [FeedbackController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
-            Route::put('/{id}/update_ajax', [FeedbackController::class, 'update_ajax']); // menyimpan perubahan data user ajax
-            Route::get('/{id}/confirm_ajax', [FeedbackController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
-            Route::delete('/{id}/delete_ajax', [FeedbackController::class, 'delete_ajax']);
+            Route::get('/{laporan_id}/create', [FeedbackController::class, 'create'])->name('pelapor.feedback.create');
+            Route::post('/{laporan_id}/store', [FeedbackController::class, 'store'])->name('pelapor.feedback.store');
+            Route::get('/{laporan_id}/show', [FeedbackController::class, 'show'])->name('pelapor.feedback.show');
+            Route::get('/{laporan_id}/edit', [FeedbackController::class, 'edit'])->name('pelapor.feedback.edit');
+            Route::put('/{laporan_id}/update', [FeedbackController::class, 'update'])->name('pelapor.feedback.update');
+            Route::get('/{laporan_id}/confirm', [FeedbackController::class, 'confirm'])->name('pelapor.feedback.confirm');
+            Route::delete('/{laporan_id}/delete', [FeedbackController::class, 'delete'])->name('pelapor.feedback.delete');
         });
     });
 
