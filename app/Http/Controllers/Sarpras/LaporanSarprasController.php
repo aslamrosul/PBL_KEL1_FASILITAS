@@ -160,4 +160,51 @@ class LaporanSarprasController extends Controller
 
         return $pdf->stream('Data Laporan ' . date('Y-m-d H-i-s') . '.pdf');
     }
+    public function assign_ajax($id)
+    {
+        $laporan = LaporanModel::find($id);
+        $teknisi = TeknisiModel::all(); // Asumsi ada model Teknisi
+        return view('sarpras.laporan.assign_ajax', compact('laporan', 'teknisi'));
+    }
+
+    public function assign(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'teknisi_id' => 'required|exists:m_user,user_id',
+            'catatan' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            // Buat perbaikan baru
+            $perbaikan = PerbaikanModel::create([
+                'laporan_id' => $id,
+                'teknisi_id' => $request->teknisi_id,
+                'tanggal_mulai' => now(),
+                'status' => 'diproses',
+                'catatan' => $request->catatan
+            ]);
+
+            // Update status laporan
+            LaporanModel::find($id)->update(['status' => 'diproses']);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Teknisi berhasil ditugaskan',
+                'id' => $perbaikan->perbaikan_id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal menugaskan teknisi: ' . $e->getMessage()
+            ]);
+        }
+    }
 }
