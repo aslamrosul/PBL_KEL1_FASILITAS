@@ -19,6 +19,22 @@
                 <p>{{ $laporan->periode->periode_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
+                <label class="form-label">gedung</label>
+                <p>{{ $laporan->gedung->gedung_nama ?? '-' }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">lantai</label>
+                <p>{{ $laporan->lantai->lantai_nama ?? '-' }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">ruang</label>
+                <p>{{ $laporan->ruang->ruang_nama ?? '-' }}</p>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">barang</label>
+                <p>{{ $laporan->barang->barang_nama ?? '-' }}</p>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Fasilitas</label>
                 <p>{{ $laporan->fasilitas->fasilitas_nama ?? '-' }}</p>
             </div>

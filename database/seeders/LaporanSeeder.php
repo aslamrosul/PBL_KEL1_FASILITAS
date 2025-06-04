@@ -64,7 +64,7 @@ class LaporanSeeder extends Seeder
                 'deskripsi' => 'AC di Lab 1 tidak bisa menyala ketika dinyalakan',
                 'foto_path' => null,
                 'bobot_id' => 1,
-                'status' => 'ditolak',
+                'status' => 'diverifikasi', //pending, diverifikasi, diproses, ditolak, selesai
                 'alasan_penolakan' => null,
                 'tanggal_selesai' => null,
                 'created_at' => Carbon::now(),

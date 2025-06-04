@@ -18,7 +18,10 @@ class LaporanModel extends Model
         'judul',
         'deskripsi',
         'foto_path',
-        'bobot_id',
+        'gedung',
+        'lantai',
+        'ruang',
+        'barang',
         'status',
         'alasan_penolakan',
         'tanggal_selesai'
@@ -44,6 +47,26 @@ class LaporanModel extends Model
         return $this->belongsTo(BobotPrioritasModel::class, 'bobot_id');
     }
 
+    public function Gedung()
+    {
+        return $this->belongsTo(GedungModel::class, 'gedung_id');
+    }
+
+    public function Ruang()
+    {
+        return $this->belongsTo(RuangModel::class, 'ruang_id');
+    }
+
+    public function Lantai()
+    {
+        return $this->belongsTo(LantaiModel::class, 'lantai_id');
+    }
+
+    public function Barang()
+    {
+        return $this->belongsTo(BarangModel::class, 'barang_id');
+    }
+
     public function histories()
     {
         return $this->hasMany(LaporanHistoryModel::class, 'laporan_id');
@@ -58,4 +81,8 @@ class LaporanModel extends Model
     {
         return $this->hasOne(FeedbackModel::class, 'laporan_id');
     }
+
+    protected $casts = [
+        'tanggal_lapor' => 'datetime',
+    ];
 }
