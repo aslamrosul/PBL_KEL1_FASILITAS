@@ -137,7 +137,10 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_excel', [UserController::class, 'export_excel']); //export excel
             Route::get('/export_pdf', [UserController::class, 'export_pdf']);
         });
-
+Route::prefix('admin')->group(function () {
+    Route::get('/dashboard/damage-categories', [DashboardAdminController::class, 'getDamageCategories'])->name('admin.dashboard.damage-categories');
+    Route::get('/dashboard/priority-stats', [DashboardAdminController::class, 'getPriorityStats'])->name('admin.dashboard.priority-stats');
+});
         //route level
         Route::group(['prefix' => 'bobot'], function () {
             Route::get('/', [BobotPrioritasController::class, 'index'])->name('admin.bobot.index'); // menampilkan halaman awal user
@@ -331,8 +334,8 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::post('/list', [LaporanAdminController::class, 'list'])->name('admin.laporan.list'); // datatables
             // Optional: AJAX modal actions
             Route::get('/{laporan_id}/show_ajax', [LaporanAdminController::class, 'show_ajax'])->name('laporan.show_ajax');
-            Route::get('/{laporan_id}/edit_ajax', [LaporanAdminController::class, 'edit_ajax'])->name('laporan.edit_ajax');
-            Route::put('/{laporan_id}/update_status', [LaporanAdminController::class, 'update_status'])->name('admin.laporan.update_status');
+            Route::get('/{id}/edit_ajax', [LaporanAdminController::class, 'edit_ajax'])->name('admin.laporan.edit_ajax');
+            Route::put('/{id}/update_status', [LaporanAdminController::class, 'update_status'])->name('laporan.update_status');
         });
 
 
@@ -434,6 +437,10 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
             Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
             Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
         });
+        Route::prefix('sarpras')->group(function () {
+    Route::get('/dashboard/yearly-trend', [DashboardSarprasController::class, 'getYearlyTrend'])->name('sarpras.dashboard.yearly-trend');
+    Route::get('/dashboard/priority-facilities', [DashboardSarprasController::class, 'getPriorityFacilities'])->name('sarpras.dashboard.priority-facilities');
+});
     });
 
     // Teknisi
