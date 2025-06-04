@@ -5,7 +5,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         {{-- Form untuk memperbarui status laporan --}}
-        <form id="form-update-status" action="{{ route('admin.laporan.update_status', $laporan->laporan_id) }}" method="POST">
+        <form id="form-update_status" action="{{ route('laporan.update_status', $laporan->laporan_id) }}" method="POST">
             @csrf {{-- Token CSRF untuk keamanan --}}
             @method('PUT') {{-- Menggunakan metode PUT untuk operasi update --}}
 
@@ -24,7 +24,7 @@
                     <input type="text" class="form-control" id="fasilitas_nama" value="{{ $laporan->fasilitas->fasilitas_nama ?? '-' }}" readonly>
                 </div>
 
-                <hr>
+                <hr> {{-- Garis pemisah --}}
 
                 <div class="mb-3">
                     <label for="status" class="form-label">Status Baru</label>
@@ -39,7 +39,6 @@
                     <div class="invalid-feedback" id="status-error"></div>
                 </div>
 
-                {{-- Blok ini dikontrol oleh JavaScript, pastikan tidak ada @if/else/endif yang tidak seimbang di sini --}}
                 <div class="mb-3" id="alasan_penolakan_div" style="display: {{ $laporan->status == 'Ditolak' ? 'block' : 'none' }};">
                     <label for="alasan_penolakan" class="form-label">Alasan Penolakan</label>
                     <textarea class="form-control" id="alasan_penolakan" name="alasan_penolakan" rows="3" placeholder="Masukkan alasan penolakan">{{ $laporan->alasan_penolakan }}</textarea>
@@ -64,77 +63,144 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        // Fungsi untuk menampilkan/menyembunyikan field alasan penolakan
-        function toggleAlasanPenolakan() {
-            if ($('#status').val() === 'Ditolak') {
-                $('#alasan_penolakan_div').show();
-                $('#alasan_penolakan').prop('required', true); // Jadikan required jika status Ditolak
-            } else {
-                $('#alasan_penolakan_div').hide();
-                $('#alasan_penolakan').prop('required', false); // Hapus required jika tidak Ditolak
-                $('#alasan_penolakan').val(''); // Kosongkan nilai saat disembunyikan
-            }
-        }
+   $(document).ready(function() {
+    // Event listener untuk tombol "Status" di tabel DataTables
+    $('#table-laporan').on('click', '.update-status-btn', function() {
+        var laporanId = $(this).data('id');
+        var currentStatus = $(this).data('current-status');
 
-        // Panggil saat halaman dimuat (untuk inisialisasi)
-        toggleAlasanPenolakan();
+        // Tampilkan modal atau SweetAlert2 untuk memilih status baru
+        Swal.fire({
+            title: 'Ubah Status Laporan',
+            html: `
+                <div class="form-group text-left">
+                    <label for="new_status">Status Baru:</label>
+                    <select id="new_status" class="form-control swal2-input">
+                        <option value="Menunggu" ${currentStatus === 'Menunggu' ? 'selected' : ''}>Menunggu</option>
+                        <option value="Diterima" ${currentStatus === 'Diterima' ? 'selected' : ''}>Diterima</option>
+                        <option value="Ditolak" ${currentStatus === 'Ditolak' ? 'selected' : ''}>Ditolak</option>
+                        <option value="Diproses" ${currentStatus === 'Diproses' ? 'selected' : ''}>Diproses</option>
+                        <option value="Selesai" ${currentStatus === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                    </select>
+                </div>
+                <div class="form-group text-left" id="alasan_penolakan_group" style="display: none;">
+                    <label for="alasan_penolakan">Alasan Penolakan (jika Ditolak):</label>
+                    <textarea id="alasan_penolakan" class="form-control swal2-textarea" placeholder="Masukkan alasan penolakan"></textarea>
+                </div>
+                <div class="form-group text-left">
+                    <label for="keterangan_histori">Keterangan Histori (Opsional):</label>
+                    <textarea id="keterangan_histori" class="form-control swal2-textarea" placeholder="Tambahkan catatan untuk histori laporan"></textarea>
+                </div>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            cancelButtonText: 'Batal',
+            didOpen: () => {
+                const newStatusSelect = Swal.getPopup().querySelector('#new_status');
+                const alasanPenolakanGroup = Swal.getPopup().querySelector('#alasan_penolakan_group');
 
-        // Panggil saat status diubah
-        $('#status').change(function() {
-            toggleAlasanPenolakan();
-        });
-
-        // Handle form submission via AJAX
-        $('#form-update-status').submit(function(e) {
-            e.preventDefault(); // Mencegah form submit default
-
-            var form = $(this);
-            var url = form.attr('action');
-            var method = form.attr('method'); // Akan menjadi "POST" karena @method('PUT')
-            var formData = form.serialize();
-
-            // Hapus pesan error sebelumnya
-            form.find('.is-invalid').removeClass('is-invalid');
-            form.find('.invalid-feedback').text('');
-
-            $.ajax({
-                url: url,
-                type: 'POST', // Menggunakan POST karena @method('PUT') akan mengubahnya di sisi server
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        alert(response.message);
-                        $('#myModal').modal('hide'); // Tutup modal
-                        window.dataLaporan.ajax.reload(); // Refresh DataTables
+                // Tampilkan/sembunyikan field alasan penolakan
+                const toggleAlasanPenolakan = () => {
+                    if (newStatusSelect.value === 'Ditolak') {
+                        alasanPenolakanGroup.style.display = 'block';
                     } else {
-                        // Jika ada error validasi dari server
-                        alert('Terjadi kesalahan: ' + response.message);
-                        if (response.errors) {
-                            $.each(response.errors, function(key, value) {
-                                $('#' + key).addClass('is-invalid');
-                                $('#' + key + '-error').text(value[0]);
+                        alasanPenolakanGroup.style.display = 'none';
+                    }
+                };
+
+                newStatusSelect.addEventListener('change', toggleAlasanPenolakan);
+                toggleAlasanPenolakan(); // Panggil saat modal terbuka untuk inisialisasi
+            },
+            preConfirm: () => {
+                const newStatus = Swal.getPopup().querySelector('#new_status').value;
+                const alasanPenolakan = Swal.getPopup().querySelector('#alasan_penolakan').value;
+                const keteranganHistori = Swal.getPopup().querySelector('#keterangan_histori').value;
+
+                if (newStatus === 'Ditolak' && !alasanPenolakan.trim()) {
+                    Swal.showValidationMessage('Alasan penolakan wajib diisi jika status Ditolak.');
+                    return false;
+                }
+
+                return { newStatus: newStatus, alasanPenolakan: alasanPenolakan, keteranganHistori: keteranganHistori };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { newStatus, alasanPenolakan, keteranganHistori } = result.value;
+
+                // Kirim permintaan AJAX
+                $.ajax({
+                    url: '/laporan-admin/' + laporanId + '/update_status', // Pastikan route ini sesuai
+                    type: 'PUT', // Menggunakan method PUT
+                    data: {
+                        _token: '{{ csrf_token() }}', // Laravel CSRF token
+                        status: newStatus,
+                        keterangan: keteranganHistori,
+                        alasan_penolakan: newStatus === 'Ditolak' ? alasanPenolakan : null
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                // Reload DataTables setelah berhasil
+                                if (window.tableLaporan) { // Sesuaikan dengan nama variabel DataTables Anda
+                                    window.tableLaporan.ajax.reload();
+                                } else if ($.fn.DataTable.isDataTable('#table-laporan')) {
+                                    $('#table-laporan').DataTable().ajax.reload();
+                                }
+                            });
+                        } else {
+                            let errorMessage = response.message || 'Terjadi kesalahan yang tidak diketahui.';
+                            if (response.errors) {
+                                // Jika ada error validasi dari server
+                                $.each(response.errors, function(key, value) {
+                                    errorMessage += '\n- ' + value[0];
+                                });
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: errorMessage,
+                                showConfirmButton: true,
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', xhr);
+                        let errorMsg = 'Terjadi kesalahan pada server.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        } else if (error) {
+                            errorMsg = error;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Gagal memperbarui status: ' + errorMsg,
+                            showConfirmButton: true,
+                        });
+
+                        // Tampilkan error validasi dari server jika ada (misalnya status 422)
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            // Anda mungkin perlu menampilkan error ini di modal SweetAlert2 atau di form jika modalnya kompleks
+                            // Untuk saat ini, akan ditampilkan di pesan text SweetAlert2
+                            let validationErrors = '';
+                            $.each(xhr.responseJSON.errors, function(key, value) {
+                                validationErrors += '\n- ' + value[0];
+                            });
+                            Swal.update({
+                                text: Swal.getPopup().querySelector('.swal2-html-container').innerText + validationErrors
                             });
                         }
                     }
-                },
-                error: function(xhr) {
-                    console.error('AJAX Error:', xhr);
-                    var errorMsg = 'Terjadi kesalahan pada server.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMsg = xhr.responseJSON.message;
-                    }
-                    alert('Gagal memperbarui status: ' + errorMsg);
-
-                    // Tampilkan error validasi dari server jika ada
-                    if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        $.each(xhr.responseJSON.errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid');
-                            $('#' + key + '-error').text(value[0]);
-                        });
-                    }
-                }
-            });
+                });
+            }
         });
     });
-</script>
+});
