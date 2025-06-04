@@ -13,4 +13,10 @@ class KlasifikasiModel extends Model
     protected $primaryKey = 'klasifikasi_id';
 
     protected $fillable = ['klasifikasi_kode', 'klasifikasi_nama'];
+
+    public function barangs()
+{
+    return $this->hasMany(BarangModel::class, 'klasifikasi_id');
+}
+
 }

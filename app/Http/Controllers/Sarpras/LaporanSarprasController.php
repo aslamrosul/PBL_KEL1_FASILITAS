@@ -5,306 +5,206 @@ namespace App\Http\Controllers\Sarpras;
 use App\Http\Controllers\Controller;
 use App\Models\LaporanModel;
 use App\Models\PeriodeModel;
+use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
-use App\Models\UserModel;
+
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class LaporanSarprasController extends Controller
 {
     public function index()
     {
         $breadcrumb = (object) [
-            'title' => 'Manajemen Laporan Kerusakan',
-            'list' => ['Home', 'Sarpras', 'Laporan Kerusakan']
+            'title' => 'Kelola Laporan',
+            'list' => ['Home', 'Laporan']
         ];
 
         $page = (object) [
-            'title' => 'Daftar Laporan Kerusakan Fasilitas Kampus'
+            'title' => 'Daftar laporan kerusakan yang perlu ditangani'
         ];
 
         $activeMenu = 'laporan';
         $periodes = PeriodeModel::all();
-        $bobots = BobotPrioritasModel::all();
+        $fasilitas = FasilitasModel::all();
+        $prioritas = BobotPrioritasModel::all();
 
         return view('sarpras.laporan.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
-            'activeMenu' => $activeMenu,
             'periodes' => $periodes,
-            'bobots' => $bobots
+            'fasilitas' => $fasilitas,
+            'prioritas' => $prioritas,
+            'activeMenu' => $activeMenu
         ]);
     }
 
     public function list(Request $request)
     {
-        $laporans = LaporanModel::with(['user', 'periode', 'fasilitas', 'bobotPrioritas'])
-            ->select('laporan_id', 'user_id', 'periode_id', 'fasilitas_id', 'judul', 'status', 'bobot_id', 'created_at');
+        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])
+            ->select('t_laporan.*');
 
         // Filter berdasarkan periode
         if ($request->periode_id) {
-            $laporans->where('periode_id', $request->periode_id);
+            $laporan->where('periode_id', $request->periode_id);
+        }
+
+        // Filter berdasarkan fasilitas
+        if ($request->fasilitas_id) {
+            $laporan->where('fasilitas_id', $request->fasilitas_id);
         }
 
         // Filter berdasarkan status
         if ($request->status) {
-            $laporans->where('status', $request->status);
+            $laporan->where('status', $request->status);
         }
 
         // Filter berdasarkan prioritas
         if ($request->bobot_id) {
-            $laporans->where('bobot_id', $request->bobot_id);
+            $laporan->where('bobot_id', $request->bobot_id);
         }
 
-        return DataTables::of($laporans)
+        return DataTables::of($laporan)
             ->addIndexColumn()
-            ->addColumn('nama_pelapor', function ($laporan) {
-                return $laporan->user->nama;
-            })
-            ->addColumn('periode', function ($laporan) {
-                return $laporan->periode->nama_periode;
-            })
-            ->addColumn('fasilitas', function ($laporan) {
-                return $laporan->fasilitas->fasilitas_nama ?? '-';
-            })
-            ->addColumn('prioritas', function ($laporan) {
-                return $laporan->bobotPrioritas->bobot_nama ?? '-';
-            })
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<a href="'.url('/sarpras/laporan/'.$laporan->laporan_id).'" class="btn btn-info btn-sm">Detail</a> ';
-                $btn .= '<a href="'.url('/sarpras/laporan/'.$laporan->laporan_id.'/edit').'" class="btn btn-warning btn-sm">Edit</a> ';
-                $btn .= '<a href="'.url('/sarpras/laporan/'.$laporan->laporan_id.'/prioritas').'" class="btn btn-primary btn-sm">Prioritas</a>';
+                $btn = '<button onclick="modalAction(\''.url('/sarpras/laporan/'.$laporan->laporan_id.'/show_ajax').'\')" class="btn btn-info btn-sm mr-1"><i class="fa fa-eye"></i></button>';
+                
+                if ($laporan->status == 'diverifikasi') {
+                    $btn .= '<button onclick="modalAction(\''.url('/sarpras/laporan/'.$laporan->laporan_id.'/assign_ajax').'\')" class="btn btn-success btn-sm ">
+                        <i class="fa fa-briefcase"></i>
+                    </button>';
+                }
+                
                 return $btn;
             })
-            ->editColumn('status', function ($laporan) {
-                $badge = '';
-                switch ($laporan->status) {
-                    case 'pending':
-                        $badge = '<span class="badge bg-warning">Pending</span>';
-                        break;
-                    case 'diterima':
-                        $badge = '<span class="badge bg-info">Diterima</span>';
-                        break;
-                    case 'ditolak':
-                        $badge = '<span class="badge bg-danger">Ditolak</span>';
-                        break;
-                    case 'diproses':
-                        $badge = '<span class="badge bg-primary">Diproses</span>';
-                        break;
-                    case 'selesai':
-                        $badge = '<span class="badge bg-success">Selesai</span>';
-                        break;
-                    default:
-                        $badge = '<span class="badge bg-secondary">Unknown</span>';
-                }
-                return $badge;
-            })
-            ->rawColumns(['aksi', 'status'])
+            ->rawColumns(['aksi'])
             ->make(true);
     }
 
-    public function show($id)
+    public function show_ajax($id)
     {
-        $laporan = LaporanModel::with(['user', 'periode', 'fasilitas', 'bobotPrioritas', 'histories.user', 'perbaikans.teknisi'])->find($id);
-
-        if (!$laporan) {
-            return redirect('/sarpras/laporan')->with('error', 'Data laporan tidak ditemukan');
-        }
-
-        $breadcrumb = (object) [
-            'title' => 'Detail Laporan',
-            'list' => ['Home', 'Sarpras', 'Laporan', 'Detail']
-        ];
-
-        $page = (object) [
-            'title' => 'Detail Laporan Kerusakan'
-        ];
-
-        $activeMenu = 'laporan';
-        $teknisis = UserModel::whereHas('level', function($query) {
-            $query->where('level_kode', 'TEK');
-        })->get();
-
-        return view('sarpras.laporan.show', [
-            'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'laporan' => $laporan,
-            'teknisis' => $teknisis,
-            'activeMenu' => $activeMenu
-        ]);
+        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])->find($id);
+        return view('sarpras.laporan.show_ajax', compact('laporan'));
     }
 
-    public function edit($id)
-    {
-        $laporan = LaporanModel::find($id);
 
-        if (!$laporan) {
-            return redirect('/sarpras/laporan')->with('error', 'Data laporan tidak ditemukan');
+    public function export_excel()
+    {
+        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Judul');
+        $sheet->setCellValue('C1', 'Deskripsi');
+        $sheet->setCellValue('D1', 'Pelapor');
+        $sheet->setCellValue('E1', 'Periode');
+        $sheet->setCellValue('F1', 'Fasilitas');
+        $sheet->setCellValue('G1', 'Prioritas');
+        $sheet->setCellValue('H1', 'Status');
+        $sheet->setCellValue('I1', 'Tanggal Lapor');
+
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+        foreach ($laporan as $item) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $item->judul);
+            $sheet->setCellValue('C' . $baris, $item->deskripsi);
+            $sheet->setCellValue('D' . $baris, $item->user->nama ?? '-');
+            $sheet->setCellValue('E' . $baris, $item->periode->periode_nama ?? '-');
+            $sheet->setCellValue('F' . $baris, $item->fasilitas->fasilitas_nama ?? '-');
+            $sheet->setCellValue('G' . $baris, $item->bobotPrioritas->bobot_nama ?? '-');
+            $sheet->setCellValue('H' . $baris, $item->status);
+            $sheet->setCellValue('I' . $baris, $item->created_at->format('d-m-Y'));
+            $no++;
+            $baris++;
         }
 
-        $breadcrumb = (object) [
-            'title' => 'Edit Laporan',
-            'list' => ['Home', 'Sarpras', 'Laporan', 'Edit']
-        ];
+        foreach (range('A', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
 
-        $page = (object) [
-            'title' => 'Edit Laporan Kerusakan'
-        ];
+        $sheet->setTitle('Data Laporan');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_Laporan_' . date('Y-m-d_H-i-s') . '.xlsx';
 
-        $activeMenu = 'laporan';
-        $bobots = BobotPrioritasModel::all();
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
 
-        return view('sarpras.laporan.edit', [
-            'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'laporan' => $laporan,
-            'bobots' => $bobots,
-            'activeMenu' => $activeMenu
-        ]);
+        $writer->save('php://output');
+        exit;
     }
 
-    public function update(Request $request, $id)
+    public function export_pdf()
     {
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|string',
-            'alasan_penolakan' => 'required_if:status,ditolak',
-            'bobot_id' => 'required|integer'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $laporan = LaporanModel::find($id);
-        if (!$laporan) {
-            return redirect('/sarpras/laporan')->with('error', 'Data laporan tidak ditemukan');
-        }
-
-        $laporan->status = $request->status;
-        $laporan->bobot_id = $request->bobot_id;
-        $laporan->alasan_penolakan = $request->alasan_penolakan;
-        $laporan->save();
-
-        // Tambahkan history
-        $laporan->histories()->create([
-            'user_id' => auth()->id(),
-            'aksi' => 'update',
-            'keterangan' => 'Mengubah status laporan menjadi ' . $request->status
-        ]);
-
-        return redirect('/sarpras/laporan')->with('success', 'Status laporan berhasil diperbarui');
-    }
-
-    public function updatePrioritas($id)
-    {
-        $laporan = LaporanModel::find($id);
-
-        if (!$laporan) {
-            return redirect('/sarpras/laporan')->with('error', 'Data laporan tidak ditemukan');
-        }
-
-        $breadcrumb = (object) [
-            'title' => 'Update Prioritas Laporan',
-            'list' => ['Home', 'Sarpras', 'Laporan', 'Prioritas']
-        ];
-
-        $page = (object) [
-            'title' => 'Update Prioritas Laporan'
-        ];
-
-        $activeMenu = 'laporan';
-        $bobots = BobotPrioritasModel::all();
-
-        return view('sarpras.laporan.prioritas', [
-            'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'laporan' => $laporan,
-            'bobots' => $bobots,
-            'activeMenu' => $activeMenu
-        ]);
-    }
-
-    public function storePrioritas(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'bobot_id' => 'required|integer'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $laporan = LaporanModel::find($id);
-        if (!$laporan) {
-            return redirect('/sarpras/laporan')->with('error', 'Data laporan tidak ditemukan');
-        }
-
-        $laporan->bobot_id = $request->bobot_id;
-        $laporan->save();
-
-        // Tambahkan history
-        $laporan->histories()->create([
-            'user_id' => auth()->id(),
-            'aksi' => 'update_priority',
-            'keterangan' => 'Mengubah prioritas laporan menjadi ' . $laporan->bobotPrioritas->bobot_nama
-        ]);
-
-        return redirect('/sarpras/laporan')->with('success', 'Prioritas laporan berhasil diperbarui');
-    }
-
-    public function assignTeknisi(Request $request, $laporan_id)
-    {
-        $validator = Validator::make($request->all(), [
-            'teknisi_id' => 'required|integer',
-            'catatan' => 'required|string'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $laporan = LaporanModel::find($laporan_id);
-        if (!$laporan) {
-            return redirect('/sarpras/laporan')->with('error', 'Data laporan tidak ditemukan');
-        }
-
-        // Buat perbaikan baru
-        $perbaikan = $laporan->perbaikans()->create([
-            'teknisi_id' => $request->teknisi_id,
-            'status' => 'diproses',
-            'catatan' => $request->catatan,
-            'tanggal_mulai' => now()
-        ]);
-
-        // Update status laporan
-        $laporan->status = 'diproses';
-        $laporan->save();
-
-        // Tambahkan history
-        $laporan->histories()->create([
-            'user_id' => auth()->id(),
-            'aksi' => 'assign_teknisi',
-            'keterangan' => 'Menugaskan teknisi untuk perbaikan'
-        ]);
-
-        return redirect('/sarpras/laporan/'.$laporan_id)->with('success', 'Teknisi berhasil ditugaskan');
-    }
-
-    public function exportPdf()
-    {
-        $laporans = LaporanModel::with(['user', 'periode', 'fasilitas', 'bobotPrioritas'])
-            ->orderBy('created_at', 'desc')
+        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])
             ->get();
 
         $data = [
-            'laporans' => $laporans,
-            'title' => 'Laporan Kerusakan Fasilitas Kampus'
+            'laporan' => $laporan,
+            'title' => 'Laporan Data Kerusakan'
         ];
 
         $pdf = Pdf::loadView('sarpras.laporan.export_pdf', $data);
         $pdf->setPaper('A4', 'landscape');
-        return $pdf->stream('Laporan Kerusakan Fasilitas Kampus.pdf');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Laporan ' . date('Y-m-d H-i-s') . '.pdf');
+    }
+    public function assign_ajax($id)
+    {
+        $laporan = LaporanModel::find($id);
+        $teknisi = TeknisiModel::all(); // Asumsi ada model Teknisi
+        return view('sarpras.laporan.assign_ajax', compact('laporan', 'teknisi'));
+    }
+
+    public function assign(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'teknisi_id' => 'required|exists:m_user,user_id',
+            'catatan' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            // Buat perbaikan baru
+            $perbaikan = PerbaikanModel::create([
+                'laporan_id' => $id,
+                'teknisi_id' => $request->teknisi_id,
+                'tanggal_mulai' => now(),
+                'status' => 'diproses',
+                'catatan' => $request->catatan
+            ]);
+
+            // Update status laporan
+            LaporanModel::find($id)->update(['status' => 'diproses']);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Teknisi berhasil ditugaskan',
+                'id' => $perbaikan->perbaikan_id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal menugaskan teknisi: ' . $e->getMessage()
+            ]);
+        }
     }
 }

@@ -30,6 +30,10 @@
                             <td>{{ $barang->kategori->kategori_nama }}</td>
                         </tr>
                         <tr>
+                            <th>Klasifikasi:</th>
+                            <td>{{ $barang->klasifikasi->klasifikasi_nama }}</td>
+                        </tr>
+                        <tr>
                             <th>Kode Barang:</th>
                             <td>{{ $barang->barang_kode }}</td>
                         </tr>

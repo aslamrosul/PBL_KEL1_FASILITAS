@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('m_kriteria_gdss', function (Blueprint $table) {
+        Schema::create('m_kriteria', function (Blueprint $table) {
             $table->id('kriteria_id');
-            $table->string('kriteria_kode', 10)->unique();
+            $table->string('kriteria_kode', 20)->unique();
             $table->string('kriteria_nama', 100)->comment('Dampak Akademik, Jumlah Pengguna, dll');
             $table->decimal('bobot', 3, 2)->comment('Bobot kriteria 0-1');
+            $table->enum('kriteria_jenis', ['benefit', 'cost'])->default('benefit')->comment('Jenis kriteria: benefit atau cost');
             $table->timestamps();
         });
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('m_kriteria_gdss');
+        Schema::dropIfExists('m_kriteria');
     }
 };

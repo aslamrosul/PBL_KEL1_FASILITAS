@@ -13,8 +13,8 @@ class PeriodeSeeder extends Seeder
     {
         PeriodeModel::insert([
             [
-                'kode_periode' => '2024-GENAP',
-                'nama_periode' => 'Semester Genap 2023/2024',
+                'periode_kode' => '2024-GENAP',
+                'periode_nama' => 'Semester Genap 2023/2024',
                 'tanggal_mulai' => Carbon::create(2024, 2, 1),
                 'tanggal_selesai' => Carbon::create(2024, 6, 30),
                 'is_aktif' => true,
@@ -22,8 +22,8 @@ class PeriodeSeeder extends Seeder
                 'updated_at' => Carbon::now(),
             ],
             [
-                'kode_periode' => '2024-GANJIL',
-                'nama_periode' => 'Semester Ganjil 2024/2025',
+                'periode_kode' => '2024-GANJIL',
+                'periode_nama' => 'Semester Ganjil 2024/2025',
                 'tanggal_mulai' => Carbon::create(2024, 9, 1),
                 'tanggal_selesai' => Carbon::create(2025, 1, 31),
                 'is_aktif' => false,

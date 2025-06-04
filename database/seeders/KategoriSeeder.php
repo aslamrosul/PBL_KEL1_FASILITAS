@@ -19,7 +19,6 @@ class KategoriSeeder extends Seeder
             ['kategori_kode' => 'ELK', 'kategori_nama' => 'Elektronik'],
             ['kategori_kode' => 'FNT', 'kategori_nama' => 'Furniture'],
             ['kategori_kode' => 'JRN', 'kategori_nama' => 'Jaringan'],
-            ['kategori_kode' => 'AC', 'kategori_nama' => 'Air Conditioner'],
         ]);
     }
 }

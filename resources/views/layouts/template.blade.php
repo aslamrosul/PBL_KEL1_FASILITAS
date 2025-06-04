@@ -9,13 +9,14 @@
     <link rel="shortcut icon" href="{{ asset('dist/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app-dark.css') }}">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <!-- DataTables CSS -->
     <link rel="stylesheet"
         href="{{ asset('dist/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('dist/assets/css/pages/datatables.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     @stack('css')
 </head>
@@ -54,7 +55,7 @@
     <!-- Bootstrap JS -->
     Harus 2 kali
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Bootstrap 5 -->
     <!-- SweetAlert2 -->
@@ -72,8 +73,30 @@
     <!-- jQuery Validation -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+{{-- script badge status --}}
+    <script>
+        function renderStatusBadge(status) {
+            let badgeClass = '';
+            switch (status.toLowerCase()) {
+                case 'pending':
+                    badgeClass = 'badge bg-warning text-dark';
+                    break;
+                case 'diproses':
+                    badgeClass = 'badge bg-info text-white';
+                    break;
+                case 'selesai':
+                    badgeClass = 'badge bg-success';
+                    break;
+                case 'ditolak':
+                    badgeClass = 'badge bg-danger';
+                    break;
+                default:
+                    badgeClass = 'badge bg-secondary';
+            }
+            return `<span class="${badgeClass}">${status}</span>`;
+        }
 
-
+    </script>
 
     <!-- Correct CSRF Token Setup -->
     <script>

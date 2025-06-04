@@ -22,6 +22,15 @@
                     <input type="number" step="0.01" min="0" max="1" name="bobot" id="bobot" class="form-control" required>
                     <small id="error-bobot" class="error-text form-text text-danger"></small>
                 </div>
+                <div class="form-group mb-3">
+                    <label>Jenis Kriteria</label>
+                    <select name="kriteria_jenis" id="kriteria_jenis" class="form-select" required>
+                        <option value="">- Pilih Jenis -</option>
+                        <option value="benefit">Benefit</option>
+                        <option value="cost">Cost</option>
+                    </select>
+                    <small id="error-kriteria_jenis" class="error-text form-text text-danger"></small>
+                </div> 
             </div>
             <div class="modal-footer">
                 <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">Batal</button>

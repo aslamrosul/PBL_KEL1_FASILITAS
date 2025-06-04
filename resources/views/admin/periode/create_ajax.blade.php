@@ -9,13 +9,13 @@
             <div class="modal-body">
                 <div class="form-group mb-3">
                     <label>Kode Periode</label>
-                    <input type="text" name="kode_periode" id="kode_periode" class="form-control" required>
-                    <small id="error-kode_periode" class="error-text form-text text-danger"></small>
+                    <input type="text" name="periode_kode" id="periode_kode" class="form-control" required>
+                    <small id="error-periode_kode" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group mb-3">
                     <label>Nama Periode</label>
-                    <input type="text" name="nama_periode" id="nama_periode" class="form-control" required>
-                    <small id="error-nama_periode" class="error-text form-text text-danger"></small>
+                    <input type="text" name="periode_nama" id="periode_nama" class="form-control" required>
+                    <small id="error-periode_nama" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group mb-3">
                     <label>Tanggal Mulai</label>

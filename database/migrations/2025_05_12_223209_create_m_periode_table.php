@@ -14,8 +14,8 @@ return new class extends Migration
         // database/migrations/2024_03_20_000020_create_periode_table.php
         Schema::create('m_periode', function (Blueprint $table) {
             $table->id('periode_id');
-            $table->string('kode_periode', 20)->unique(); // Contoh: 2023-GENAP
-            $table->string('nama_periode', 50); // Contoh: Semester Genap 2023/2024
+            $table->string('periode_kode', 20)->unique(); // Contoh: 2023-GENAP
+            $table->string('periode_nama', 50); // Contoh: Semester Genap 2023/2024
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->boolean('is_aktif')->default(false);

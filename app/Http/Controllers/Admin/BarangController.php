@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BarangModel;
 use App\Models\KategoriModel;
+use App\Models\KlasifikasiModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -27,19 +28,25 @@ class BarangController extends Controller
         $activeMenu = 'barang';
 
         $kategori = KategoriModel::all();
+        $klasifikasi = KlasifikasiModel::all();
 
         return view('admin.barang.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'kategori' => $kategori,
+            'klasifikasi' => $klasifikasi,
             'activeMenu' => $activeMenu
         ]);
     }
 
     public function list(Request $request)
     {
-        $barangs = BarangModel::select('barang_id', 'kategori_id', 'barang_kode', 'barang_nama')
-            ->with('kategori');
+        $barangs = BarangModel::select('barang_id', 'kategori_id', 'klasifikasi_id', 'barang_kode', 'barang_nama')
+            ->with('kategori')
+            ->with('klasifikasi');
+        if ($request->klasifikasi_id) {
+            $barangs->where('klasifikasi_id', $request->klasifikasi_id);
+        }
 
         if ($request->kategori_id) {
             $barangs->where('kategori_id', $request->kategori_id);
@@ -53,14 +60,14 @@ class BarangController extends Controller
                 $deleteUrl = url('/barang/' . $barang->barang_id . '/delete_ajax');
 
                 return '
-                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                        <i class="fa fa-eye"></i> Detail
+                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">
+                        <i class="fa fa-eye"></i>  
                     </button>
-                    <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                        <i class="fa fa-edit"></i> Edit
+                    <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm" title="Edit Periode">
+                        <i class="fa fa-edit"></i>  
                     </button>
-                    <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
-                        <i class="fa fa-trash"></i> Hapus
+                    <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm" title="Hapus Periode">
+                        <i class="fa fa-trash"></i>  
                     </button>
                 ';
             })
@@ -71,7 +78,9 @@ class BarangController extends Controller
     public function create_ajax()
     {
         $kategori = KategoriModel::all();
-        return view('admin.barang.create_ajax', compact('kategori'));
+        $klasifikasi = KlasifikasiModel::all();
+
+        return view('admin.barang.create_ajax', compact('kategori', 'klasifikasi'));
     }
 
     public function store_ajax(Request $request)
@@ -79,7 +88,8 @@ class BarangController extends Controller
         $validator = Validator::make($request->all(), [
             'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode',
             'barang_nama' => 'required|string|max:100',
-            'kategori_id' => 'required|integer'
+            'kategori_id' => 'required|integer',
+            'klasifikasi_id' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -109,7 +119,7 @@ class BarangController extends Controller
 
     public function show_ajax($barang_id)
     {
-        $barang = BarangModel::with('kategori')->find($barang_id);
+        $barang = BarangModel::with('kategori', 'klasifikasi')->find($barang_id);
         return view('admin.barang.show_ajax', compact('barang'));
     }
 
@@ -117,7 +127,9 @@ class BarangController extends Controller
     {
         $barang = BarangModel::find($barang_id);
         $kategori = KategoriModel::all();
-        return view('admin.barang.edit_ajax', compact('barang', 'kategori'));
+        $klasifikasi = KlasifikasiModel::all();
+
+        return view('admin.barang.edit_ajax', compact('barang', 'kategori', 'klasifikasi'));
     }
 
     public function update_ajax(Request $request, $barang_id)
@@ -125,7 +137,8 @@ class BarangController extends Controller
         $validator = Validator::make($request->all(), [
             'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode,' . $barang_id . ',barang_id',
             'barang_nama' => 'required|string|max:100',
-            'kategori_id' => 'required|integer'
+            'kategori_id' => 'required|integer',
+            'klasifikasi_id' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -213,18 +226,22 @@ class BarangController extends Controller
                         $barang_kode = trim($value['A']);
                         $barang_nama = trim($value['B']);
                         $kategori_nama = trim($value['C']);
+                        $klasifikasi_nama = trim($value['D']);
 
                         $kategori = KategoriModel::where('kategori_nama', $kategori_nama)->first();
+                        $klasifikasi = KlasifikasiModel::where('klasifikasi_nama', $klasifikasi_nama)->first();
 
-                        if ($kategori) {
+                        if ($kategori && $klasifikasi) {
                             $insert[] = [
                                 'barang_kode'  => $barang_kode,
                                 'barang_nama'  => $barang_nama,
                                 'kategori_id'  => $kategori->kategori_id,
+                                'klasifikasi_id'  => $klasifikasi->klasifikasi_id,
                                 'created_at'   => now(),
                             ];
                         } else {
-                            $errors[] = "Baris {$baris}: Kategori '{$kategori_nama}' tidak terdaftar di database.";
+
+                            $errors[] = "Baris {$baris}: Kategori '{$kategori_nama}' atau Baris {$baris}: Klasifikasi '{$klasifikasi_nama}' tidak terdaftar di database.";
                         }
                     }
                 }
@@ -235,7 +252,8 @@ class BarangController extends Controller
 
                 return response()->json([
                     'status'  => count($errors) === 0,
-                    'message' => 'Data berhasil diimport'
+                    'message' => count($errors) === 0 ? 'Data berhasil diimport' : 'Data sebagian berhasil diimport',
+                    'errors'  => $errors
                 ]);
             } else {
                 return response()->json([
@@ -250,8 +268,8 @@ class BarangController extends Controller
 
     public function export_excel()
     {
-        $barangs = BarangModel::select('barang_id', 'barang_kode', 'barang_nama', 'kategori_id')
-            ->with('kategori')
+        $barangs = BarangModel::select('barang_id', 'barang_kode', 'barang_nama', 'kategori_id', 'klasifikasi_id')
+            ->with('kategori', 'klasifikasi')
             ->get();
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -261,8 +279,9 @@ class BarangController extends Controller
         $sheet->setCellValue('B1', 'Kode Barang');
         $sheet->setCellValue('C1', 'Nama Barang');
         $sheet->setCellValue('D1', 'Kategori');
+        $sheet->setCellValue('E1', 'Klasifikasi');
 
-        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
@@ -271,11 +290,12 @@ class BarangController extends Controller
             $sheet->setCellValue('B' . $baris, $barang->barang_kode);
             $sheet->setCellValue('C' . $baris, $barang->barang_nama);
             $sheet->setCellValue('D' . $baris, $barang->kategori->kategori_nama ?? '');
+            $sheet->setCellValue('E' . $baris, $barang->klasifikasi->klasifikasi_nama ?? '');
             $no++;
             $baris++;
         }
 
-        foreach (range('A', 'D') as $columnID) {
+        foreach (range('A', 'E') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -298,7 +318,7 @@ class BarangController extends Controller
 
     public function export_pdf()
     {
-        $barangs = BarangModel::with('kategori')->get();
+        $barangs = BarangModel::with('kategori', 'klasifikasi')->get();
 
         $data = [
             'barangs' => $barangs,

@@ -62,28 +62,28 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($laporans as $index => $laporan)
+            @foreach($laporan as $index => $lpr)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $laporan->judul }}</td>
-                <td>{{ $laporan->user->nama }}</td>
-                <td>{{ $laporan->periode->nama_periode }}</td>
-                <td>{{ $laporan->fasilitas->fasilitas_nama ?? '-' }}</td>
-                <td>{{ $laporan->bobotPrioritas->bobot_nama ?? '-' }}</td>
+                <td>{{ $lpr->judul }}</td>
+                <td>{{ $lpr->user->nama }}</td>
+                <td>{{ $lpr->periode->periode_nama }}</td>
+                <td>{{ $lpr->fasilitas->fasilitas_nama ?? '-' }}</td>
+                <td>{{ $lpr->bobotPrioritas->bobot_nama ?? '-' }}</td>
                 <td>
-                    @if($laporan->status == 'pending')
+                    @if($lpr->status == 'pending')
                         <span class="badge badge-warning">Pending</span>
-                    @elseif($laporan->status == 'diterima')
+                    @elseif($lpr->status == 'diterima')
                         <span class="badge badge-info">Diterima</span>
-                    @elseif($laporan->status == 'ditolak')
+                    @elseif($lpr->status == 'ditolak')
                         <span class="badge badge-danger">Ditolak</span>
-                    @elseif($laporan->status == 'diproses')
+                    @elseif($lpr->status == 'diproses')
                         <span class="badge badge-primary">Diproses</span>
-                    @elseif($laporan->status == 'selesai')
+                    @elseif($lpr->status == 'selesai')
                         <span class="badge badge-success">Selesai</span>
                     @endif
                 </td>
-                <td>{{ $laporan->created_at }}</td>
+                <td>{{ $lpr->created_at }}</td>
             </tr>
             @endforeach
         </tbody>

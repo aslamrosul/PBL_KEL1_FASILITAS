@@ -6,8 +6,10 @@
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
                 <button onclick="modalAction('{{ url('/barang/import') }}')" class="btn btn-info">Import Barang</button>
-                <a href="{{ url('/barang/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Barang</a>
-                <a href="{{ url('/barang/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Barang</a>
+                <a href="{{ url('/barang/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export
+                    Barang</a>
+                <a href="{{ url('/barang/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export
+                    Barang</a>
                 <button onclick="modalAction('{{ url('/barang/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
@@ -45,6 +47,7 @@
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
                             <th>Kategori</th>
+                            <th>Klasifikasi</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -62,7 +65,7 @@
 @push('js')
     <script>
         function modalAction(url = '') {
-            $('#myModal').load(url, function() {
+            $('#myModal').load(url, function () {
                 var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
                     keyboard: false,
                     backdrop: 'static'
@@ -72,13 +75,13 @@
         }
 
         var dataBarang;
-        $(document).ready(function() {
+        $(document).ready(function () {
             window.dataBarang = $('#table_barang').DataTable({
                 serverSide: true,
                 ajax: {
                     url: "{{ url('barang/list') }}",
                     type: "POST",
-                    data: function(d) {
+                    data: function (d) {
                         d.kategori_id = $('#kategori_id').val();
                     }
                 },
@@ -87,11 +90,13 @@
                     { data: "barang_kode", className: "", orderable: true, searchable: true },
                     { data: "barang_nama", className: "", orderable: true, searchable: true },
                     { data: "kategori.kategori_nama", className: "", orderable: false, searchable: false },
+                    { data: "klasifikasi.klasifikasi_nama", className: "", orderable: false, searchable: false },
+
                     { data: "aksi", className: "", orderable: false, searchable: false }
                 ]
             });
 
-            $('#kategori_id').on('change', function() {
+            $('#kategori_id').on('change', function () {
                 dataBarang.ajax.reload();
             });
         });

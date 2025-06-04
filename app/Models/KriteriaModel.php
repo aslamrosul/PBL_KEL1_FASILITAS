@@ -9,7 +9,7 @@ class KriteriaModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'm_kriteria_gdss';
+    protected $table = 'm_kriteria';
     protected $primaryKey = 'kriteria_id';
     protected $fillable = ['kriteria_kode', 'kriteria_nama', 'bobot'];
 }

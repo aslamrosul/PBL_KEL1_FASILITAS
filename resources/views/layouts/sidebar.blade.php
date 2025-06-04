@@ -58,31 +58,28 @@
                 @if(Auth::user()->level->level_kode === 'ADM')
                             <li class="sidebar-title">Administrator</li>
 
-                            <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+                          
+                             <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.user.index') }}" class='sidebar-link'>
-                                    <i class="bi bi-people-fill"></i>
+                                     <i class="bi bi-people-fill"></i>
                                     <span>Manajemen User</span>
                                 </a>
                             </li>
+                            
 
-                            <li class="sidebar-item has-sub
-                                                    {{
-                    request()->routeIs('admin.fasilitas.*') ||
+                            <li
+                                class="sidebar-item has-sub
+                                                                                                                                                                                                                {{
+                    request()->routeIs('admin.periode.*') ||
                     request()->routeIs('admin.gedung.*') ||
                     request()->routeIs('admin.lantai.*') ||
-                    request()->routeIs('admin.ruang.*') ||
-                    request()->routeIs('admin.klasifikasi.*') ||
-                    request()->routeIs('admin.kategori.*') ||
-                    request()->routeIs('admin.barang.*') ||
-                    request()->routeIs('admin.periode.*') ||
-                    request()->routeIs('admin.bobot-prioritas.*') ||
-                    request()->routeIs('admin.kriteria.*')
+                    request()->routeIs(patterns: 'admin.ruang.*')
                     ? 'active'
                     : ''
-                                                    }}">
+                                                                                                                                                                                                                }}">
                                 <a href="#" class='sidebar-link'>
-                                    <i class="bi bi-building"></i>
-                                    <span>Manajemen Fasilitas</span>
+                                    <i class="bi bi-map"></i>
+                                    <span>Manajemen Lokasi</span>
                                 </a>
                                 <ul class="submenu">
                                     <li class="submenu-item {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}">
@@ -97,6 +94,26 @@
                                     <li class="submenu-item {{ request()->routeIs('admin.ruang.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.ruang.index') }}">Ruang</a>
                                     </li>
+                                </ul>
+                            </li>
+                            <li
+                                class="sidebar-item has-sub
+                                                                                                                                                                                                                {{
+                    request()->routeIs('admin.fasilitas.*') ||
+                    request()->routeIs('admin.klasifikasi.*') ||
+                    request()->routeIs('admin.kategori.*') ||
+                    request()->routeIs('admin.barang.*') ||
+                    request()->routeIs('admin.bobot-prioritas.*') ||
+                    request()->routeIs('admin.kriteria.*')
+                    ? 'active'
+                    : ''
+                                                                                                                                                                                                                }}">
+                                <a href="#" class='sidebar-link'>
+                                    <i class="bi bi-gear"></i>
+                                    <span>Manajemen Fasilitas</span>
+                                </a>
+                                <ul class="submenu">
+
                                     <li class="submenu-item {{ request()->routeIs('admin.klasifikasi.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.klasifikasi.index') }}">Klasifikasi</a>
                                     </li>
@@ -109,13 +126,12 @@
                                     <li class="submenu-item {{ request()->routeIs('admin.fasilitas.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.fasilitas.index') }}">Fasilitas</a>
                                     </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.bobot-prioritas.*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.bobot-prioritas.index') }}">Bobot Prioritas</a>
-                                    </li>
                                     <li class="submenu-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.kriteria.index') }}">Kriteria</a>
                                     </li>
-                                    
+                                    <li class="submenu-item {{ request()->routeIs('admin.bobot-prioritas.*') ? 'active' : '' }}">
+                                        <a href="{{ route('admin.bobot-prioritas.index') }}">Bobot Prioritas</a>
+                                    </li>
                                 </ul>
                             </li>
 
@@ -125,17 +141,10 @@
                                     <span>Laporan Kerusakan</span>
                                 </a>
                             </li>
-
-                            <li class="sidebar-item {{ request()->routeIs('admin.statistik.*') ? 'active' : '' }}">
-                                <a href="{{ route('admin.statistik.index') }}" class='sidebar-link'>
-                                    <i class="bi bi-bar-chart-line"></i>
-                                    <span>Statistik</span>
-                                </a>
-                            </li>
                 @endif
 
                 <!-- Menu untuk Pelapor (Mahasiswa/Dosen/Tendik) -->
-                @if(Auth::user()->level->level_kode === 'MHS,DSN,TNK')
+                @if(Auth::user()->level->level_kode === 'DSN' || Auth::user()->level->level_kode === 'MHS' || Auth::user()->level->level_kode === 'TNK')
                     <li class="sidebar-title">Pelaporan</li>
 
                     <li class="sidebar-item {{ request()->routeIs('pelapor.laporan.*') ? 'active' : '' }}">
@@ -144,7 +153,12 @@
                             <span>Buat Laporan</span>
                         </a>
                     </li>
-
+                    {{-- <li class="sidebar-item {{ request()->routeIs('pelapor.feedback.*') ? 'active' : '' }}">
+                        <a href="{{ route('pelapor.feedback.index') }}" class='sidebar-link'>
+                            <i class="bi bi-chat-dots"></i>
+                            <span>Feedback Laporan</span>
+                        </a>
+                    </li> --}}
                     <li class="sidebar-item {{ request()->routeIs('pelapor.riwayat.*') ? 'active' : '' }}">
                         <a href="{{ route('pelapor.riwayat.index') }}" class='sidebar-link'>
                             <i class="bi bi-clock-history"></i>
@@ -152,45 +166,76 @@
                         </a>
                     </li>
 
-                    <li class="sidebar-item {{ request()->routeIs('pelapor.fasilitas.*') ? 'active' : '' }}">
-                        <a href="{{ route('pelapor.fasilitas.index') }}" class='sidebar-link'>
-                            <i class="bi bi-list-check"></i>
-                            <span>Daftar Fasilitas</span>
-                        </a>
-                    </li>
                 @endif
 
                 <!-- Menu untuk Sarana Prasarana (SPR) -->
                 @if(Auth::user()->level->level_kode === 'SPR')
-                    <li class="sidebar-title">Sarana Prasarana</li>
+                            <li class="sidebar-title">Sarana Prasarana</li>
 
-                    <li class="sidebar-item {{ request()->routeIs('sarpras.laporan.*') ? 'active' : '' }}">
-                        <a href="{{ route('sarpras.laporan') }}" class='sidebar-link'>
-                            <i class="bi bi-inboxes"></i>
-                            <span>Kelola Laporan</span>
-                        </a>
-                    </li>
+                            <li class="sidebar-item {{ request()->routeIs('sarpras.laporan.*') ? 'active' : '' }}">
+                                <a href="{{ route('sarpras.laporan.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-inboxes"></i>
+                                    <span>Kelola Laporan</span>
+                                </a>
+                            </li>
 
-                    <li class="sidebar-item {{ request()->routeIs('sarpras.prioritas.*') ? 'active' : '' }}">
-                        {{-- <a href="{{ route('sarpras.prioritas.index') }}" class='sidebar-link'>
-                            <i class="bi bi-exclamation-triangle"></i>
-                            <span>Prioritas Perbaikan</span>
-                        </a> --}}
-                    </li>
 
-                    <li class="sidebar-item {{ request()->routeIs('sarpras.penugasan.*') ? 'active' : '' }}">
-                        {{-- <a href="{{ route('sarpras.penugasan.index') }}" class='sidebar-link'>
-                            <i class="bi bi-person-workspace"></i>
-                            <span>Penugasan Teknisi</span>
-                        </a> --}}
-                    </li>
+                            <li
+                                class="sidebar-item has-sub
+                                                                                                                                                                                                                {{
+                    request()->routeIs('sarpras.rekomendasi.*') ||
+                    request()->routeIs('sarpras.rekomendasi-mahasiswa.*') ||
+                    request()->routeIs('sarpras.rekomendasi-dosen.*') ||
+                    request()->routeIs(patterns: 'sarpras.rekomendasi-tendik.*')
+                    ? 'active'
+                    : ''
+                                                                                                                                                                                                                }}">
+                                <a href="#" class='sidebar-link'>
+                                    <i class="bi bi-lightbulb"></i>
+                                    <span>Rekomendasi Laporan</span>
+                                </a>
+                                <ul class="submenu">
+                                    <li class="submenu-item {{ request()->routeIs('sarpras.rekomendasi.*') ? 'active' : '' }}">
+                                        <a href="{{ route('sarpras.rekomendasi.index') }}">Semua</a>
+                                    </li>
+                                    <li
+                                        class="submenu-item {{ request()->routeIs('pelapor.rekomendasi-mahasiswa.*') ? 'active' : '' }}">
+                                        <a href="{{ route('sarpras.rekomendasi-mahasiswa.index') }}">Mahasiswa</a>
+                                    </li>
+                                    <li
+                                        class="submenu-item {{ request()->routeIs('pelapor.rekomendasi-dosen.*') ? 'active' : '' }}">
+                                        <a href="{{ route('sarpras.rekomendasi-dosen.index') }}">Dosen</a>
+                                    </li>
+                                    <li
+                                        class="submenu-item {{ request()->routeIs('pelapor.rekomendasi-tendik.*') ? 'active' : '' }}">
+                                        <a href="{{ route('sarpras.rekomendasi-tendik.index') }}">Tendik</a>
+                                    </li>
+                                </ul>
+                            </li>
 
-                    <li class="sidebar-item {{ request()->routeIs('sarpras.rekomendasi.*') ? 'active' : '' }}">
-                        {{-- <a href="{{ route('sarpras.rekomendasi.index') }}" class='sidebar-link'>
-                            <i class="bi bi-lightbulb"></i>
-                            <span>Rekomendasi DSS</span>
-                        </a> --}}
-                    </li>
+                            <li class="sidebar-item {{ request()->routeIs('sarpras.riwayat.*') ? 'active' : '' }}">
+                                <a href="{{ route('sarpras.riwayat.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-journal-text"></i>
+                                    <span>Riwayat Penugasan</span>
+                                </a>
+                            </li>
+
+
+
+                            <li class="sidebar-item {{ request()->routeIs('sarpras.prioritas.*') ? 'active' : '' }}">
+                                {{-- <a href="{{ route('sarpras.prioritas.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <span>rekomendasi Laporan</span>
+                                </a> --}}
+                            </li>
+
+                            <li class="sidebar-item {{ request()->routeIs('sarpras.penugasan.*') ? 'active' : '' }}">
+                                {{-- <a href="{{ route('sarpras.penugasan.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-person-workspace"></i>
+                                    <span>Penugasan Teknisi</span>
+                                </a> --}}
+                            </li>
+
                 @endif
 
                 <!-- Menu untuk Teknisi -->

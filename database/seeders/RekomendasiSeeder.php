@@ -3,18 +3,18 @@
 namespace Database\Seeders;
 use Carbon\Carbon;
 
-use App\Models\RekomendasiGDSSModel;
+use App\Models\RekomendasiModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RekomendasiGDSSSeeder extends Seeder
+class RekomendasiSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run()
     {
-        RekomendasiGDSSModel::insert([
+        RekomendasiModel::insert([
             [
                 'laporan_id' => 1,
                 'rekom_mahasiswa' => json_encode(['skor' => 80, 'kriteria' => ['DMPK' => 90, 'JMH' => 80, 'KRSK' => 70, 'KTS' => 60]]),

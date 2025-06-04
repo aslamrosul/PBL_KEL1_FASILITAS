@@ -66,8 +66,8 @@
                 },
                 columns: [
                     { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
-                    { data: "kode_periode", className: "", orderable: true, searchable: true },
-                    { data: "nama_periode", className: "", orderable: true, searchable: true },
+                    { data: "periode_kode", className: "", orderable: true, searchable: true },
+                    { data: "periode_nama", className: "", orderable: true, searchable: true },
                     { data: "tanggal_mulai", className: "", orderable: true, searchable: true },
                     { data: "tanggal_selesai", className: "", orderable: true, searchable: true },
                     { data: "is_aktif", className: "text-center", orderable: true, searchable: true },

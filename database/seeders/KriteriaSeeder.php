@@ -15,25 +15,35 @@ class KriteriaSeeder extends Seeder
     {
         KriteriaModel::insert([
             [
-                'kriteria_kode' => 'DMPK',
-                'kriteria_nama' => 'Dampak Akademik',
-                'bobot' => 0.4
+                'kriteria_kode' => 'FREK',
+                'kriteria_nama' => 'Frekuensi Laporan',
+                'bobot' => 0.4,
+                'kriteria_jenis' => 'benefit'
             ],
             [
-                'kriteria_kode' => 'JMH',
-                'kriteria_nama' => 'Jumlah Pengguna',
-                'bobot' => 0.3
+                'kriteria_kode' => 'USIA',
+                'kriteria_nama' => 'Usia Fasilitas',
+                'bobot' => 0.3,
+                'kriteria_jenis' => 'cost'
             ],
             [
-                'kriteria_kode' => 'KRSK',
-                'kriteria_nama' => 'Tingkat Kerusakan',
-                'bobot' => 0.2
+                'kriteria_kode' => 'KLASIFIKASI',
+                'kriteria_nama' => 'Prioritas Klasifikasi',
+                'bobot' => 0.2,
+                'kriteria_jenis' => 'benefit'
             ],
             [
-                'kriteria_kode' => 'KTS',
-                'kriteria_nama' => 'Ketersediaan Sparepart',
-                'bobot' => 0.1
+                'kriteria_kode' => 'KATEGORI',
+                'kriteria_nama' => 'Kategori Fasilitas',
+                'bobot' => 0.1,
+                'kriteria_jenis' => 'benefit'
             ],
+            [
+                'kriteria_kode' => 'KONDISI',
+                'kriteria_nama' => 'Kondisi Fasilitas',
+                'bobot' => 0.5,
+                'kriteria_jenis' => 'benefit'
+            ]
         ]);
     }
 }

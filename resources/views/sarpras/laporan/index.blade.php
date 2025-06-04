@@ -2,11 +2,14 @@
 
 @section('content')
     <div class="card card-outline card-primary">
-        <div class="card-header">
-            <h3 class="card-title">{{ $page->title }}</h3>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <a href="{{ url('/sarpras/laporan/export') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-file-pdf"></i> Export PDF
+                <a href="{{ url('/sarpras/laporan/export_excel') }}" class="btn btn-primary">
+                    <i class="bi bi-file-excel"></i> Export Excel
+                </a>
+                <a href="{{ url('/sarpras/laporan/export_pdf') }}" class="btn btn-warning">
+                    <i class="bi bi-file-pdf"></i> Export PDF
                 </a>
             </div>
         </div>
@@ -17,99 +20,105 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="periode_id">Filter Periode:</label>
-                    <select class="form-control" id="periode_id" name="periode_id">
-                        <option value="">Semua Periode</option>
-                        @foreach($periodes as $periode)
-                            <option value="{{ $periode->periode_id }}">{{ $periode->nama_periode }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="status">Filter Status:</label>
-                    <select class="form-control" id="status" name="status">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="diterima">Diterima</option>
-                        <option value="ditolak">Ditolak</option>
-                        <option value="diproses">Diproses</option>
-                        <option value="selesai">Selesai</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="bobot_id">Filter Prioritas:</label>
-                    <select class="form-control" id="bobot_id" name="bobot_id">
-                        <option value="">Semua Prioritas</option>
-                        @foreach($bobots as $bobot)
-                            <option value="{{ $bobot->bobot_id }}">{{ $bobot->bobot_nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="button" id="btn-filter" class="btn btn-primary">Filter</button>
-                    <button type="button" id="btn-reset" class="btn btn-secondary ml-2">Reset</button>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group row">
+                        <label class="col-1 control-label col-form-label">Filter:</label>
+                        <div class="col-2">
+                            <select class="form-control" id="periode_id" name="periode_id">
+                                <option value="">- Semua Periode -</option>
+                                @foreach($periodes as $item)
+                                    <option value="{{ $item->periode_id }}">{{ $item->periode_nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control" id="fasilitas_id" name="fasilitas_id">
+                                <option value="">- Semua Fasilitas -</option>
+                                @foreach($fasilitas as $item)
+                                    <option value="{{ $item->fasilitas_id }}">{{ $item->fasilitas_nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control" id="bobot_id" name="bobot_id">
+                                <option value="">- Semua Prioritas -</option>
+                                @foreach($prioritas as $item)
+                                    <option value="{{ $item->bobot_id }}">{{ $item->bobot_nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <select class="form-control" id="status" name="status">
+                                <option value="">- Semua Status -</option>
+                                <option value="pending">Pending</option>
+                                <option value="diverifikasi">Diverifikasi</option>
+                                <option value="diproses">Diproses</option>
+                                <option value="selesai">Selesai</option>
+                                <option value="ditolak">Ditolak</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_laporan">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Pelapor</th>
-                        <th>Judul</th>
-                        <th>Periode</th>
-                        <th>Fasilitas</th>
-                        <th>Prioritas</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover" id="table_laporan">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Judul</th>
+                            <th>Pelapor</th>
+                            <th>Fasilitas</th>
+                            <th>Prioritas</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
+    </div>
+    <div id="myModal" class="modal fade" tabindex="-1" aria-hidden="true">
     </div>
 @endsection
 
-@push('css')
-@endpush
-
 @push('js')
     <script>
+        function modalAction(url = '') {
+            $('#myModal').load(url, function() {
+                var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
+                    keyboard: false,
+                    backdrop: 'static'
+                });
+                myModal.show();
+            });
+        }
+
         $(document).ready(function() {
             var dataLaporan = $('#table_laporan').DataTable({
                 serverSide: true,
                 ajax: {
                     url: "{{ url('sarpras/laporan/list') }}",
+                    type: "POST",
                     data: function(d) {
                         d.periode_id = $('#periode_id').val();
-                        d.status = $('#status').val();
+                        d.fasilitas_id = $('#fasilitas_id').val();
                         d.bobot_id = $('#bobot_id').val();
+                        d.status = $('#status').val();
                     }
                 },
                 columns: [
-                    {data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false},
-                    {data: "nama_pelapor", className: "", orderable: true, searchable: true},
-                    {data: "judul", className: "", orderable: true, searchable: true},
-                    {data: "periode", className: "", orderable: true, searchable: true},
-                    {data: "fasilitas", className: "", orderable: true, searchable: true},
-                    {data: "prioritas", className: "", orderable: true, searchable: true},
-                    {data: "status", className: "", orderable: true, searchable: true},
-                    {data: "created_at", className: "", orderable: true, searchable: true},
-                    {data: "aksi", className: "text-center", orderable: false, searchable: false}
+                    { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+                    { data: "judul", className: "", orderable: true, searchable: true },
+                    { data: "user.nama", className: "", orderable: false, searchable: false },
+                    { data: "fasilitas.fasilitas_nama", className: "", orderable: false, searchable: false },
+                    { data: "bobot_prioritas.bobot_nama", className: "", orderable: false, searchable: false },
+                    { data: "status", className: "", orderable: true, searchable: true },
+                    { data: "aksi", className: "", orderable: false, searchable: false }
                 ]
             });
 
-            $('#btn-filter').click(function(){
-                dataLaporan.ajax.reload();
-            });
-
-            $('#btn-reset').click(function(){
-                $('#periode_id').val('');
-                $('#status').val('');
-                $('#bobot_id').val('');
+            $('#periode_id, #fasilitas_id, #bobot_id, #status').on('change', function() {
                 dataLaporan.ajax.reload();
             });
         });

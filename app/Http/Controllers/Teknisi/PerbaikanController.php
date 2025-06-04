@@ -65,11 +65,11 @@ class PerbaikanController extends Controller
         return DataTables::of($perbaikans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($perbaikan) {
-                $btn = '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/edit_ajax') . '\')" class="btn btn-primary btn-sm mr-1">
-                            <i class="fa fa-edit"></i> Proses
+                $btn = '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/edit_ajax') . '\')" class="btn btn-primary btn-sm mr-1 title="Proses Perbaikan">
+                        <i class="fa fa-wrench"></i>
                         </button>';
-                $btn .= '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">
-                            <i class="fa fa-eye"></i> Detail
+                $btn .= '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm title="Lihat Detail Perbaikan">
+                            <i class="fa fa-eye"></i> 
                         </button>';
                 return $btn;
             })

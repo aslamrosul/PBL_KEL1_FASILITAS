@@ -54,6 +54,7 @@
                 <th>Kode Kriteria</th>
                 <th>Nama Kriteria</th>
                 <th>Bobot</th>
+                <th>Jenis Kriteria</th>
             </tr>
         </thead>
         <tbody>
@@ -63,6 +64,7 @@
                     <td>{{ $kriteria->kriteria_kode }}</td>
                     <td>{{ $kriteria->kriteria_nama }}</td>
                     <td>{{ $kriteria->bobot }}</td>
+                    <td>{{ $kriteria->kriteria_jenis }}</td>
                 </tr>
             @empty
                 <tr>

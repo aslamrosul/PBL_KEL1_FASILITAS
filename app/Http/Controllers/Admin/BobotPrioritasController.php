@@ -40,7 +40,7 @@ class BobotPrioritasController extends Controller
                 $editUrl = url('/bobot-prioritas/' . $bobot->bobot_id . '/edit_ajax');
                 return '
                     <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                        <i class="fa fa-edit"></i> Edit
+                        <i class="fa fa-edit"></i>  
                     </button>
                 ';
             })

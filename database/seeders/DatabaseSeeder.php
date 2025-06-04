@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
             LantaiSeeder::class,
             RuangSeeder::class,
             KategoriSeeder::class,
+            KlasifikasiSeeder::class,
             BarangSeeder::class,
             FasilitasSeeder::class,
-            KlasifikasiSeeder::class,
             PeriodeSeeder::class,
             BobotPrioritasSeeder::class,
             LaporanSeeder::class,
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             RekomendasiMahasiswaSeeder::class,
             RekomendasiDosenSeeder::class,
             RekomendasiTendikSeeder::class,
-            RekomendasiGDSSSeeder::class,
+            RekomendasiSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 
