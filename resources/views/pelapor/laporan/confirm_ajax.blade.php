@@ -4,7 +4,7 @@
             <h5 class="modal-title">Konfirmasi Hapus Laporan</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="formDeleteLaporan" action="{{ url('/pelapor/laporan/delete_ajax/' . $laporan->laporan_id) }}" method="POST">
+        <form id="formDeleteLaporan" action="{{ url('/pelapor/laporan/' . $laporan->laporan_id . '/delete_ajax') }}" method="POST">
             @csrf
             @method('DELETE')
             <div class="modal-body">

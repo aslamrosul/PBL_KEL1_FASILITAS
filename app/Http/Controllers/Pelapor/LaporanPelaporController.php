@@ -6,10 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\LaporanModel;
 use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
-use App\Models\GedungModel;
-use App\Models\LantaiModel;
-use App\Models\RuangModel;
-use App\Models\BarangModel;
 use App\Models\BobotPrioritasModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,8 +41,6 @@ class LaporanPelaporController extends Controller
     {
         if ($request->ajax()) {
             $laporan = LaporanModel::where('user_id', Auth::id())
-
-                ->with(['periode', 'fasilitas', 'user', 'Gedung', 'Lantai', 'Ruang', 'Barang'])
                 ->where('status', '!=', 'selesai') // hindari laporan yang sudah selesai
                 ->with(['periode', 'fasilitas', 'bobotPrioritas'])
                 ->select('t_laporan.*');
@@ -59,19 +53,19 @@ class LaporanPelaporController extends Controller
                     $deleteUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/confirm_ajax');
 
                     $buttons = '
-                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm " title="Lihat Laporan">
-                        <i class="fa fa-eye"></i> 
+                    <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
+                        <i class="fa fa-eye"></i> Detail
                     </button>
                 ';
 
                     // Tampilkan Edit dan Hapus hanya jika status bukan "diproses"
                     if ($laporan->status !== 'diproses') {
                         $buttons .= '
-                        <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm " title="Edit Laporan">
-                            <i class="fa fa-edit"></i> 
+                        <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
+                            <i class="fa fa-edit"></i> Edit
                         </button>
-                        <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm " title="Hapus Laporan">
-                            <i class="fa fa-trash"></i> 
+                        <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
+                            <i class="fa fa-trash"></i> Hapus
                         </button>
                     ';
                     }
@@ -87,11 +81,8 @@ class LaporanPelaporController extends Controller
     {
         $periode = PeriodeModel::select('periode_id', 'periode_nama')->get();
         $fasilitas = FasilitasModel::select('fasilitas_id', 'fasilitas_nama')->get();
-        $gedung = GedungModel::select('gedung_id', 'gedung_nama')->get();
-        $lantai = LantaiModel::select('lantai_id', 'lantai_nomor')->get();
-        $ruang = RuangModel::select('ruang_id', 'ruang_nama')->get();
-        $barang = BarangModel::select('barang_id', 'barang_nama')->get();
-        return view('pelapor.laporan.create_ajax', compact('periode', 'fasilitas', 'gedung', 'lantai', 'ruang', 'barang'));
+        $bobot = BobotPrioritasModel::select('bobot_id', 'bobot_nama')->get();
+        return view('pelapor.laporan.create_ajax', compact('periode', 'fasilitas', 'bobot'));
     }
 
     public function store_ajax(Request $request)
@@ -100,12 +91,9 @@ class LaporanPelaporController extends Controller
             $validator = Validator::make($request->all(), [
                 'judul' => 'required|string|max:100',
                 'deskripsi' => 'required|string',
-                'gedung_id' => 'required|exists:m_gedung,gedung_id',
-                'lantai_id' => 'required|exists:m_lantai,lantai_id',
-                'ruang_id' => 'required|exists:m_ruang,ruang_id',
-                'barang_id' => 'nullable|exists:m_barang,barang_id',
-                'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
                 'periode_id' => 'required|exists:m_periode,periode_id',
+                'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
+                'bobot_id' => 'nullable|exists:m_bobot_prioritas,bobot_id',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
@@ -124,10 +112,7 @@ class LaporanPelaporController extends Controller
                     'fasilitas_id' => $request->fasilitas_id,
                     'judul' => $request->judul,
                     'deskripsi' => $request->deskripsi,
-                    'gedung_id' => $request->gedung_id,
-                    'lantai_id' => $request->lantai_id,
-                    'ruang_id' => $request->ruang_id,
-                    'barang_id' => $request->barang_id,
+                    'bobot_id' => $request->bobot_id,
                     'status' => 'pending',
                 ];
 
@@ -161,15 +146,10 @@ class LaporanPelaporController extends Controller
                 'message' => 'Data tidak ditemukan'
             ]);
         }
-        
-        $fasilitas = FasilitasModel::all();
-        $periode = PeriodeModel::all();
-        
-        return view('pelapor.laporan.edit_ajax', compact(
-            'laporan', 
-            'fasilitas',
-            'periode'
-        ));
+        $periode = PeriodeModel::select('periode_id', 'periode_nama')->get();
+        $fasilitas = FasilitasModel::select('fasilitas_id', 'fasilitas_nama')->get();
+        $bobot = BobotPrioritasModel::select('bobot_id', 'bobot_nama')->get();
+        return view('pelapor.laporan.edit_ajax', compact('laporan', 'periode', 'fasilitas', 'bobot'));
     }
 
     public function update_ajax(Request $request, $id)
@@ -178,12 +158,9 @@ class LaporanPelaporController extends Controller
             $validator = Validator::make($request->all(), [
                 'judul' => 'required|string|max:100',
                 'deskripsi' => 'required|string',
-                'gedung_id' => 'required|exists:m_gedung,gedung_id',
-                'lantai_id' => 'required|exists:m_lantai,lantai_id',
-                'ruang_id' => 'required|exists:m_ruang,ruang_id',
-                'barang_id' => 'nullable|exists:m_barang,barang_id',
-                'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
                 'periode_id' => 'required|exists:m_periode,periode_id',
+                'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
+                'bobot_id' => 'nullable|exists:m_bobot_prioritas,bobot_id',
                 'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
@@ -205,16 +182,11 @@ class LaporanPelaporController extends Controller
 
             try {
                 $data = [
-                    'user_id' => Auth::id(),
                     'periode_id' => $request->periode_id,
                     'fasilitas_id' => $request->fasilitas_id,
                     'judul' => $request->judul,
                     'deskripsi' => $request->deskripsi,
-                    'gedung_id' => $request->gedung_id,
-                    'lantai_id' => $request->lantai_id,
-                    'ruang_id' => $request->ruang_id,
-                    'barang_id' => $request->barang_id,
-                    'status' => 'pending',
+                    'bobot_id' => $request->bobot_id,
                 ];
 
                 if ($request->hasFile('foto')) {
@@ -276,7 +248,7 @@ class LaporanPelaporController extends Controller
 
     public function show_ajax($id)
     {
-        $laporan = LaporanModel::with(['periode', 'fasilitas', 'user'])->find($id);
+        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])->find($id);
         if (!$laporan) {
             return response()->json([
                 'status' => false,
@@ -325,10 +297,7 @@ class LaporanPelaporController extends Controller
                             'fasilitas_id' => trim($value['B']),
                             'judul' => trim($value['C']),
                             'deskripsi' => trim($value['D']),
-                            'gedung' => trim($value['E']),
-                            'lantai' => trim($value['F']),
-                            'ruang' => trim($value['G']),
-                            'barang' => trim($value['H']),
+                            'bobot_id' => trim($value['E']) ?: null,
                             'status' => 'pending',
                             'created_at' => now(),
                         ];
@@ -357,7 +326,7 @@ class LaporanPelaporController extends Controller
     public function export_excel()
     {
         $laporan = LaporanModel::where('user_id', Auth::id())
-            ->with(['periode', 'fasilitas', 'user'])
+            ->with(['periode', 'fasilitas', 'bobotPrioritas'])
             ->select('t_laporan.*')
             ->get();
 
@@ -369,13 +338,10 @@ class LaporanPelaporController extends Controller
         $sheet->setCellValue('C1', 'Deskripsi');
         $sheet->setCellValue('D1', 'Periode');
         $sheet->setCellValue('E1', 'Fasilitas');
-        $sheet->setCellValue('F1', 'Gedung');
-        $sheet->setCellValue('G1', 'Lantai');
-        $sheet->setCellValue('H1', 'Ruang');
-        $sheet->setCellValue('I1', 'Barang');
-        $sheet->setCellValue('J1', 'Status');
-        $sheet->setCellValue('K1', 'Tanggal Lapor');
-        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
+        $sheet->setCellValue('F1', 'Prioritas');
+        $sheet->setCellValue('G1', 'Status');
+        $sheet->setCellValue('H1', 'Tanggal Lapor');
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
@@ -385,17 +351,14 @@ class LaporanPelaporController extends Controller
             $sheet->setCellValue('C' . $baris, $item->deskripsi);
             $sheet->setCellValue('D' . $baris, $item->periode->periode_nama ?? '-');
             $sheet->setCellValue('E' . $baris, $item->fasilitas->fasilitas_nama ?? '-');
-            $sheet->setCellValue('F' . $baris, $item->gedung);
-            $sheet->setCellValue('G' . $baris, $item->lantai);
-            $sheet->setCellValue('H' . $baris, $item->ruang);
-            $sheet->setCellValue('I' . $baris, $item->barang);
-            $sheet->setCellValue('J' . $baris, $item->status);
-            $sheet->setCellValue('K' . $baris, $item->tanggal_lapor);
+            $sheet->setCellValue('F' . $baris, $item->bobotPrioritas->bobot_nama ?? '-');
+            $sheet->setCellValue('G' . $baris, $item->status);
+            $sheet->setCellValue('H' . $baris, $item->tanggal_lapor);
             $no++;
             $baris++;
         }
 
-        foreach (range('A', 'K') as $columnID) {
+        foreach (range('A', 'H') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -414,7 +377,7 @@ class LaporanPelaporController extends Controller
     public function export_pdf()
     {
         $laporan = LaporanModel::where('user_id', Auth::id())
-            ->with(['periode', 'fasilitas', 'user'])
+            ->with(['periode', 'fasilitas', 'bobotPrioritas'])
             ->select('t_laporan.*')
             ->get();
 
