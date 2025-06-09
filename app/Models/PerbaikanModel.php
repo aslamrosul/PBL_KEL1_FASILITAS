@@ -27,6 +27,12 @@ class PerbaikanModel extends Model
         'foto_perbaikan',
     ];
 
+    protected $casts = [
+        'tanggal_mulai' => 'datetime',
+        'tanggal_selesai' => 'datetime',
+        'total_biaya' => 'decimal:2'
+    ];
+
     public function laporan()
     {
         return $this->belongsTo(LaporanModel::class, 'laporan_id');
@@ -40,5 +46,15 @@ class PerbaikanModel extends Model
     public function details()
     {
         return $this->hasMany(PerbaikanDetailModel::class, 'perbaikan_id');
+    }
+
+     public function scopeAktif($query)
+    {
+        return $query->whereIn('status', ['dalam_antrian', 'dikerjakan']);
+    }
+
+    public function scopeSelesai($query)
+    {
+        return $query->where('status', 'selesai');
     }
 }

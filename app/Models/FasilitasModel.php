@@ -36,4 +36,8 @@ class FasilitasModel extends Model
     {
         return $this->hasMany(LaporanModel::class, 'fasilitas_id');
     }
+       public function alternatifNilai()
+    {
+        return $this->hasMany(AlternatifNilaiModel::class, 'fasilitas_id');
+    }
 }

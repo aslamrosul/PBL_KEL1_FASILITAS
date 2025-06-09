@@ -7,7 +7,8 @@ use App\Models\LaporanModel;
 use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
-
+use App\Models\PerbaikanModel;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -70,14 +71,14 @@ class LaporanSarprasController extends Controller
         return DataTables::of($laporan)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\''.url('/sarpras/laporan/'.$laporan->laporan_id.'/show_ajax').'\')" class="btn btn-info btn-sm mr-1"><i class="fa fa-eye"></i></button>';
-                
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm mr-1"><i class="fa fa-eye"></i></button>';
+
                 if ($laporan->status == 'diverifikasi') {
-                    $btn .= '<button onclick="modalAction(\''.url('/sarpras/laporan/'.$laporan->laporan_id.'/assign_ajax').'\')" class="btn btn-success btn-sm ">
+                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm ">
                         <i class="fa fa-briefcase"></i>
                     </button>';
                 }
-                
+
                 return $btn;
             })
             ->rawColumns(['aksi'])
@@ -160,51 +161,5 @@ class LaporanSarprasController extends Controller
 
         return $pdf->stream('Data Laporan ' . date('Y-m-d H-i-s') . '.pdf');
     }
-    public function assign_ajax($id)
-    {
-        $laporan = LaporanModel::find($id);
-        $teknisi = TeknisiModel::all(); // Asumsi ada model Teknisi
-        return view('sarpras.laporan.assign_ajax', compact('laporan', 'teknisi'));
-    }
-
-    public function assign(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
-            'teknisi_id' => 'required|exists:m_user,user_id',
-            'catatan' => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal',
-                'msgField' => $validator->errors()
-            ]);
-        }
-
-        try {
-            // Buat perbaikan baru
-            $perbaikan = PerbaikanModel::create([
-                'laporan_id' => $id,
-                'teknisi_id' => $request->teknisi_id,
-                'tanggal_mulai' => now(),
-                'status' => 'diproses',
-                'catatan' => $request->catatan
-            ]);
-
-            // Update status laporan
-            LaporanModel::find($id)->update(['status' => 'diproses']);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Teknisi berhasil ditugaskan',
-                'id' => $perbaikan->perbaikan_id
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Gagal menugaskan teknisi: ' . $e->getMessage()
-            ]);
-        }
-    }
+   
 }

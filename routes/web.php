@@ -11,7 +11,6 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\DashboardAdminController;
 // 
 use App\Http\Controllers\Admin\LaporanAdminController;
-use App\Http\Controllers\Admin\StatistikTrenController;
 
 //  manajemen data
 use App\Http\Controllers\Admin\UserController;
@@ -41,6 +40,8 @@ use App\Http\Controllers\RiwayatController;
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
 use App\Http\Controllers\Sarpras\LaporanSarprasController;
+use App\Http\Controllers\Sarpras\PenugasanController;
+use App\Http\Controllers\Sarpras\RiwayatPenugasanController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -388,7 +389,7 @@ Route::prefix('admin')->group(function () {
         Route::prefix('sarpras')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardSarprasController::class, 'index'])->name('sarpras.dashboard');
             Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi.index');
-            Route::get('/riwayat', [RiwayatController::class, 'index'])->name('sarpras.riwayat.index');
+            Route::get('/riwayat', [RiwayatPenugasanController::class, 'index'])->name('sarpras.riwayat.index');
         });
 
         //route laporan kerusakan
@@ -399,8 +400,8 @@ Route::prefix('admin')->group(function () {
                 Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan.index');
                 Route::post('/list',[LaporanSarprasController::class, 'list'] )->name('laporan.list');
                 Route::get('/{id}/show_ajax', [LaporanSarprasController::class, 'show_ajax'] )->name('laporan.show');
-                Route::get('/{id}/assign_ajax', [LaporanSarprasController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
-                Route::post('/{id}/assign',[LaporanSarprasController::class, 'assign']  )->name('laporan.assign');
+                Route::get('/{id}/assign_ajax', [PenugasanController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
+                Route::post('/{id}/assign',[PenugasanController::class, 'assign']  )->name('laporan.assign');
                 Route::get('/export_excel', [LaporanSarprasController::class, 'export_excel'] )->name('laporan.export_excel');
                 Route::get('/export_pdf',[LaporanSarprasController::class, 'export_pdf']  )->name('laporan.export_pdf');
             });

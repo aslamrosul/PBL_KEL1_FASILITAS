@@ -1,38 +1,43 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Models;
 
-return new class extends Migration
+use Illuminate\Database\Eloquent\Model;
+
+class RiwayatPenugasanModel extends Model
 {
-    /**
-     * Run the migrations.
-     */
-    public function up()
+    protected $table = 't_riwayat_penugasan';
+    protected $primaryKey = 'riwayat_penugasan_id';
+    protected $fillable = [
+        'laporan_id',
+        'teknisi_id',
+        'sarpras_id',
+        'tanggal_penugasan',
+        'status_penugasan',
+        'tanggal_selesai'
+    ];
+
+    // Relasi ke laporan
+    public function laporan()
     {
-        Schema::create('t_riwayat_penugasan', function (Blueprint $table) {
-            $table->id('riwayat_penugasan_id');
-            $table->unsignedBigInteger('laporan_id');
-            $table->unsignedBigInteger('teknisi_id');
-            $table->unsignedBigInteger('sarpras_id');
-            $table->date('tanggal_penugasan');
-            $table->string('status_penugasan')->default('ditugaskan'); // bisa juga enum
-            $table->text('catatan')->nullable();
-            $table->timestamps();
-
-            $table->foreign('teknisi_id')->references('user_id')->on('m_user');
-            $table->foreign('sarpras_id')->references('user_id')->on('m_user');
-            $table->foreign('laporan_id')->references('laporan_id')->on('t_laporan');
-
-        });
+        return $this->belongsTo(LaporanModel::class, 'laporan_id');
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    // Relasi ke teknisi
+    public function teknisi()
     {
-        Schema::dropIfExists('t_riwayat_penugasan');
+        return $this->belongsTo(UserModel::class, 'teknisi_id');
     }
-};
+
+    // Relasi ke petugas sarpras
+    public function sarpras()
+    {
+        return $this->belongsTo(UserModel::class, 'sarpras_id');
+    }
+
+    // Scope untuk penugasan aktif
+    public function scopeAktif($query)
+    {
+        return $query->whereIn('status_penugasan', ['ditugaskan', 'dikerjakan']);
+    }
+}

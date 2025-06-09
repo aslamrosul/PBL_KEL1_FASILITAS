@@ -12,13 +12,14 @@ class PeriodeSeeder extends Seeder
     public function run()
     {
         PeriodeModel::insert([
+            // Tahun Akademik 2024/2025
             [
-                'periode_kode' => '2024-GENAP',
-                'periode_nama' => 'Semester Genap 2023/2024',
-                'tanggal_mulai' => Carbon::create(2024, 2, 1),
-                'tanggal_selesai' => Carbon::create(2024, 6, 30),
-                'is_aktif' => true,
-                 'created_at' => Carbon::now(),
+                'periode_kode' => '2024-TAHUN',
+                'periode_nama' => 'Tahun Akademik 2024/2025',
+                'tanggal_mulai' => Carbon::create(2024, 9, 1),
+                'tanggal_selesai' => Carbon::create(2025, 6, 30),
+                'is_aktif' => false,
+                'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
@@ -28,6 +29,24 @@ class PeriodeSeeder extends Seeder
                 'tanggal_selesai' => Carbon::create(2025, 1, 31),
                 'is_aktif' => false,
                  'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'periode_kode' => '2025-GENAP',
+                'periode_nama' => 'Semester Genap 2024/2025',
+                'tanggal_mulai' => Carbon::create(2025, 2, 1),
+                'tanggal_selesai' => Carbon::create(2025, 6, 30),
+                'is_aktif' => false,
+                 'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+             [
+                'periode_kode' => '2024-TAHUN',
+                'periode_nama' => 'Tahun Akademik 2024/2025',
+                'tanggal_mulai' => Carbon::create(2024, 9, 1),
+                'tanggal_selesai' => Carbon::create(2025, 6, 30),
+                'is_aktif' => false,
+                'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
         ]);
