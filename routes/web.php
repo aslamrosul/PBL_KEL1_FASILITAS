@@ -183,7 +183,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/', [LantaiController::class, 'index'])->name('admin.lantai.index'); // menampilkan halaman awal user
             Route::post('/list', [LantaiController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [LantaiController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
-            Route::post('/ajax', [LantaiController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::post('/store_ajax', [LantaiController::class, 'store_ajax']); // Menyimpan data user baru Ajax
             Route::get('/{id}/show_ajax', [LantaiController::class, 'show_ajax']); // menampilkan detail user ajax
             Route::get('/{id}/edit_ajax', [LantaiController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
             Route::put('/{id}/update_ajax', [LantaiController::class, 'update_ajax']); // menyimpan perubahan data user ajax
