@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\KriteriaController;
 use App\Http\Controllers\Admin\KlasifikasiController;
 
 
+
 //Pelapor Controllers
 use App\Http\Controllers\DashboardPelaporController;
 use App\Http\Controllers\Pelapor\FeedbackController;
@@ -35,13 +36,14 @@ use App\Http\Controllers\Pelapor\RiwayatPelaporController;
 //Sarpras Controllers
 use App\Http\Controllers\DashboardSarprasController;
 use App\Http\Controllers\Sarpras\RekomendasiController;
+use App\Http\Controllers\Sarpras\RiwayatPenugasanController;
+use App\Http\Controllers\Sarpras\LaporanSarprasController;
 use App\Http\Controllers\RiwayatController;
+
 
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
-use App\Http\Controllers\Sarpras\LaporanSarprasController;
 use App\Http\Controllers\Sarpras\PenugasanController;
-use App\Http\Controllers\Sarpras\RiwayatPenugasanController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -389,7 +391,7 @@ Route::prefix('admin')->group(function () {
         Route::prefix('sarpras')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardSarprasController::class, 'index'])->name('sarpras.dashboard');
             Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi.index');
-            Route::get('/riwayat', [RiwayatPenugasanController::class, 'index'])->name('sarpras.riwayat.index');
+            // Route::get('/riwayat', [RiwayatPenugasanController::class, 'index'])->name('sarpras.riwayat.index');
         });
 
         //route laporan kerusakan
@@ -402,9 +404,23 @@ Route::prefix('admin')->group(function () {
                 Route::get('/{id}/show_ajax', [LaporanSarprasController::class, 'show_ajax'] )->name('laporan.show');
                 Route::get('/{id}/assign_ajax', [PenugasanController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
                 Route::post('/{id}/assign',[PenugasanController::class, 'assign']  )->name('laporan.assign');
+                Route::get('/{id}/change_status_ajax', [LaporanSarprasController::class, 'change_status_ajax'])->name('laporan.change_status_ajax');
+                Route::put('/{id}/update_status', [LaporanSarprasController::class, 'update_status'])->name('laporan.update_status');
                 Route::get('/export_excel', [LaporanSarprasController::class, 'export_excel'] )->name('laporan.export_excel');
                 Route::get('/export_pdf',[LaporanSarprasController::class, 'export_pdf']  )->name('laporan.export_pdf');
             });
+
+            Route::prefix('penugasan')->group(function () {
+                Route::get('/', [RiwayatPenugasanController::class, 'index'])->name('sarpras.penugasan.index');
+                Route::post('/list', [RiwayatPenugasanController::class, 'list'])->name('penugasan.list');
+                Route::get('/{id}/show_ajax', [RiwayatPenugasanController::class, 'show_ajax'])->name('penugasan.show_ajax');
+                Route::get('/export_excel', [RiwayatPenugasanController::class, 'export_excel'])->name('penugasan.export_excel');
+                Route::get('/export_pdf', [RiwayatPenugasanController::class, 'export_pdf'])->name('penugasan.export_pdf');
+                Route::get('/{laporan_id}/create_ajax', [RiwayatPenugasanController::class, 'create_ajax'])->name('penugasan.create_ajax');
+                Route::post('/', [RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
+            });
+           
+    
         });
 
         // Route untuk rekomendasi
@@ -438,6 +454,8 @@ Route::prefix('admin')->group(function () {
             Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
             Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
         });
+
+        
         Route::prefix('sarpras')->group(function () {
     Route::get('/dashboard/yearly-trend', [DashboardSarprasController::class, 'getYearlyTrend'])->name('sarpras.dashboard.yearly-trend');
     Route::get('/dashboard/priority-facilities', [DashboardSarprasController::class, 'getPriorityFacilities'])->name('sarpras.dashboard.priority-facilities');
