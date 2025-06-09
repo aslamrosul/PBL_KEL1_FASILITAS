@@ -79,7 +79,7 @@
                                                                                                                                                                                                                 }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-map"></i>
-                                    <span>Manajemen Lokasi</span>
+                                    <span>Manajemen Data</span>
                                 </a>
                                 <ul class="submenu">
                                     <li class="submenu-item {{ request()->routeIs('admin.periode.*') ? 'active' : '' }}">
@@ -135,11 +135,11 @@
                                 </ul>
                             </li>
 
-                            <li class="sidebar-item {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                            {{-- <li class="sidebar-item {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.laporan.index') }}" class='sidebar-link'>
                                     <i class="bi bi-file-earmark-text"></i>
                                     <span>Laporan Kerusakan</span>
-                                </a>
+                                </a> --}}
                             </li>
                 @endif
 
