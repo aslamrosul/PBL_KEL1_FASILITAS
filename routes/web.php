@@ -402,8 +402,8 @@ Route::prefix('admin')->group(function () {
                 Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan.index');
                 Route::post('/list',[LaporanSarprasController::class, 'list'] )->name('laporan.list');
                 Route::get('/{id}/show_ajax', [LaporanSarprasController::class, 'show_ajax'] )->name('laporan.show');
-                Route::get('/{id}/assign_ajax', [PenugasanController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
-                Route::post('/{id}/assign',[PenugasanController::class, 'assign']  )->name('laporan.assign');
+                Route::get('/{id}/assign_ajax', [LaporanSarprasController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
+                Route::post('/{id}/assign', [LaporanSarprasController::class, 'assign'])->name('laporan.assign');
                 Route::get('/{id}/change_status_ajax', [LaporanSarprasController::class, 'change_status_ajax'])->name('laporan.change_status_ajax');
                 Route::put('/{id}/update_status', [LaporanSarprasController::class, 'update_status'])->name('laporan.update_status');
                 Route::get('/export_excel', [LaporanSarprasController::class, 'export_excel'] )->name('laporan.export_excel');
