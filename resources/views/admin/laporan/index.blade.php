@@ -1,18 +1,9 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                {{-- Tombol tambah laporan, diaktifkan jika Anda ingin menambahkan fungsionalitas tambah --}}
-                {{-- <button onclick="modalAction('{{ url('/laporan-admin/create_ajax') }}')" class="btn btn-success">
-                    Tambah Laporan
-                </button> --}}
-                {{-- Contoh tombol export/import jika diperlukan untuk laporan --}}
-                {{-- <button onclick="modalAction('{{ url('/laporan-admin/import') }}')" class="btn btn-info">Import Laporan</button>
-                <a href="{{ url('/laporan-admin/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
-                <a href="{{ url('/laporan-admin/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a> --}}
             </div>
         </div>
         <div class="card-body">

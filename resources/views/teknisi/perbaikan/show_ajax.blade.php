@@ -92,14 +92,13 @@
                 </div>
             </div>
 
-             @if($perbaikan->status == 'ditolak')
+            @if($perbaikan->status == 'ditolak')
                 <div class="alert alert-danger">
                     <h5><i class="fas fa-times-circle"></i> Alasan Penolakan</h5>
                     <p class="mb-0">{{ $perbaikan->catatan }}</p>
-                    <p class="mb-0 mt-2"><small>Tanggal ditolak: {{ $perbaikan->tanggal_ditolak }}</small></p>
                 </div>
             @endif
-            
+
             @if ($perbaikan->laporan->foto_path)
                 <div class="mb-4">
                     <h5>Foto Bukti Kerusakan</h5>
@@ -122,33 +121,37 @@
                 </div>
             @endif
 
-            @if ($perbaikan->status == 'selesai' && $perbaikan->details->count() > 0)
+            @if ($perbaikan->status == 'selesai')
                 <div class="mb-4">
-                    <h5>Detail Tindakan Perbaikan</h5>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Tindakan</th>
-                                <th>Deskripsi</th>
-                                <th>Bahan</th>
-                                <th>Biaya</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($perbaikan->details as $detail)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $detail->tindakan }}</td>
-                                    <td>{{ $detail->deskripsi ?? '-' }}</td>
-                                    <td>{{ $detail->bahan ?? '-' }}</td>
-                                    <td>{{ $detail->biaya ? 'Rp ' . number_format($detail->biaya, 0, ',', '.') : '-' }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <h5>Total Biaya</h5>
+                    <div class="p-3 bg-light rounded">
+                        Rp {{ number_format($perbaikan->total_biaya, 0, ',', '.') }}
+                    </div>
                 </div>
+
+                @if ($perbaikan->details->count() > 0)
+                    <div class="mb-4">
+                        <h5>Detail Tindakan Perbaikan</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tindakan</th>
+                                    <th>Deskripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($perbaikan->details as $detail)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $detail->tindakan }}</td>
+                                        <td>{{ $detail->deskripsi ?? '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             @endif
         </div>
         <div class="modal-footer">

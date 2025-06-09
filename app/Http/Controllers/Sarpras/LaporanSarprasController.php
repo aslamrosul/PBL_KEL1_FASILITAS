@@ -7,7 +7,8 @@ use App\Models\LaporanModel;
 use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
-
+use App\Models\PerbaikanModel;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -68,21 +69,29 @@ class LaporanSarprasController extends Controller
         }
 
         return DataTables::of($laporan)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\''.url('/sarpras/laporan/'.$laporan->laporan_id.'/show_ajax').'\')" class="btn btn-info btn-sm mr-1"><i class="fa fa-eye"></i></button>';
-                
-                if ($laporan->status == 'diverifikasi') {
-                    $btn .= '<button onclick="modalAction(\''.url('/sarpras/laporan/'.$laporan->laporan_id.'/assign_ajax').'\')" class="btn btn-success btn-sm ">
-                        <i class="fa fa-briefcase"></i>
-                    </button>';
-                }
-                
-                return $btn;
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
-    }
+        ->addIndexColumn()
+        ->addColumn('aksi', function ($laporan) {
+            $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm mr-1"><i class="fa fa-eye"></i></button>';
+
+            // Tombol Assign (jika laporan diverifikasi)
+            if ($laporan->status == 'diterima') {
+                $btn .= '<button onclick="modalAction(\'' . url('/sarpras/penugasan/' . $laporan->laporan_id . '/create_ajax') . '\')" class="btn btn-success btn-sm mr-1">
+                    <i class="fa fa-briefcase"></i>
+                </button>';
+            }
+
+            // Tombol Ubah Status (jika status bukan 'selesai' atau 'ditolak')
+            if (!in_array($laporan->status, ['diterima', 'ditolak'])) {
+                $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/change_status_ajax') . '\')" class="btn btn-primary btn-sm">
+                    <i class="fa fa-sync-alt"></i>
+                </button>';
+            }
+
+            return $btn;
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+}
 
     public function show_ajax($id)
     {
@@ -160,4 +169,60 @@ class LaporanSarprasController extends Controller
 
         return $pdf->stream('Data Laporan ' . date('Y-m-d H-i-s') . '.pdf');
     }
+
+    public function change_status_ajax($id)
+    {
+        $laporan = LaporanModel::find($id);
+        if (!$laporan) {
+            return response()->json(['error' => 'Laporan tidak ditemukan.'], 404);
+        }
+        return view('sarpras.laporan.change_status_ajax', compact('laporan'));
+    }
+
+    /**
+     * Memproses perubahan status laporan.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id laporan_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update_status(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:diterima,ditolak', // Sesuaikan dengan status yang valid
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            $laporan = LaporanModel::find($id);
+            if (!$laporan) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Laporan tidak ditemukan.'
+                ], 404);
+            }
+
+            $laporan->status = $request->status;
+            $laporan->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Status laporan berhasil diperbarui.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal memperbarui status laporan: ' . $e->getMessage()
+            ]);
+        }
+    }
+
 }

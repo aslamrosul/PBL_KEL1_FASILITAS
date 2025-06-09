@@ -56,7 +56,7 @@
                 <div id="auth-left">
                     <div class="auth-logo mb-4">
                         <a href="#">
-                            <span class="brand-text">SILATAS <span>POLINEMA</span></span>
+                            <span class="brand-text">FixIT <span>POLINEMA</span></span>
                         </a>
                     </div>
                     <h1 class="auth-title">Sign In</h1>

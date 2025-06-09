@@ -18,6 +18,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+
 use Illuminate\Support\Facades\Log; // Untuk logging
 use Illuminate\Support\Facades\Auth; // Untuk mendapatkan user yang login
 use Illuminate\Support\Facades\DB; // Untuk transaksi database
@@ -152,7 +153,6 @@ class LaporanAdminController extends Controller
         {
             Log::info('update_status dipanggil untuk ID ' . $id . ' dengan data: ', $request->all());
     
-            // Validasi input request
             $validator = Validator::make($request->all(), [
                 'status' => 'required|string|in:Menunggu,Diterima,Ditolak,Diproses,Selesai',
                 'keterangan' => 'nullable|string|max:500',
@@ -175,7 +175,6 @@ class LaporanAdminController extends Controller
             $alasanPenolakan = $request->alasan_penolakan;
             $keteranganHistori = $request->keterangan;
     
-            // Pastikan user yang login ada
             $userId = Auth::id();
             if (is_null($userId)) {
                 Log::error('User tidak terautentikasi saat mencoba update status laporan ID: ' . $id);
@@ -187,7 +186,6 @@ class LaporanAdminController extends Controller
     
             DB::beginTransaction();
             try {
-                // Perbarui status laporan
                 $laporan->status = $newStatus;
     
                 if ($newStatus === 'Ditolak') {
@@ -203,28 +201,50 @@ class LaporanAdminController extends Controller
                     $laporan->tanggal_selesai = null;
                 }
     
-                // Coba simpan laporan dan log hasilnya
                 if ($laporan->save()) {
                     Log::info('Laporan ID ' . $id . ' status berhasil diperbarui di database.');
                 } else {
                     Log::error('Laporan ID ' . $id . ' status GAGAL diperbarui di database (save() mengembalikan false).');
-                    throw new \Exception('Gagal menyimpan perubahan status laporan.'); // Lempar exception untuk rollback
+                    throw new \Exception('Gagal menyimpan perubahan status laporan.');
                 }
     
-                // Buat entri histori laporan dan log hasilnya
+                // Tentukan nilai 'aksi' berdasarkan status baru
+                $aksi = '';
+                switch ($newStatus) {
+                    case 'Menunggu':
+                        $aksi = 'status_menunggu';
+                        break;
+                    case 'Diterima':
+                        $aksi = 'status_diterima';
+                        break;
+                    case 'Ditolak':
+                        $aksi = 'status_ditolak';
+                        break;
+                    case 'Diproses':
+                        $aksi = 'status_diproses';
+                        break;
+                    case 'Selesai':
+                        $aksi = 'status_selesai';
+                        break;
+                    default:
+                        $aksi = 'status_update'; // Fallback
+                        break;
+                }
+    
+                // Membuat entri histori laporan sesuai dengan kolom tabel t_laporan_history
                 $history = LaporanHistoryModel::create([
                     'laporan_id' => $laporan->laporan_id,
-                    'user_id' => $userId, // Gunakan userId yang sudah dicek
-                    'status' => $newStatus,
-                    'catatan' => $keteranganHistori,
-                    'tanggal_perubahan' => now(),
+                    'user_id' => $userId,
+                    'aksi' => $aksi,
+                    'keterangan' => $keteranganHistori,
+                    // created_at dan updated_at akan diisi otomatis oleh Laravel karena $timestamps = true di model
                 ]);
     
                 if ($history) {
                     Log::info('Histori laporan untuk ID ' . $id . ' berhasil dibuat.');
                 } else {
                     Log::error('Histori laporan untuk ID ' . $id . ' GAGAL dibuat.');
-                    throw new \Exception('Gagal membuat entri histori laporan.'); // Lempar exception untuk rollback
+                    throw new \Exception('Gagal membuat entri histori laporan.');
                 }
     
                 DB::commit();
@@ -239,7 +259,7 @@ class LaporanAdminController extends Controller
     
             } catch (\Exception $e) {
                 DB::rollBack();
-                Log::error('ERROR dalam transaksi updateStatus untuk ID ' . $id . ': ' . $e->getMessage(), ['exception' => $e]);
+                Log::error('ERROR dalam transaksi update_status untuk ID ' . $id . ': ' . $e->getMessage(), ['exception' => $e]);
     
                 return response()->json([
                     'success' => false,

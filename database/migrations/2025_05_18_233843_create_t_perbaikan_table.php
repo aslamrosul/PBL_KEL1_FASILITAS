@@ -17,10 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('teknisi_id');
             $table->timestamp('tanggal_mulai');
             $table->timestamp('tanggal_selesai')->nullable();
-            $table->timestamp('tanggal_ditolak')->nullable();
-
             $table->string('status', 20)->default('dalam_antrian')->comment('dalam_antrian, diproses, selesai');
             $table->text('catatan')->nullable();
+            $table->decimal('total_biaya', 15, 2)->nullable();
             $table->timestamps();
 
 

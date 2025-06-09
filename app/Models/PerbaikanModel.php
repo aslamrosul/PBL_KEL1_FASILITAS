@@ -15,17 +15,22 @@ class PerbaikanModel extends Model
     protected $dates = [
     'tanggal_mulai',
     'tanggal_selesai',
-    'tanggal_ditolak' // Tambahkan ini
 ];
     protected $fillable = [
         'laporan_id',
         'teknisi_id',
         'tanggal_mulai',
         'tanggal_selesai',
-         'tanggal_ditolak',
         'status',
         'catatan',
-        'foto_perbaikan'
+        'total_biaya',
+        'foto_perbaikan',
+    ];
+
+    protected $casts = [
+        'tanggal_mulai' => 'datetime',
+        'tanggal_selesai' => 'datetime',
+        'total_biaya' => 'decimal:2'
     ];
 
     public function laporan()
@@ -41,5 +46,15 @@ class PerbaikanModel extends Model
     public function details()
     {
         return $this->hasMany(PerbaikanDetailModel::class, 'perbaikan_id');
+    }
+
+     public function scopeAktif($query)
+    {
+        return $query->whereIn('status', ['dalam_antrian', 'dikerjakan']);
+    }
+
+    public function scopeSelesai($query)
+    {
+        return $query->where('status', 'selesai');
     }
 }

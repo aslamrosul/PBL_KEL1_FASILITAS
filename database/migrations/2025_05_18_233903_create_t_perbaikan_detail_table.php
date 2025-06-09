@@ -16,9 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('perbaikan_id');
             $table->text('tindakan');
             $table->text('deskripsi')->nullable(); // Opsional
-
-            $table->string('bahan', 100)->nullable();
-            $table->decimal('biaya', 12, 2)->nullable();
             $table->timestamps();
 
 

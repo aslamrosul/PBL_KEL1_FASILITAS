@@ -11,24 +11,22 @@
             <div class="modal-body">
                 <div class="form-group mb-3">
                     <label class="fw-bold">Status Perbaikan</label>
-                    <select name="status" id="status" class="form-control" required>
-                        <option value="menunggu" {{ $perbaikan->status == 'menunggu' ? 'selected' : '' }}>Menunggu
-                        </option>
-                        <option value="diproses" {{ $perbaikan->status == 'diproses' ? 'selected' : '' }}>Diproses
-                        </option>
-                        <option value="selesai" {{ $perbaikan->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                        <option value="ditolak" {{ $perbaikan->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-                    </select>
+                    @if (in_array($perbaikan->status, ['menunggu', 'diproses']))
+                        <select name="status" id="status" class="form-control" required>
+                            <option value="selesai">Selesai</option>
+                        </select>
+                    @else
+                        <input type="text" class="form-control" value="{{ $perbaikan->status }}" readonly>
+                        <input type="hidden" name="status" value="{{ $perbaikan->status }}">
+                    @endif
                 </div>
 
-                <div class="form-group mb-3" id="catatan-container">
-                    <label>Catatan <span class="text-danger" id="catatan-required"
-                            style="display: none;">*</span></label>
+                <div class="form-group mb-3">
+                    <label>Catatan</label>
                     <textarea name="catatan" class="form-control" rows="3">{{ $perbaikan->catatan }}</textarea>
-                    <small class="text-muted">Wajib diisi ketika status Ditolak</small>
                 </div>
 
-                <div id="foto-container" style="display: {{ $perbaikan->status == 'selesai' ? 'block' : 'none' }};">
+                <div id="selesai-container" style="display: {{ $perbaikan->status == 'selesai' ? 'block' : 'none' }};">
                     <div class="form-group mb-3">
                         <label>Foto Perbaikan</label>
                         <input type="file" name="foto_perbaikan" class="form-control">
@@ -44,9 +42,13 @@
                             </div>
                         @endif
                     </div>
-                </div>
 
-                <div id="detail-perbaikan" style="display: {{ $perbaikan->status == 'selesai' ? 'block' : 'none' }};">
+                    <div class="form-group mb-3">
+                        <label>Total Biaya (Rp) <span class="text-danger">*</span></label>
+                        <input type="number" name="total_biaya" class="form-control"
+                            value="{{ $perbaikan->total_biaya ?? '' }}" required>
+                    </div>
+
                     <h5 class="border-bottom pb-2">Detail Perbaikan</h5>
                     <div id="tindakan-container">
                         @if ($perbaikan->status == 'selesai' && $perbaikan->details->count() > 0)
@@ -55,28 +57,11 @@
                                     <div class="form-group">
                                         <label>Tindakan <span class="text-danger">*</span></label>
                                         <input type="text" name="tindakan[]" class="form-control"
-                                            value="{{ $detail->tindakan }}"
-                                            {{ $perbaikan->status == 'selesai' ? 'required' : '' }}>
+                                            value="{{ $detail->tindakan }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Deskripsi</label>
                                         <textarea name="deskripsi[]" class="form-control">{{ $detail->deskripsi }}</textarea>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Bahan</label>
-                                                <input type="text" name="bahan[]" class="form-control"
-                                                    value="{{ $detail->bahan }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Biaya (Rp)</label>
-                                                <input type="number" name="biaya[]" class="form-control"
-                                                    value="{{ $detail->biaya }}">
-                                            </div>
-                                        </div>
                                     </div>
                                     @if ($index > 0)
                                         <button type="button" class="btn btn-danger btn-sm mt-2 remove-tindakan">Hapus
@@ -88,26 +73,11 @@
                             <div class="tindakan-item mb-3 border p-3">
                                 <div class="form-group">
                                     <label>Tindakan <span class="text-danger">*</span></label>
-                                    <input type="text" name="tindakan[]" class="form-control"
-                                        {{ $perbaikan->status == 'selesai' ? 'required' : '' }}>
+                                    <input type="text" name="tindakan[]" class="form-control" required>
                                 </div>
                                 <div class="form-group">
                                     <label>Deskripsi</label>
                                     <textarea name="deskripsi[]" class="form-control"></textarea>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Bahan</label>
-                                            <input type="text" name="bahan[]" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Biaya (Rp)</label>
-                                            <input type="number" name="biaya[]" class="form-control">
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -130,32 +100,14 @@
         // Toggle tampilan field berdasarkan status
         $('#status').change(function() {
             const status = $(this).val();
-
-            // Tampilkan catatan wajib jika status ditolak
-            if (status === 'ditolak') {
-                $('#catatan-required').show();
-                $('textarea[name="catatan"]').prop('required', true);
-            } else {
-                $('#catatan-required').hide();
-                $('textarea[name="catatan"]').prop('required', false);
-            }
-
-            // Tampilkan foto dan detail perbaikan hanya untuk status selesai
             if (status === 'selesai') {
-                $('#foto-container').show();
-                $('#detail-perbaikan').show();
-                // Set required hanya untuk status selesai
+                $('#selesai-container').show();
                 $('input[name="tindakan[]"]').prop('required', true);
+                $('input[name="total_biaya"]').prop('required', true);
             } else {
-                $('#foto-container').hide();
-                $('#detail-perbaikan').hide();
-                // Hapus required ketika bukan status selesai
+                $('#selesai-container').hide();
                 $('input[name="tindakan[]"]').prop('required', false);
-            }
-
-            // Sembunyikan foto jika status ditolak
-            if (status === 'ditolak') {
-                $('#hapus_foto').prop('checked', true);
+                $('input[name="total_biaya"]').prop('required', false);
             }
         });
 
@@ -164,34 +116,19 @@
 
         // Fungsi tambah tindakan
         $('#tambah-tindakan').click(function() {
-            var isSelesai = $('#status').val() === 'selesai';
             var newItem = `
-        <div class="tindakan-item mb-3 border p-3">
-            <div class="form-group">
-                <label>Tindakan <span class="text-danger">*</span></label>
-                <input type="text" name="tindakan[]" class="form-control" ${isSelesai ? 'required' : ''}>
-            </div>
-            <div class="form-group">
-                <label>Deskripsi</label>
-                <textarea name="deskripsi[]" class="form-control"></textarea>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
+                <div class="tindakan-item mb-3 border p-3">
                     <div class="form-group">
-                        <label>Bahan</label>
-                        <input type="text" name="bahan[]" class="form-control">
+                        <label>Tindakan <span class="text-danger">*</span></label>
+                        <input type="text" name="tindakan[]" class="form-control" required>
                     </div>
-                </div>
-                <div class="col-md-6">
                     <div class="form-group">
-                        <label>Biaya (Rp)</label>
-                        <input type="number" name="biaya[]" class="form-control">
+                        <label>Deskripsi</label>
+                        <textarea name="deskripsi[]" class="form-control"></textarea>
                     </div>
+                    <button type="button" class="btn btn-danger btn-sm mt-2 remove-tindakan">Hapus Tindakan</button>
                 </div>
-            </div>
-            <button type="button" class="btn btn-danger btn-sm mt-2 remove-tindakan">Hapus Tindakan</button>
-        </div>
-    `;
+            `;
             $('#tindakan-container').append(newItem);
         });
 

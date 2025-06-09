@@ -11,7 +11,6 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\DashboardAdminController;
 // 
 use App\Http\Controllers\Admin\LaporanAdminController;
-use App\Http\Controllers\Admin\StatistikTrenController;
 
 //  manajemen data
 use App\Http\Controllers\Admin\UserController;
@@ -27,6 +26,7 @@ use App\Http\Controllers\Admin\KriteriaController;
 use App\Http\Controllers\Admin\KlasifikasiController;
 
 
+
 //Pelapor Controllers
 use App\Http\Controllers\DashboardPelaporController;
 use App\Http\Controllers\Pelapor\FeedbackController;
@@ -36,11 +36,14 @@ use App\Http\Controllers\Pelapor\RiwayatPelaporController;
 //Sarpras Controllers
 use App\Http\Controllers\DashboardSarprasController;
 use App\Http\Controllers\Sarpras\RekomendasiController;
+use App\Http\Controllers\Sarpras\RiwayatPenugasanController;
+use App\Http\Controllers\Sarpras\LaporanSarprasController;
 use App\Http\Controllers\RiwayatController;
+
 
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
-use App\Http\Controllers\Sarpras\LaporanSarprasController;
+use App\Http\Controllers\Sarpras\PenugasanController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -183,7 +186,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/', [LantaiController::class, 'index'])->name('admin.lantai.index'); // menampilkan halaman awal user
             Route::post('/list', [LantaiController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
             Route::get('/create_ajax', [LantaiController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
-            Route::post('/ajax', [LantaiController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::post('/store_ajax', [LantaiController::class, 'store_ajax']); // Menyimpan data user baru Ajax
             Route::get('/{id}/show_ajax', [LantaiController::class, 'show_ajax']); // menampilkan detail user ajax
             Route::get('/{id}/edit_ajax', [LantaiController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
             Route::put('/{id}/update_ajax', [LantaiController::class, 'update_ajax']); // menyimpan perubahan data user ajax
@@ -334,8 +337,8 @@ Route::prefix('admin')->group(function () {
             Route::post('/list', [LaporanAdminController::class, 'list'])->name('admin.laporan.list'); // datatables
             // Optional: AJAX modal actions
             Route::get('/{laporan_id}/show_ajax', [LaporanAdminController::class, 'show_ajax'])->name('laporan.show_ajax');
-            Route::get('/{laporan_id}/edit_ajax', [LaporanAdminController::class, 'edit_ajax'])->name('laporan.edit_ajax');
-            Route::put('/{laporan_id}/update_status', [LaporanAdminController::class, 'update_status'])->name('admin.laporan.update_status');
+            Route::get('/{id}/edit_ajax', [LaporanAdminController::class, 'edit_ajax'])->name('admin.laporan.edit_ajax');
+            Route::put('/{id}/update_status', [LaporanAdminController::class, 'update_status'])->name('laporan.update_status');
         });
 
 
@@ -388,7 +391,7 @@ Route::prefix('admin')->group(function () {
         Route::prefix('sarpras')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardSarprasController::class, 'index'])->name('sarpras.dashboard');
             Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi.index');
-            Route::get('/riwayat', [RiwayatController::class, 'index'])->name('sarpras.riwayat.index');
+            // Route::get('/riwayat', [RiwayatPenugasanController::class, 'index'])->name('sarpras.riwayat.index');
         });
 
         //route laporan kerusakan
@@ -399,11 +402,25 @@ Route::prefix('admin')->group(function () {
                 Route::get('/', [LaporanSarprasController::class, 'index'])->name('sarpras.laporan.index');
                 Route::post('/list',[LaporanSarprasController::class, 'list'] )->name('laporan.list');
                 Route::get('/{id}/show_ajax', [LaporanSarprasController::class, 'show_ajax'] )->name('laporan.show');
-                Route::get('/{id}/assign_ajax', [LaporanSarprasController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
-                Route::post('/{id}/assign',[LaporanSarprasController::class, 'assign']  )->name('laporan.assign');
+                Route::get('/{id}/assign_ajax', [PenugasanController::class, 'assign_ajax'] )->name('laporan.assign_ajax');
+                Route::post('/{id}/assign',[PenugasanController::class, 'assign']  )->name('laporan.assign');
+                Route::get('/{id}/change_status_ajax', [LaporanSarprasController::class, 'change_status_ajax'])->name('laporan.change_status_ajax');
+                Route::put('/{id}/update_status', [LaporanSarprasController::class, 'update_status'])->name('laporan.update_status');
                 Route::get('/export_excel', [LaporanSarprasController::class, 'export_excel'] )->name('laporan.export_excel');
                 Route::get('/export_pdf',[LaporanSarprasController::class, 'export_pdf']  )->name('laporan.export_pdf');
             });
+
+            Route::prefix('penugasan')->group(function () {
+                Route::get('/', [RiwayatPenugasanController::class, 'index'])->name('sarpras.penugasan.index');
+                Route::post('/list', [RiwayatPenugasanController::class, 'list'])->name('penugasan.list');
+                Route::get('/{id}/show_ajax', [RiwayatPenugasanController::class, 'show_ajax'])->name('penugasan.show_ajax');
+                Route::get('/export_excel', [RiwayatPenugasanController::class, 'export_excel'])->name('penugasan.export_excel');
+                Route::get('/export_pdf', [RiwayatPenugasanController::class, 'export_pdf'])->name('penugasan.export_pdf');
+                Route::get('/{laporan_id}/create_ajax', [RiwayatPenugasanController::class, 'create_ajax'])->name('penugasan.create_ajax');
+                Route::post('/', [RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
+            });
+           
+    
         });
 
         // Route untuk rekomendasi
@@ -437,6 +454,8 @@ Route::prefix('admin')->group(function () {
             Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
             Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
         });
+
+        
         Route::prefix('sarpras')->group(function () {
     Route::get('/dashboard/yearly-trend', [DashboardSarprasController::class, 'getYearlyTrend'])->name('sarpras.dashboard.yearly-trend');
     Route::get('/dashboard/priority-facilities', [DashboardSarprasController::class, 'getPriorityFacilities'])->name('sarpras.dashboard.priority-facilities');
