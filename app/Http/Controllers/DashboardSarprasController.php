@@ -29,7 +29,6 @@ class DashboardSarprasController extends Controller
             'total' => PerbaikanModel::count(),
             'ongoing' => PerbaikanModel::where('status', 'diproses')->count(),
             'completed' => PerbaikanModel::where('status', 'selesai')->count(),
-            'rejected' => PerbaikanModel::where('status', 'ditolak')->count(),
         ];
 
         // Facility condition statistics

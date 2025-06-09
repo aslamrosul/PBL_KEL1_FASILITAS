@@ -54,7 +54,7 @@ class LaporanPelaporController extends Controller
 
                     $buttons = '
                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">
-                        <i class="fa fa-eye"></i> Detail
+                        <i class="fa fa-eye"></i>  
                     </button>
                 ';
 
@@ -62,10 +62,10 @@ class LaporanPelaporController extends Controller
                     if ($laporan->status !== 'diproses') {
                         $buttons .= '
                         <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                            <i class="fa fa-edit"></i> Edit
+                            <i class="fa fa-edit"></i>  
                         </button>
                         <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
-                            <i class="fa fa-trash"></i> Hapus
+                            <i class="fa fa-trash"></i>  
                         </button>
                     ';
                     }
@@ -113,7 +113,7 @@ class LaporanPelaporController extends Controller
                     'judul' => $request->judul,
                     'deskripsi' => $request->deskripsi,
                     'bobot_id' => $request->bobot_id,
-                    'status' => 'pending',
+                    'status' => 'menunggu',
                 ];
 
                 if ($request->hasFile('foto')) {
@@ -298,7 +298,7 @@ class LaporanPelaporController extends Controller
                             'judul' => trim($value['C']),
                             'deskripsi' => trim($value['D']),
                             'bobot_id' => trim($value['E']) ?: null,
-                            'status' => 'pending',
+                            'status' => 'menunggu',
                             'created_at' => now(),
                         ];
                     }

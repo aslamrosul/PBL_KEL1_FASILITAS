@@ -1,4 +1,4 @@
-@extends('layouts.template')
+ @extends('layouts.template')
 
 @section('content')
 <div class="row">
@@ -18,7 +18,7 @@
             <div class="card-body">
                 <div class="row g-4">
                     <!-- Report Statistics -->
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-2 col-md-4 col-sm-6">
                         <div class="stat-box bg-primary text-white">
                             <div class="stat-content">
                                 <h3>{{ $reportStats['total'] }}</h3>
@@ -30,20 +30,44 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-2 col-md-4 col-sm-6">
                         <div class="stat-box bg-warning text-dark">
                             <div class="stat-content">
-                                <h3>{{ $reportStats['pending'] }}</h3>
-                                <p>Pending</p>
+                                <h3>{{ $reportStats['menunggu'] }}</h3>
+                                <p>Menunggu</p>
                                 <i class="fa fa-clock-o stat-icon"></i>
                             </div>
-                            <a href="{{ route('admin.laporan.index', ['status' => 'pending']) }}" class="stat-footer">
+                            <a href="{{ route('admin.laporan.index', ['status' => 'menunggu']) }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-2 col-md-4 col-sm-6">
                         <div class="stat-box bg-info text-white">
+                            <div class="stat-content">
+                                <h3>{{ $reportStats['diterima'] }}</h3>
+                                <p>Diterima</p>
+                                <i class="fa fa-check stat-icon"></i>
+                            </div>
+                            <a href="{{ route('admin.laporan.index', ['status' => 'diterima']) }}" class="stat-footer">
+                                More Info <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <div class="stat-box bg-danger text-white">
+                            <div class="stat-content">
+                                <h3>{{ $reportStats['rejected'] }}</h3>
+                                <p>Ditolak</p>
+                                <i class="fa fa-times stat-icon"></i>
+                            </div>
+                            <a href="{{ route('admin.laporan.index', ['status' => 'ditolak']) }}" class="stat-footer">
+                                More Info <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6">
+                        <div class="stat-box bg-secondary text-white">
                             <div class="stat-content">
                                 <h3>{{ $reportStats['processed'] }}</h3>
                                 <p>Diproses</p>
@@ -54,7 +78,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-2 col-md-4 col-sm-6">
                         <div class="stat-box bg-success text-white">
                             <div class="stat-content">
                                 <h3>{{ $reportStats['completed'] }}</h3>
@@ -423,3 +447,4 @@
         });
     </script>
 @endpush
+```

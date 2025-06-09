@@ -71,8 +71,8 @@
                 <td>{{ $lpr->fasilitas->fasilitas_nama ?? '-' }}</td>
                 <td>{{ $lpr->bobotPrioritas->bobot_nama ?? '-' }}</td>
                 <td>
-                    @if($lpr->status == 'pending')
-                        <span class="badge badge-warning">Pending</span>
+                    @if($lpr->status == 'menunggu')
+                        <span class="badge badge-warning">Menunggu</span>
                     @elseif($lpr->status == 'diterima')
                         <span class="badge badge-info">Diterima</span>
                     @elseif($lpr->status == 'ditolak')

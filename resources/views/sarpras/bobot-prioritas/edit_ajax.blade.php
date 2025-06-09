@@ -11,7 +11,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/bobot-prioritas/' . $bobot->bobot_id . '/update_ajax') }}" method="POST" id="form-edit-bobot">
+    <form action="{{ url('/sarpras/bobot-prioritas/' . $bobot->bobot_id . '/update_ajax') }}" method="POST" id="form-edit-bobot">
         @csrf
         @method('PUT')
         <div class="modal-dialog modal-lg" role="document">

@@ -26,7 +26,7 @@
                 <div class="form-group">
                     <label>Status</label>
                     <select class="form-control" id="status" name="status" required>
-                        <option value="pending" {{ $laporan->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="menunggu" {{ $laporan->status == 'menunggu' ? 'selected' : '' }}>menunggu</option>
                         <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Diterima</option>
                         <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                         <option value="diproses" {{ $laporan->status == 'diproses' ? 'selected' : '' }}>Diproses</option>

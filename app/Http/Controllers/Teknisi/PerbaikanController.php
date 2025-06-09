@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Teknisi;
 
 use App\Http\Controllers\Controller;
+use App\Models\LaporanModel;
 use App\Models\PerbaikanModel;
 use App\Models\PerbaikanDetailModel;
+use App\Models\RiwayatPenugasanModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -60,7 +62,7 @@ class PerbaikanController extends Controller
         $perbaikans = PerbaikanModel::select('perbaikan_id', 'laporan_id', 'teknisi_id', 'tanggal_mulai', 'tanggal_selesai', 'status', 'catatan')
             ->with(['laporan', 'laporan.fasilitas', 'teknisi'])
             ->where('teknisi_id', auth()->user()->user_id)
-            ->whereIn('status', ['menunggu', 'diproses']);
+            ->whereIn('status', ['dalam_antrian', 'diproses']);
 
         return DataTables::of($perbaikans)
             ->addIndexColumn()
@@ -97,7 +99,7 @@ class PerbaikanController extends Controller
             ->addIndexColumn()
             ->addColumn('aksi', function ($perbaikan) {
                 return '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">
-                            <i class="fa fa-eye"></i> Detail
+                            <i class="fa fa-eye"></i>  
                         </button>';
             })
             ->editColumn('status', function ($perbaikan) {
@@ -151,21 +153,35 @@ class PerbaikanController extends Controller
             ], 404);
         }
 
-        // Hanya izinkan perubahan ke status 'selesai' dari 'menunggu' atau 'diproses'
-        if ($request->status !== 'selesai' || !in_array($perbaikan->status, ['menunggu', 'diproses'])) {
+        // Validate allowed status transitions
+        $allowedStatuses = ['dalam_antrian', 'diproses', 'selesai'];
+        if (
+            !in_array($request->status, $allowedStatuses) ||
+            ($request->status === 'diproses' && $perbaikan->status !== 'dalam_antrian') ||
+            ($request->status === 'selesai' && !in_array($perbaikan->status, ['dalam_antrian', 'diproses']))
+        ) {
             return response()->json([
                 'status' => false,
-                'message' => 'Hanya dapat mengubah status ke Selesai dari status Menunggu atau Diproses'
+                'message' => 'Transisi status tidak valid'
             ], 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:selesai',
-            'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'tindakan.*' => 'required|string',
-            'deskripsi.*' => 'nullable|string',
-            'total_biaya' => 'required|numeric|min:0'
-        ], [
+        // Define validation rules based on status
+        $rules = [
+            'status' => 'required|in:dalam_antrian,diproses,selesai',
+            'catatan' => 'nullable|string',
+        ];
+
+        if ($request->status === 'selesai') {
+            $rules = array_merge($rules, [
+                'foto_perbaikan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'tindakan.*' => 'required|string',
+                'deskripsi.*' => 'nullable|string',
+                'total_biaya' => 'required|numeric|min:0'
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), $rules, [
             'tindakan.*.required' => 'Tindakan wajib diisi ketika status selesai',
             'total_biaya.required' => 'Total biaya wajib diisi ketika status selesai'
         ]);
@@ -178,39 +194,68 @@ class PerbaikanController extends Controller
             ], 422);
         }
 
+        // Prevent updates to restricted fields when status is diproses
+        if ($perbaikan->status === 'diproses' && $request->status !== 'selesai') {
+            if (
+                $request->hasFile('foto_perbaikan') || $request->has('tindakan') ||
+                $request->has('deskripsi') || $request->has('total_biaya')
+            ) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak dapat mengubah foto, tindakan, deskripsi, atau total biaya saat status diproses'
+                ], 403);
+            }
+        }
+
         DB::beginTransaction();
         try {
             $data = [
                 'status' => $request->status,
                 'catatan' => $request->catatan,
-                'tanggal_selesai' => now(),
-                'total_biaya' => $request->total_biaya
             ];
 
-            // Handle upload foto perbaikan
-            if ($request->hasFile('foto_perbaikan')) {
-                $foto = $request->file('foto_perbaikan');
-                $fotoName = time() . '_' . $foto->getClientOriginalName();
-                $foto->move(public_path('images/perbaikan'), $fotoName);
-                $data['foto_perbaikan'] = 'images/perbaikan/' . $fotoName;
+            // Handle fields for selesai status
+            if ($request->status === 'selesai') {
+                $data['tanggal_selesai'] = now();
+                $data['total_biaya'] = $request->total_biaya;
 
-                // Hapus foto lama jika ada
-                if ($perbaikan->foto_perbaikan && file_exists(public_path($perbaikan->foto_perbaikan))) {
-                    unlink(public_path($perbaikan->foto_perbaikan));
+                // Handle upload foto perbaikan
+                if ($request->hasFile('foto_perbaikan')) {
+                    $foto = $request->file('foto_perbaikan');
+                    $fotoName = time() . '_' . $foto->getClientOriginalName();
+                    $foto->move(public_path('images/perbaikan'), $fotoName);
+                    $data['foto_perbaikan'] = 'images/perbaikan/' . $fotoName;
+
+                    // Hapus foto lama jika ada
+                    if ($perbaikan->foto_perbaikan && file_exists(public_path($perbaikan->foto_perbaikan))) {
+                        unlink(public_path($perbaikan->foto_perbaikan));
+                    }
                 }
             }
 
             $perbaikan->update($data);
 
-            // Simpan detail perbaikan
-            PerbaikanDetailModel::where('perbaikan_id', $perbaikan_id)->delete();
-            foreach ($request->tindakan as $key => $tindakan) {
-                PerbaikanDetailModel::create([
-                    'perbaikan_id' => $perbaikan_id,
-                    'tindakan' => $tindakan,
-                    'deskripsi' => $request->deskripsi[$key] ?? null,
-                ]);
+            // Update status_penugasan in RiwayatPenugasanModel
+            $statusPenugasan = $request->status === 'diproses' ? 'dikerjakan' : ($request->status === 'selesai' ? 'selesai' : 'ditugaskan');
+            RiwayatPenugasanModel::where('laporan_id', $perbaikan->laporan_id)
+                ->where('teknisi_id', $perbaikan->teknisi_id)
+                ->update(['status_penugasan' => $statusPenugasan]);
+
+            // Handle detail perbaikan for selesai status
+            if ($request->status === 'selesai') {
+                PerbaikanDetailModel::where('perbaikan_id', $perbaikan_id)->delete();
+                foreach ($request->tindakan as $key => $tindakan) {
+                    PerbaikanDetailModel::create([
+                        'perbaikan_id' => $perbaikan_id,
+                        'tindakan' => $tindakan,
+                        'deskripsi' => $request->deskripsi[$key] ?? null,
+                    ]);
+                }
             }
+
+            // Update laporan status
+            $laporanStatus = $request->status === 'selesai' ? 'selesai' : 'diproses';
+            LaporanModel::find($perbaikan->laporan_id)->update(['status' => $laporanStatus]);
 
             DB::commit();
 
@@ -231,17 +276,14 @@ class PerbaikanController extends Controller
     private function getStatusBadge($status)
     {
         switch ($status) {
-            case 'menunggu':
-                return '<span class="badge badge-warning">Menunggu</span>';
+            case 'dalam_antrian':
+                return '<span class="badge badge-warning">Dalam Antrian</span>';
             case 'diproses':
                 return '<span class="badge badge-primary">Diproses</span>';
             case 'selesai':
                 return '<span class="badge badge-success">Selesai</span>';
-            case 'ditolak':
-                return '<span class="badge badge-danger">Ditolak</span>';
             default:
                 return '<span class="badge badge-secondary">Unknown</span>';
         }
     }
-
 }

@@ -21,8 +21,7 @@ use App\Http\Controllers\Admin\RuangController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\BarangController;
 use App\Http\Controllers\Admin\FasilitasController;
-use App\Http\Controllers\Admin\BobotPrioritasController;
-use App\Http\Controllers\Admin\KriteriaController;
+
 use App\Http\Controllers\Admin\KlasifikasiController;
 
 
@@ -38,12 +37,11 @@ use App\Http\Controllers\DashboardSarprasController;
 use App\Http\Controllers\Sarpras\RekomendasiController;
 use App\Http\Controllers\Sarpras\RiwayatPenugasanController;
 use App\Http\Controllers\Sarpras\LaporanSarprasController;
-use App\Http\Controllers\RiwayatController;
-
+use App\Http\Controllers\Sarpras\BobotPrioritasController;
+use App\Http\Controllers\Sarpras\KriteriaController;
 
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
-use App\Http\Controllers\Sarpras\PenugasanController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -290,22 +288,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/export_pdf', [FasilitasController::class, 'export_pdf']);
         });
 
-        //route kriteria
-        Route::group(['prefix' => 'kriteria'], function () {
-            Route::get('/', [KriteriaController::class, 'index'])->name('admin.kriteria.index');; // menampilkan halaman awal user
-            Route::post('/list', [KriteriaController::class, 'list']); // menampilkan data user dalam bentuk json untuk datables
-            Route::get('/create_ajax', [KriteriaController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
-            Route::post('/ajax', [KriteriaController::class, 'store_ajax']); // Menyimpan data user baru Ajax
-            Route::get('/{id}/show_ajax', [KriteriaController::class, 'show_ajax']); // menampilkan detail user ajax
-            Route::get('/{id}/edit_ajax', [KriteriaController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
-            Route::put('/{id}/update_ajax', [KriteriaController::class, 'update_ajax']); // menyimpan perubahan data user ajax
-            Route::get('/{id}/delete_ajax', [KriteriaController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
-            Route::delete('/{id}/delete_ajax', [KriteriaController::class, 'delete_ajax']);
-            Route::get('/import', [KriteriaController::class, 'import']); // ajax form upload excel
-            Route::post('/import_ajax', [KriteriaController::class, 'import_ajax']); // ajax import excel
-            Route::get('/export_excel', [KriteriaController::class, 'export_excel']); //export excel
-            Route::get('/export_pdf', [KriteriaController::class, 'export_pdf']);
-        });
+      
 
         //route klasifikasi
         Route::group(['prefix' => 'klasifikasi'], function () {
@@ -324,13 +307,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/export_pdf', [KlasifikasiController::class, 'export_pdf']);
         });
 
-        //Bobot Prioritas edit skor
-        Route::prefix('bobot-prioritas')->group(function () {
-            Route::get('/', [BobotPrioritasController::class, 'index'])->name('admin.bobot-prioritas.index');
-            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('admin.bobot-prioritas.list');
-            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('admin.bobot-prioritas.edit_ajax');
-            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('admin.bobot-prioritas.update_ajax');
-        });
+     
 
         Route::group(['prefix' => 'laporan-admin'], function () {
             Route::get('/', [LaporanAdminController::class, 'index'])->name('admin.laporan.index');
@@ -391,7 +368,7 @@ Route::prefix('admin')->group(function () {
         Route::prefix('sarpras')->middleware(['auth'])->group(function () {
             Route::get('/', [DashboardSarprasController::class, 'index'])->name('sarpras.dashboard');
             Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi.index');
-            // Route::get('/riwayat', [RiwayatPenugasanController::class, 'index'])->name('sarpras.riwayat.index');
+            Route::get('/riwayat', [RiwayatPenugasanController::class, 'index'])->name('sarpras.riwayat.index');
         });
 
         //route laporan kerusakan
@@ -416,7 +393,7 @@ Route::prefix('admin')->group(function () {
                 Route::get('/{id}/show_ajax', [RiwayatPenugasanController::class, 'show_ajax'])->name('penugasan.show_ajax');
                 Route::get('/export_excel', [RiwayatPenugasanController::class, 'export_excel'])->name('penugasan.export_excel');
                 Route::get('/export_pdf', [RiwayatPenugasanController::class, 'export_pdf'])->name('penugasan.export_pdf');
-                Route::get('/{laporan_id}/create_ajax', [RiwayatPenugasanController::class, 'create_ajax'])->name('penugasan.create_ajax');
+                Route::get('/create_ajax', [RiwayatPenugasanController::class, 'create_ajax'])->name('penugasan.create_ajax');
                 Route::post('/', [RiwayatPenugasanController::class, 'store'])->name('penugasan.store');
             });
            
@@ -439,7 +416,6 @@ Route::prefix('admin')->group(function () {
             Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
         });
         Route::prefix('sarpras/rekomendasi-dosen')->group(function () {
-
             Route::get('/', [RekomendasiController::class, 'index'])->name('sarpras.rekomendasi-dosen.index');
             Route::post('/list', [RekomendasiController::class, 'list'])->name('sarpras.rekomendasi-dosen.list');
             Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show_ajax'])->name('sarpras.rekomendasi.show');
@@ -453,6 +429,31 @@ Route::prefix('admin')->group(function () {
             Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show_ajax'])->name('sarpras.rekomendasi.show');
             Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel'); //export excel
             Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
+        });
+
+             //Bobot Prioritas edit skor
+        Route::prefix('sarpras/bobot-prioritas')->group(function () {
+            Route::get('/', [BobotPrioritasController::class, 'index'])->name('sarpras.bobot-prioritas.index');
+            Route::post('/list', [BobotPrioritasController::class, 'list'])->name('sarpras.bobot-prioritas.list');
+            Route::get('/{bobot_id}/edit_ajax', [BobotPrioritasController::class, 'edit_ajax'])->name('sarpras.bobot-prioritas.edit_ajax');
+            Route::put('/{bobot_id}/update_ajax', [BobotPrioritasController::class, 'update_ajax'])->name('sarpras.bobot-prioritas.update_ajax');
+        });
+        
+        //route kriteria
+        Route::group(['prefix' => 'sarpras/kriteria'], function () {
+            Route::get('/', [KriteriaController::class, 'index'])->name('sarpras.kriteria.index');; // menampilkan halaman awal user
+            Route::post('/list', [KriteriaController::class, 'list'])->name('sarpras.kriteria.list'); // menampilkan data user dalam bentuk json untuk datables
+            Route::get('/create_ajax', [KriteriaController::class, 'create_ajax']); //Menampilkan halaman form tambah user ajax
+            Route::post('/ajax', [KriteriaController::class, 'store_ajax']); // Menyimpan data user baru Ajax
+            Route::get('/{id}/show_ajax', [KriteriaController::class, 'show_ajax']); // menampilkan detail user ajax
+            Route::get('/{id}/edit_ajax', [KriteriaController::class, 'edit_ajax']); //Menampilkan halaman form edit user ajax
+            Route::put('/{id}/update_ajax', [KriteriaController::class, 'update_ajax']); // menyimpan perubahan data user ajax
+            Route::get('/{id}/delete_ajax', [KriteriaController::class, 'confirm_ajax']); //untuk tampilkan form confirm delete user ajax
+            Route::delete('/{id}/delete_ajax', [KriteriaController::class, 'delete_ajax']);
+            Route::get('/import', [KriteriaController::class, 'import']); // ajax form upload excel
+            Route::post('/import_ajax', [KriteriaController::class, 'import_ajax']); // ajax import excel
+            Route::get('/export_excel', [KriteriaController::class, 'export_excel']); //export excel
+            Route::get('/export_pdf', [KriteriaController::class, 'export_pdf']);
         });
 
         

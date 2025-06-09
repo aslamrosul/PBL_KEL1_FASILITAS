@@ -26,7 +26,7 @@ return new class extends Migration
             $table->timestamp('tanggal_lapor')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->unsignedBigInteger('bobot_id')->nullable();
             
-            $table->string('status', 20)->default('pending')->comment('pending, diproses, selesai, ditolak');
+            $table->string('status', 20)->default('menunggu')->comment('menunggu,diterima, diproses, selesai, ditolak');
             $table->text('alasan_penolakan')->nullable();
             $table->timestamp('tanggal_selesai')->nullable();
             $table->timestamps();

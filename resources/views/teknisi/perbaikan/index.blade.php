@@ -63,7 +63,12 @@
                     { data: "laporan.judul", className: "", orderable: true, searchable: true },
                     { data: "laporan.fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true },
                     { data: "tanggal_mulai", className: "", orderable: true, searchable: true },
-                    { data: "status", className: "", orderable: true, searchable: true },
+                   {
+                        data: "status", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]
             });

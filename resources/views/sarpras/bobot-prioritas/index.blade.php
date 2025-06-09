@@ -52,7 +52,7 @@
             $('#table_bobot_prioritas').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('bobot-prioritas/list') }}",
+                    url: "{{ route('sarpras.bobot-prioritas.list') }}",
                     type: "POST"
                 },
                 columns: [

@@ -75,8 +75,11 @@
                         render: function(data) {
                             let badgeClass = '';
                             switch(data) {
-                                case 'PENDING':
+                                case 'MENUNGGU':
                                     badgeClass = 'bg-secondary';
+                                    break;
+                                case 'DITERIMA':
+                                    badgeClass = 'bg-info';
                                     break;
                                 case 'DIPROSES':
                                     badgeClass = 'bg-primary';

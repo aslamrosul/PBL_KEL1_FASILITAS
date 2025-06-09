@@ -53,8 +53,7 @@
 @push('js')
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -90,7 +89,12 @@
                     { data: "fasilitas_kode", className: "", orderable: true, searchable: true },
                     { data: "fasilitas_nama", className: "", orderable: true, searchable: true },
                     { data: "keterangan", className: "", orderable: true, searchable: true },
-                    { data: "status", className: "", orderable: true, searchable: true },
+                   {
+                        data: "status", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
                     { data: "tahun_pengadaan", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]

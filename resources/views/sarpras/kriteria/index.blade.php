@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/kriteria/import') }}')" class="btn btn-info">Import Kriteria</button>
-                <a href="{{ url('/kriteria/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
-                <a href="{{ url('/kriteria/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
-                <button onclick="modalAction('{{ url('/kriteria/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ url('/sarpras/kriteria/import') }}')" class="btn btn-info">Import Kriteria</button>
+                <a href="{{ url('/sarpras/kriteria/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
+                <a href="{{ url('/sarpras/kriteria/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
+                <button onclick="modalAction('{{ url('/sarpras/kriteria/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -49,10 +49,7 @@
 
 @push('js')
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-   
-
+  
     <script>
         function modalAction(url = '') {
             jQuery('#myModal').load(url, function() {
@@ -69,7 +66,7 @@
             window.dataKriteria = jQuery('#table_kriteria').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('kriteria/list') }}",
+                    url: "{{ route('sarpras.kriteria.list') }}",
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')

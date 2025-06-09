@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Sarpras;
 
 use App\Http\Controllers\Controller;
 use App\Models\KriteriaModel;
@@ -25,7 +25,7 @@ class KriteriaController extends Controller
 
         $activeMenu = 'kriteria';
 
-        return view('admin.kriteria.index', [
+        return view('sarpras.kriteria.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu
@@ -39,9 +39,9 @@ class KriteriaController extends Controller
         return DataTables::of($kriterias)
             ->addIndexColumn()
             ->addColumn('aksi', function ($kriteria) {
-                $showUrl = url('/kriteria/' . $kriteria->kriteria_id . '/show_ajax');
-                $editUrl = url('/kriteria/' . $kriteria->kriteria_id . '/edit_ajax');
-                $deleteUrl = url('/kriteria/' . $kriteria->kriteria_id . '/delete_ajax');
+                $showUrl = url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/show_ajax');
+                $editUrl = url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/edit_ajax');
+                $deleteUrl = url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">
@@ -61,7 +61,7 @@ class KriteriaController extends Controller
 
     public function create_ajax()
     {
-        return view('admin.kriteria.create_ajax');
+        return view('sarpras.kriteria.create_ajax');
     }
 
     public function store_ajax(Request $request)
@@ -101,7 +101,7 @@ class KriteriaController extends Controller
     public function edit_ajax($kriteria_id)
     {
         $kriteria = KriteriaModel::find($kriteria_id);
-        return view('admin.kriteria.edit_ajax', compact('kriteria'));
+        return view('sarpras.kriteria.edit_ajax', compact('kriteria'));
     }
 
     public function update_ajax(Request $request, $kriteria_id)
@@ -149,7 +149,7 @@ class KriteriaController extends Controller
     public function confirm_ajax($kriteria_id)
     {
         $kriteria = KriteriaModel::find($kriteria_id);
-        return view('admin.kriteria.confirm_ajax', compact('kriteria'));
+        return view('sarpras.kriteria.confirm_ajax', compact('kriteria'));
     }
 
     public function delete_ajax($kriteria_id)
@@ -173,12 +173,12 @@ class KriteriaController extends Controller
     public function show_ajax($kriteria_id)
     {
         $kriteria = KriteriaModel::find($kriteria_id);
-        return view('admin.kriteria.show_ajax', compact('kriteria'));
+        return view('sarpras.kriteria.show_ajax', compact('kriteria'));
     }
 
     public function import()
     {
-        return view('admin.kriteria.import');
+        return view('sarpras.kriteria.import');
     }
 
     public function import_ajax(Request $request)
@@ -289,7 +289,7 @@ class KriteriaController extends Controller
             'title' => 'Laporan Data Kriteria'
         ];
 
-        $pdf = Pdf::loadView('admin.kriteria.export_pdf', $data);
+        $pdf = Pdf::loadView('sarpras.kriteria.export_pdf', $data);
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOption("isRemoteEnabled", true);
         $pdf->render();

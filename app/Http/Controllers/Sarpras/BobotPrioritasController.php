@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Sarpras;
 
 use App\Http\Controllers\Controller;
 use App\Models\BobotPrioritasModel;
@@ -23,7 +23,7 @@ class BobotPrioritasController extends Controller
 
         $activeMenu = 'bobot-prioritas';
 
-        return view('admin.bobot-prioritas.index', [
+        return view('sarpras.bobot-prioritas.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu
@@ -37,7 +37,7 @@ class BobotPrioritasController extends Controller
         return DataTables::of($bobots)
             ->addIndexColumn()
             ->addColumn('aksi', function ($bobot) {
-                $editUrl = url('/bobot-prioritas/' . $bobot->bobot_id . '/edit_ajax');
+                $editUrl = url('/sarpras/bobot-prioritas/' . $bobot->bobot_id . '/edit_ajax');
                 return '
                     <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
                         <i class="fa fa-edit"></i>  
@@ -51,7 +51,7 @@ class BobotPrioritasController extends Controller
     public function edit_ajax($bobot_id)
     {
         $bobot = BobotPrioritasModel::find($bobot_id);
-        return view('admin.bobot-prioritas.edit_ajax', compact('bobot'));
+        return view('sarpras.bobot-prioritas.edit_ajax', compact('bobot'));
     }
 
     public function update_ajax(Request $request, $bobot_id)
@@ -59,16 +59,16 @@ class BobotPrioritasController extends Controller
         $validator = Validator::make($request->all(), [
             'skor_min' => 'required|integer|min:0',
             'skor_max' => 'required|integer|min:0|gte:skor_min',
-            'tindakan' => 'required|string|max:100',
+          
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal',
-                'msgField' => $validator->errors()
-            ]);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Validasi gagal',
+        //         'msgField' => $validator->errors()
+        //     ]);
+        // }
 
         $bobot = BobotPrioritasModel::find($bobot_id);
         if (!$bobot) {
@@ -82,7 +82,6 @@ class BobotPrioritasController extends Controller
             $bobot->update([
                 'skor_min' => $request->skor_min,
                 'skor_max' => $request->skor_max,
-                'tindakan' => $request->tindakan
             ]);
 
             return response()->json([

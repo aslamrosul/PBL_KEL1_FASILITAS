@@ -28,7 +28,8 @@ class DashboardAdminController extends Controller
 
         $reportStats = [
             'total' => LaporanModel::count(),
-            'pending' => LaporanModel::where('status', 'pending')->count(),
+            'menunggu' => LaporanModel::where('status', 'menunggu')->count(),
+             'diterima' => LaporanModel::where('status', 'diterima')->count(),
             'processed' => LaporanModel::where('status', 'diproses')->count(),
             'completed' => LaporanModel::where('status', 'selesai')->count(),
             'rejected' => LaporanModel::where('status', 'ditolak')->count(),
