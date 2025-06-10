@@ -3,7 +3,6 @@
         <div class="modal-header">
             <h5 class="modal-title">Detail Laporan</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
         </div>
         <div class="modal-body">
             <div class="mb-3">
@@ -19,28 +18,24 @@
                 <p>{{ $laporan->periode->periode_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
-                <label class="form-label">gedung</label>
+                <label class="form-label">Gedung</label>
                 <p>{{ $laporan->gedung->gedung_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
-                <label class="form-label">lantai</label>
-                <p>{{ $laporan->lantai->lantai_nama ?? '-' }}</p>
+                <label class="form-label">Lantai</label>
+                <p>{{ $laporan->lantai->lantai_nomor ?? '-' }}</p>
             </div>
             <div class="mb-3">
-                <label class="form-label">ruang</label>
+                <label class="form-label">Ruang</label>
                 <p>{{ $laporan->ruang->ruang_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
-                <label class="form-label">barang</label>
+                <label class="form-label">Barang</label>
                 <p>{{ $laporan->barang->barang_nama ?? '-' }}</p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Fasilitas</label>
                 <p>{{ $laporan->fasilitas->fasilitas_nama ?? '-' }}</p>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Prioritas</label>
-                <p>{{ $laporan->bobotPrioritas->nama_bobot ?? '-' }}</p>
             </div>
             <div class="mb-3">
                 <label class="form-label">Status</label>

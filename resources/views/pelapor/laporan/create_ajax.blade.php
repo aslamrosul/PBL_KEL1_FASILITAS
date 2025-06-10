@@ -22,7 +22,7 @@
                     <select class="form-control" id="periode_id" name="periode_id" required>
                         <option value="">Pilih Periode</option>
                         @foreach ($periode as $item)
-                            <option value="{{ $item->periode_id }}">{{ $item->nama_periode }}</option>
+                            <option value="{{ $item->periode_id }}">{{ $item->periode_nama }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback"></div>
@@ -32,17 +32,47 @@
                     <select class="form-control" id="fasilitas_id" name="fasilitas_id" required>
                         <option value="">Pilih Fasilitas</option>
                         @foreach ($fasilitas as $item)
-                            <option value="{{ $item->fasilitas_id }}">{{ $item->nama_fasilitas }}</option>
+                            <option value="{{ $item->fasilitas_id }}">{{ $item->fasilitas_nama }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="bobot_id" class="form-label">Prioritas</label>
-                    <select class="form-control" id="bobot_id" name="bobot_id">
-                        <option value="">Pilih Prioritas</option>
-                        @foreach ($bobot as $item)
-                            <option value="{{ $item->bobot_id }}">{{ $item->nama_bobot }}</option>
+                    <label for="gedung_id" class="form-label">Gedung</label>
+                    <select class="form-control" id="gedung_id" name="gedung_id" required>
+                        <option value="">Pilih Gedung</option>
+                        @foreach ($gedung as $item)
+                            <option value="{{ $item->gedung_id }}">{{ $item->gedung_nama }}</option>
+                        @endforeach
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="lantai_id" class="form-label">Lantai</label>
+                    <select class="form-control" id="lantai_id" name="lantai_id" required>
+                        <option value="">Pilih Lantai</option>
+                        @foreach ($lantai as $item)
+                            <option value="{{ $item->lantai_id }}">{{ $item->lantai_nomor }}</option>
+                        @endforeach
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="ruang_id" class="form-label">Ruang</label>
+                    <select class="form-control" id="ruang_id" name="ruang_id" required>
+                        <option value="">Pilih Ruang</option>
+                        @foreach ($ruang as $item)
+                            <option value="{{ $item->ruang_id }}">{{ $item->ruang_nama }}</option>
+                        @endforeach
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="barang_id" class="form-label">Barang</label>
+                    <select class="form-control" id="barang_id" name="barang_id" required>
+                        <option value="">Pilih Barang</option>
+                        @foreach ($barang as $item)
+                            <option value="{{ $item->barang_id }}">{{ $item->barang_nama }}</option>
                         @endforeach
                     </select>
                     <div class="invalid-feedback"></div>

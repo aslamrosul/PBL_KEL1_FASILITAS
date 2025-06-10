@@ -56,20 +56,59 @@
                         <small id="error-fasilitas_id" class="text-danger error-text"></small>
                     </div>
                     <div class="mb-3">
-                        <label for="bobot_id" class="form-label">Prioritas</label>
-                        <select class="form-control" id="bobot_id" name="bobot_id">
-                            <option value="">Pilih Prioritas</option>
-                            @foreach ($bobot as $item)
-                                <option value="{{ $item->bobot_id }}" {{ $item->bobot_id == $laporan->bobot_id ? 'selected' : '' }}>
-                                    {{ $item->nama_bobot }}
+                        <label for="gedung_id" class="form-label">Gedung</label>
+                        <select class="form-control" id="gedung_id" name="gedung_id" required>
+                            <option value="">Pilih Gedung</option>
+                            @foreach ($gedung as $item)
+                                <option value="{{ $item->gedung_id }}" {{ $item->gedung_id == $laporan->gedung_id ? 'selected' : '' }}>
+                                    {{ $item->gedung_nama }}
                                 </option>
                             @endforeach
                         </select>
-                        <small id="error-bobot_id" class="text-danger error-text"></small>
+                        <small id="error-gedung_id" class="text-danger error-text"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="lantai_id" class="form-label">Lantai</label>
+                        <select class="form-control" id="lantai_id" name="lantai_id" required>
+                            <option value="">Pilih Lantai</option>
+                            @foreach ($lantai as $item)
+                                <option value="{{ $item->lantai_id }}" {{ $item->lantai_id == $laporan->lantai_id ? 'selected' : '' }}>
+                                    {{ $item->lantai_nomor }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small id="error-lantai_id" class="text-danger error-text"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ruang_id" class="form-label">Ruang</label>
+                        <select class="form-control" id="ruang_id" name="ruang_id" required>
+                            <option value="">Pilih Ruang</option>
+                            @foreach ($ruang as $item)
+                                <option value="{{ $item->ruang_id }}" {{ $item->ruang_id == $laporan->ruang_id ? 'selected' : '' }}>
+                                    {{ $item->ruang_nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small id="error-ruang_id" class="text-danger error-text"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="barang_id" class="form-label">Barang</label>
+                        <select class="form-control" id="barang_id" name="barang_id" required>
+                            <option value="">Pilih Barang</option>
+                            @foreach ($barang as $item)
+                                <option value="{{ $item->barang_id }}" {{ $item->barang_id == $laporan->barang_id ? 'selected' : '' }}>
+                                    {{ $item->barang_nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small id="error-barang_id" class="text-danger error-text"></small>
                     </div>
                     <div class="mb-3">
                         <label for="foto" class="form-label">Foto (Opsional)</label>
                         <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                        @if ($laporan->foto_path)
+                            <small class="form-text text-muted">File saat ini: {{ basename($laporan->foto_path) }}</small>
+                        @endif
                         <small id="error-foto" class="text-danger error-text"></small>
                     </div>
                 </div>
@@ -90,7 +129,7 @@
                 $('.error-text').text('');
                 $.ajax({
                     url: form.action,
-                    method: form.method,
+                    method: 'POST',
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -107,13 +146,89 @@
                         }
                     },
                     error: function(xhr) {
-                        let errors = xhr.responseJSON.errors;
+                        let errors = xhr.responseJSON.errors || xhr.responseJSON.msgField;
                         $.each(errors, function(prefix, val) {
                             $('#error-' + prefix).text(val[0]);
                         });
+                        Swal.fire('Gagal', xhr.responseJSON.message || 'Terjadi kesalahan', 'error');
                     }
                 });
             });
+
+            // Cascading dropdowns
+            $('#gedung_id').on('change', function() {
+                var gedung_id = $(this).val();
+                $('#lantai_id').prop('disabled', true).html('<option value="">Pilih Lantai</option>');
+                $('#ruang_id').prop('disabled', true).html('<option value="">Pilih Ruang</option>');
+                $('#barang_id').prop('disabled', true).html('<option value="">Pilih Barang</option>');
+                if (gedung_id) {
+                    $.ajax({
+                        url: '{{ url("/pelapor/laporan/getLantai") }}',
+                        type: 'GET',
+                        data: { gedung_id: gedung_id },
+                        success: function(data) {
+                            $('#lantai_id').prop('disabled', false);
+                            $.each(data, function(index, item) {
+                                $('#lantai_id').append('<option value="' + item.lantai_id + '">' + item.lantai_nomor + '</option>');
+                            });
+                            // Pre-select current lantai_id if available
+                            if ('{{ $laporan->lantai_id }}') {
+                                $('#lantai_id').val('{{ $laporan->lantai_id }}').trigger('change');
+                            }
+                        }
+                    });
+                }
+            });
+
+            $('#lantai_id').on('change', function() {
+                var lantai_id = $(this).val();
+                $('#ruang_id').prop('disabled', true).html('<option value="">Pilih Ruang</option>');
+                $('#barang_id').prop('disabled', true).html('<option value="">Pilih Barang</option>');
+                if (lantai_id) {
+                    $.ajax({
+                        url: '{{ url("/pelapor/laporan/getRuang") }}',
+                        type: 'GET',
+                        data: { lantai_id: lantai_id },
+                        success: function(data) {
+                            $('#ruang_id').prop('disabled', false);
+                            $.each(data, function(index, item) {
+                                $('#ruang_id').append('<option value="' + item.ruang_id + '">' + item.ruang_nama + '</option>');
+                            });
+                            // Pre-select current ruang_id if available
+                            if ('{{ $laporan->ruang_id }}') {
+                                $('#ruang_id').val('{{ $laporan->ruang_id }}').trigger('change');
+                            }
+                        }
+                    });
+                }
+            });
+
+            $('#ruang_id').on('change', function() {
+                var ruang_id = $(this).val();
+                $('#barang_id').prop('disabled', true).html('<option value="">Pilih Barang</option>');
+                if (ruang_id) {
+                    $.ajax({
+                        url: '{{ url("/pelapor/laporan/getBarang") }}',
+                        type: 'GET',
+                        data: { ruang_id: ruang_id },
+                        success: function(data) {
+                            $('#barang_id').prop('disabled', false);
+                            $.each(data, function(index, item) {
+                                $('#barang_id').append('<option value="' + item.barang_id + '">' + item.barang_nama + '</option>');
+                            });
+                            // Pre-select current barang_id if available
+                            if ('{{ $laporan->barang_id }}') {
+                                $('#barang_id').val('{{ $laporan->barang_id }}');
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Trigger change on gedung_id to load initial lantai, ruang, and barang
+            if ('{{ $laporan->gedung_id }}') {
+                $('#gedung_id').val('{{ $laporan->gedung_id }}').trigger('change');
+            }
         });
     </script>
 @endempty
