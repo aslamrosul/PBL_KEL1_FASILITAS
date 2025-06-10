@@ -5,6 +5,8 @@
             <h5 class="modal-title">Detail Perbaikan
                 @if ($perbaikan->status == 'menunggu')
                     <span class="badge bg-warning">Menunggu</span>
+                @elseif($perbaikan->status == 'diterima')
+                    <span class="badge bg-info">Diterima</span>
                 @elseif($perbaikan->status == 'diproses')
                     <span class="badge bg-primary">Diproses</span>
                 @elseif($perbaikan->status == 'selesai')
@@ -48,6 +50,8 @@
                             <td>
                                 @if ($perbaikan->status == 'menunggu')
                                     <span class="badge badge-warning">Menunggu</span>
+                                @elseif($perbaikan->status == 'diterima')
+                                    <span class="badge badge-info">Diterima</span>
                                 @elseif($perbaikan->status == 'diproses')
                                     <span class="badge badge-primary">Diproses</span>
                                 @elseif($perbaikan->status == 'selesai')

@@ -2,7 +2,8 @@
 
 @php
     $colors = [
-        'pending' => 'bg-secondary',
+        'menunggu' => 'bg-secondary',
+        'diterima' => 'bg-info',
         'diproses' => 'bg-warning text-dark',
         'selesai' => 'bg-success',
         'ditolak' => 'bg-danger'

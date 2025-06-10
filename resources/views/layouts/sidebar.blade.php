@@ -3,10 +3,22 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href={{ url('/admin') }}><span class="brand-text font-weight-bold">
-                            FixIT <span style="color: rgb(41, 205, 255);">POLINEMA</span>
-                        </span></a>
+                    <a href="{{ url('/admin') }}"><span class="brand-text fw-bold fs-2">Fix<span
+                                class="text-info fw-bold fs-2">IT</span></span></a>
                 </div>
+                <style>
+                    .brand-text {
+                        font-size: 3rem !important;
+                        /* Sesuaikan ukuran */
+                        font-weight: bold !important;
+                    }
+
+                    .brand-text span {
+                        font-size: 3rem !important;
+                        /* Pastikan span anak mengikuti ukuran induk */
+                        font-weight: bold !important;
+                    }
+                </style>
                 <div class="theme-toggle d-flex gap-2 align-items-center mt-2">
                     <!-- Theme toggle icons -->
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -58,25 +70,25 @@
                 @if(Auth::user()->level->level_kode === 'ADM')
                             <li class="sidebar-title">Administrator</li>
 
-                          
-                             <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+
+                            <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
                                 <a href="{{ route('admin.user.index') }}" class='sidebar-link'>
-                                     <i class="bi bi-people-fill"></i>
+                                    <i class="bi bi-people-fill"></i>
                                     <span>Manajemen User</span>
                                 </a>
                             </li>
-                            
+
 
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                                {{
+                                                                                                                                                                                                                                                                                        {{
                     request()->routeIs('admin.periode.*') ||
                     request()->routeIs('admin.gedung.*') ||
                     request()->routeIs('admin.lantai.*') ||
                     request()->routeIs(patterns: 'admin.ruang.*')
                     ? 'active'
                     : ''
-                                                                                                                                                                                                                }}">
+                                                                                                                                                                                                                                                                                        }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-map"></i>
                                     <span>Manajemen Data</span>
@@ -98,16 +110,15 @@
                             </li>
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                                {{
+                                                                                                                                                                                                                                                                                        {{
                     request()->routeIs('admin.fasilitas.*') ||
                     request()->routeIs('admin.klasifikasi.*') ||
                     request()->routeIs('admin.kategori.*') ||
-                    request()->routeIs('admin.barang.*') ||
-                    request()->routeIs('admin.bobot-prioritas.*') ||
-                    request()->routeIs('admin.kriteria.*')
+                    request()->routeIs('admin.barang.*')
+
                     ? 'active'
                     : ''
-                                                                                                                                                                                                                }}">
+                                                                                                                                                                                                                                                                                        }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-gear"></i>
                                     <span>Manajemen Fasilitas</span>
@@ -126,12 +137,7 @@
                                     <li class="submenu-item {{ request()->routeIs('admin.fasilitas.*') ? 'active' : '' }}">
                                         <a href="{{ route('admin.fasilitas.index') }}">Fasilitas</a>
                                     </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.kriteria.index') }}">Kriteria</a>
-                                    </li>
-                                    <li class="submenu-item {{ request()->routeIs('admin.bobot-prioritas.*') ? 'active' : '' }}">
-                                        <a href="{{ route('admin.bobot-prioritas.index') }}">Bobot Prioritas</a>
-                                    </li>
+
                                 </ul>
                             </li>
 
@@ -182,14 +188,14 @@
 
                             <li
                                 class="sidebar-item has-sub
-                                                                                                                                                                                                                {{
+                                                                                                                                                                                                                                                                                        {{
                     request()->routeIs('sarpras.rekomendasi.*') ||
                     request()->routeIs('sarpras.rekomendasi-mahasiswa.*') ||
                     request()->routeIs('sarpras.rekomendasi-dosen.*') ||
                     request()->routeIs(patterns: 'sarpras.rekomendasi-tendik.*')
                     ? 'active'
                     : ''
-                                                                                                                                                                                                                }}">
+                                                                                                                                                                                                                                                                                        }}">
                                 <a href="#" class='sidebar-link'>
                                     <i class="bi bi-lightbulb"></i>
                                     <span>Rekomendasi Laporan</span>
@@ -213,27 +219,38 @@
                                 </ul>
                             </li>
 
+
+                            <li
+                                class="sidebar-item has-sub
+                                                                                                                                                                                                                                                                                        {{
+
+                    request()->routeIs('sarpras.bobot-prioritas.*') ||
+                    request()->routeIs('sarpras.kriteria.*')
+                    ? 'active'
+                    : ''
+                                                                                                                                                                                                                                                                                        }}">
+                                <a href="#" class='sidebar-link'>
+                                    <i class="bi bi-gear"></i>
+                                    <span>Manajemen Prioritas</span>
+                                </a>
+                                <ul class="submenu">
+
+
+                                    <li class="submenu-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
+                                        <a href="{{ route('sarpras.kriteria.index') }}">Kriteria</a>
+                                    </li>
+                                    <li class="submenu-item {{ request()->routeIs('admin.bobot-prioritas.*') ? 'active' : '' }}">
+                                        <a href="{{ route('sarpras.bobot-prioritas.index') }}">Bobot Prioritas</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+
                             <li class="sidebar-item {{ request()->routeIs('sarpras.riwayat.*') ? 'active' : '' }}">
                                 <a href="{{ route('sarpras.riwayat.index') }}" class='sidebar-link'>
                                     <i class="bi bi-journal-text"></i>
                                     <span>Riwayat Penugasan</span>
                                 </a>
-                            </li>
-
-
-
-                            <li class="sidebar-item {{ request()->routeIs('sarpras.prioritas.*') ? 'active' : '' }}">
-                                {{-- <a href="{{ route('sarpras.prioritas.index') }}" class='sidebar-link'>
-                                    <i class="bi bi-exclamation-triangle"></i>
-                                    <span>rekomendasi Laporan</span>
-                                </a> --}}
-                            </li>
-
-                            <li class="sidebar-item {{ request()->routeIs('sarpras.penugasan.*') ? 'active' : '' }}">
-                                {{-- <a href="{{ route('sarpras.penugasan.index') }}" class='sidebar-link'>
-                                    <i class="bi bi-person-workspace"></i>
-                                    <span>Penugasan Teknisi</span>
-                                </a> --}}
                             </li>
 
                 @endif
@@ -256,26 +273,9 @@
                         </a>
                     </li>
                 @endif
-                <!-- Menu Umum untuk Semua Role -->
-                <li class="sidebar-title">Akun</li>
 
-                {{-- <li class="sidebar-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
-                    <a href="{{ route('profile.edit') }}" class='sidebar-link'>
-                        <i class="bi bi-person-circle"></i>
-                        <span>Profil Saya</span>
-                    </a>
-                </li> --}}
 
-                <li class="sidebar-item">
-                    <form method="GET" action="{{ route('logout') }}">
-                        @csrf
-                        <a href="{{ route('logout') }}" class='sidebar-link'
-                            onclick="event.preventDefault(); this.closest('form').submit();">
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>Keluar</span>
-                        </a>
-                    </form>
-                </li>
+
             </ul>
         </div>
     </div>

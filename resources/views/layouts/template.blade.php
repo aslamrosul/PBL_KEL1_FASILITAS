@@ -78,8 +78,11 @@
         function renderStatusBadge(status) {
             let badgeClass = '';
             switch (status.toLowerCase()) {
-                case 'pending':
+                case 'menunggu':
                     badgeClass = 'badge bg-warning text-dark';
+                    break;
+                case 'diterima':
+                    badgeClass = 'badge bg-primary text-white';
                     break;
                 case 'diproses':
                     badgeClass = 'badge bg-info text-white';

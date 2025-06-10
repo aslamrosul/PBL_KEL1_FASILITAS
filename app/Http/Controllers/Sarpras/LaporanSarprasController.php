@@ -8,6 +8,7 @@ use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
 use App\Models\PerbaikanModel;
+use App\Models\RiwayatPenugasanModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -71,22 +72,22 @@ class LaporanSarprasController extends Controller
         return DataTables::of($laporan)
         ->addIndexColumn()
         ->addColumn('aksi', function ($laporan) {
-            $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm mr-1"><i class="fa fa-eye"></i></button>';
+            $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1"><i class="fa fa-eye"></i></button>';
 
-            // Tombol Assign (jika laporan diverifikasi)
+            // Tombol Assign (jika laporan diterima)
             if ($laporan->status == 'diterima') {
-                $btn .= '<button onclick="modalAction(\'' . url('/sarpras/penugasan/' . $laporan->laporan_id . '/create_ajax') . '\')" class="btn btn-success btn-sm mr-1">
+                $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
                     <i class="fa fa-briefcase"></i>
                 </button>';
             }
 
             // Tombol Ubah Status (jika status bukan 'selesai' atau 'ditolak')
-            if (!in_array($laporan->status, ['diterima', 'ditolak'])) {
+           if (!in_array($laporan->status, ['diterima', 'ditolak'])) {
                 $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/change_status_ajax') . '\')" class="btn btn-primary btn-sm">
-                    <i class="fa fa-sync-alt"></i>
+                    <i class="fa fa-edit"></i>
                 </button>';
             }
-
+ 
             return $btn;
         })
         ->rawColumns(['aksi'])
@@ -224,5 +225,65 @@ class LaporanSarprasController extends Controller
             ]);
         }
     }
+
+    public function assign_ajax($id)
+    {
+        $laporan = LaporanModel::find($id);
+        $teknisi = UserModel::whereHas('level', function ($query) {
+            $query->where('level_kode', 'TKN'); // Atau pakai where('level_id', 3) jika pakai angka
+        })->get();
+        return view('sarpras.laporan.assign_ajax', compact('laporan', 'teknisi'));
+    }
+
+   public function assign(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        'teknisi_id' => 'required|exists:m_user,user_id',
+        'catatan' => 'nullable|string'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validasi gagal',
+            'msgField' => $validator->errors()
+        ]);
+    }
+
+    try {
+        // Buat perbaikan baru
+        $perbaikan = PerbaikanModel::create([
+            'laporan_id' => $id,
+            'teknisi_id' => $request->teknisi_id,
+            'tanggal_mulai' => now(),
+            'status' => 'dalam_antrian',
+            'catatan' => $request->catatan
+        ]);
+
+        // Update status laporan
+        LaporanModel::find($id)->update(['status' => 'diproses']);
+
+        // Buat riwayat penugasan
+        RiwayatPenugasanModel::create([
+            'laporan_id' => $id,
+            'teknisi_id' => $request->teknisi_id,
+            'sarpras_id' => auth()->user()->user_id, // Assuming authenticated user is sarpras
+            'tanggal_penugasan' => now(),
+            'status_penugasan' => 'ditugaskan',
+            'catatan' => $request->catatan
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Teknisi berhasil ditugaskan',
+            'id' => $perbaikan->perbaikan_id
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Gagal menugaskan teknisi: ' . $e->getMessage()
+        ]);
+    }
+}
 
 }

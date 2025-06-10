@@ -42,7 +42,7 @@
                                 href="javascript:modalAction('{{ route('profile.edit_ajax') }}')"><i
                                     class="icon-mid bi bi-pencil-square me-2"></i> Edit Profile</a></li>
 
-                        <li><a class="dropdown-item" href=""><i class="icon-mid bi bi-gear me-2"></i> Settings</a></li>
+                        
                         <li>
                             <hr class="dropdown-divider">
                         </li>

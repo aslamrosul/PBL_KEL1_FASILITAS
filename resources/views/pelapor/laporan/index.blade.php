@@ -42,7 +42,6 @@
 @endpush
 
 @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function modalAction(url = '') {
             jQuery('#myModal').load(url, function() {
@@ -69,7 +68,12 @@
                     { data: "judul", className: "", orderable: true, searchable: true },
                     { data: "periode.periode_nama", className: "", orderable: true, searchable: true },
                     { data: "fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true },
-                    { data: "status", className: "", orderable: true, searchable: true },
+                     {
+                        data: "status", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]
             });

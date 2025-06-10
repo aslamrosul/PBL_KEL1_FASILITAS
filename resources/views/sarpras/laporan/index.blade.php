@@ -51,8 +51,8 @@
                         <div class="col-2">
                             <select class="form-control" id="status" name="status">
                                 <option value="">- Semua Status -</option>
-                                <option value="pending">Pending</option>
-                                <option value="diverifikasi">Diverifikasi</option>
+                                <option value="menunggu">Menunggu</option>
+                                <option value="diterima">Diterima</option>
                                 <option value="diproses">Diproses</option>
                                 <option value="selesai">Selesai</option>
                                 <option value="ditolak">Ditolak</option>
@@ -113,7 +113,12 @@
                     { data: "user.nama", className: "", orderable: false, searchable: false },
                     { data: "fasilitas.fasilitas_nama", className: "", orderable: false, searchable: false },
                     { data: "bobot_prioritas.bobot_nama", className: "", orderable: false, searchable: false },
-                    { data: "status", className: "", orderable: true, searchable: true },
+                     {
+                        data: "status", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
                     { data: "aksi", className: "", orderable: false, searchable: false }
                 ]
             });

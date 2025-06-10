@@ -73,6 +73,8 @@
                         <td>
                             <span class="badge
                                 @if ($laporan->status == 'Menunggu') bg-warning
+                                @elseif ($laporan->status == 'Diterima') bg-primary
+                                @elseif ($laporan->status == 'Ditolak') bg-danger
                                 @elseif ($laporan->status == 'Diproses') bg-info
                                 @elseif ($laporan->status == 'Selesai') bg-success
                                 @else bg-danger @endif">

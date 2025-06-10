@@ -11,7 +11,7 @@
             <div class="card-body">
                 <div class="row g-4">
                     <!-- Maintenance Statistics -->
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="stat-box bg-primary text-white">
                             <div class="stat-content">
                                 <h3>{{ $maintenanceStats['total'] }}</h3>
@@ -23,7 +23,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="stat-box bg-warning text-dark">
                             <div class="stat-content">
                                 <h3>{{ $maintenanceStats['ongoing'] }}</h3>
@@ -35,7 +35,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="stat-box bg-success text-white">
                             <div class="stat-content">
                                 <h3>{{ $maintenanceStats['completed'] }}</h3>
@@ -47,18 +47,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="stat-box bg-danger text-white">
-                            <div class="stat-content">
-                                <h3>{{ $maintenanceStats['rejected'] }}</h3>
-                                <p>Ditolak</p>
-                                <i class="fa fa-times-circle-o stat-icon"></i>
-                            </div>
-                            <a href="{{ route('sarpras.laporan.index', ['status' => 'ditolak']) }}" class="stat-footer">
-                                More Info <i class="fa fa-arrow-circle-right"></i>
-                            </a>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>

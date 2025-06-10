@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Sarpras;
 
 use App\Http\Controllers\Controller;
 use App\Models\RiwayatPenugasanModel;
@@ -25,7 +25,7 @@ class RiwayatPenugasanController extends Controller
             'title' => 'Daftar riwayat penugasan yang terdaftar'
         ];
         $activeMenu = 'riwayat_penugasan';
-        return view('admin.riwayat_penugasan.index', compact('breadcrumb', 'page', 'activeMenu'));
+        return view('sarpras.riwayat_penugasan.index', compact('breadcrumb', 'page', 'activeMenu'));
     }
 
     // Mengambil data untuk DataTable
@@ -45,72 +45,73 @@ class RiwayatPenugasanController extends Controller
                 return $item->sarpras->nama ?? '-';
             })
             ->addColumn('aksi', function ($item) {
-                $showUrl = url('/riwayat_penugasan/' . $item->riwayat_penugasan_id . '/show_ajax');
-                $editUrl = url('/riwayat_penugasan/' . $item->riwayat_penugasan_id . '/edit_ajax');
-                $deleteUrl = url('/riwayat_penugasan/' . $item->riwayat_penugasan_id . '/delete_ajax');
+                $showUrl = url('/sarpras/penugasan/' . $item->riwayat_penugasan_id . '/show_ajax');
+              
                 return '
                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat">
                         <i class="fa fa-eye"></i>
                     </button>
-                    <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm" title="Edit">
-                        <i class="fa fa-edit"></i>
-                    </button>
-                    <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm" title="Hapus">
-                        <i class="fa fa-trash"></i>
-                    </button>
+                  
                 ';
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
 
+    public function show_ajax($id)
+{
+    $riwayat = RiwayatPenugasanModel::with(['laporan', 'teknisi', 'sarpras'])
+        ->findOrFail($id);
+    return view('sarpras.riwayat_penugasan.show_ajax', compact('riwayat'));
+}
+
     // Menampilkan form tambah data
-    public function create_ajax()
-    {
-        $laporan = LaporanModel::all();
-        $teknisi = UserModel::whereHas('level', function ($query) {
-            $query->where('level_kode', 'TKN'); // Filter teknisi
-        })->get();
-        $sarpras = UserModel::whereHas('level', function ($query) {
-            $query->where('level_kode', 'SPR'); // Filter petugas sarpras
-        })->get();
-        return view('admin.riwayat_penugasan.create_ajax', compact('laporan', 'teknisi', 'sarpras'));
-    }
+    // public function create_ajax()
+    // {
+    //     $laporan = LaporanModel::all();
+    //     $teknisi = UserModel::whereHas('level', function ($query) {
+    //         $query->where('level_kode', 'TKN'); // Filter teknisi
+    //     })->get();
+    //     $sarpras = UserModel::whereHas('level', function ($query) {
+    //         $query->where('level_kode', 'SPR'); // Filter petugas sarpras
+    //     })->get();
+    //     return view('sarpras.riwayat_penugasan.create_ajax', compact('laporan', 'teknisi', 'sarpras'));
+    // }
 
-    // Menyimpan data baru
-    public function store_ajax(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'laporan_id' => 'required|exists:t_laporan,laporan_id',
-            'teknisi_id' => 'required|exists:m_user,user_id',
-            'sarpras_id' => 'required|exists:m_user,user_id',
-            'tanggal_penugasan' => 'required|date',
-            'status_penugasan' => 'required|in:ditugaskan,selesai,dibatalkan',
-            'catatan' => 'nullable|string'
-        ]);
+    // // Menyimpan data baru
+    // public function store_ajax(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'laporan_id' => 'required|exists:t_laporan,laporan_id',
+    //         'teknisi_id' => 'required|exists:m_user,user_id',
+    //         'sarpras_id' => 'required|exists:m_user,user_id',
+    //         'tanggal_penugasan' => 'required|date',
+    //         'status_penugasan' => 'required|in:ditugaskan,selesai',
+    //         'catatan' => 'nullable|string'
+    //     ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal',
-                'msgField' => $validator->errors()
-            ]);
-        }
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Validasi gagal',
+    //             'msgField' => $validator->errors()
+    //         ]);
+    //     }
 
-        try {
-            $riwayat = RiwayatPenugasanModel::create($request->all());
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil ditambahkan',
-                'id' => $riwayat->riwayat_penugasan_id
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Gagal menambah data: ' . $e->getMessage()
-            ]);
-        }
-    }
+    //     try {
+    //         $riwayat = RiwayatPenugasanModel::create($request->all());
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Data berhasil ditambahkan',
+    //             'id' => $riwayat->riwayat_penugasan_id
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Gagal menambah data: ' . $e->getMessage()
+    //         ]);
+    //     }
+    // }
 
     // Export ke Excel
     public function export_excel()
@@ -160,7 +161,7 @@ class RiwayatPenugasanController extends Controller
             'riwayat' => $riwayat,
             'title' => 'Laporan Riwayat Penugasan'
         ];
-        $pdf = Pdf::loadView('admin.riwayat_penugasan.export_pdf', $data);
+        $pdf = Pdf::loadView('sarpras.riwayat_penugasan.export_pdf', $data);
         $pdf->setPaper('A4', 'portrait');
         $pdf->render();
         return $pdf->stream('Riwayat_Penugasan_' . date('Y-m-d_H-i-s') . '.pdf');

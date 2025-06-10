@@ -90,7 +90,12 @@
                     { data: "user_nama", className: "", orderable: true, searchable: true }, // Nama pelapor dari relasi
                     { data: "fasilitas", className: "", orderable: true, searchable: true }, // Nama fasilitas dari relasi
                     { data: "periode", className: "", orderable: true, searchable: true }, // Nama periode dari relasi
-                    { data: "status", className: "", orderable: true, searchable: true },
+                     {
+                        data: "status", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
                     { data: "tanggal_selesai", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false } // Kolom aksi (tombol)
                 ]

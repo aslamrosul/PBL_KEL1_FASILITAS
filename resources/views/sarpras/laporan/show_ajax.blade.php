@@ -34,8 +34,8 @@
                     <th>Status</th>
                     <td>
                         <span class="badge 
-                            @if($laporan->status == 'pending') bg-secondary
-                            @elseif($laporan->status == 'diverifikasi') bg-info
+                            @if($laporan->status == 'menunggu') bg-secondary
+                            @elseif($laporan->status == 'diterima') bg-info
                             @elseif($laporan->status == 'diproses') bg-primary
                             @elseif($laporan->status == 'selesai') bg-success
                             @else bg-danger @endif">

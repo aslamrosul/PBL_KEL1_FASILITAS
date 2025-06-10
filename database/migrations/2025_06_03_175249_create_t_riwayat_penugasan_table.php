@@ -14,6 +14,7 @@ class CreateTRiwayatPenugasanTable extends Migration
             $table->unsignedBigInteger('sarpras_id');
             $table->date('tanggal_penugasan');
             $table->enum('status_penugasan', ['ditugaskan', 'dikerjakan', 'selesai'])->default('ditugaskan');
+            $table->text('catatan')->nullable();
             $table->date('tanggal_selesai')->nullable();
             $table->timestamps();
 
