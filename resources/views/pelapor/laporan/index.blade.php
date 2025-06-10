@@ -25,10 +25,6 @@
                             <th>Judul</th>
                             <th>Periode</th>
                             <th>Fasilitas</th>
-                            <th>Gedung</th>
-                            <th>Lantai</th>
-                            <th>Ruang</th>
-                            <th>Barang</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -91,10 +87,6 @@
                 { data: "judul", className: "", orderable: true, searchable: true },
                 { data: "periode.periode_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
                 { data: "fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
-                { data: "gedung.gedung_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
-                { data: "lantai.lantai_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
-                { data: "ruang.ruang_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
-                { data: "barang.barang_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
                 {
                     data: "status",
                     render: function(data) {
