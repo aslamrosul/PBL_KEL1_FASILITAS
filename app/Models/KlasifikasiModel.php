@@ -13,6 +13,9 @@ class KlasifikasiModel extends Model
     protected $primaryKey = 'klasifikasi_id';
 
     protected $fillable = ['klasifikasi_kode', 'klasifikasi_nama'];
+    protected $casts = [
+    'bobot_prioritas' => 'decimal:2', // agar otomatis format 2 angka desimal
+];
 
     public function barangs()
 {

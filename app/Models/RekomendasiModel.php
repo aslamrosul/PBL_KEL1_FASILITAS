@@ -18,7 +18,7 @@ class RekomendasiModel extends Model
         'rekom_tendik',
         'skor_final',
         'bobot_id'
-    ];
+    ];   
 
     public function laporan()
     {

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('klasifikasi_id');
             $table->string('klasifikasi_kode', 10);
             $table->string('klasifikasi_nama', 100);
+             $table->decimal('bobot_prioritas', 4, 2)->default(0.00);
             $table->timestamps();
         });
     }

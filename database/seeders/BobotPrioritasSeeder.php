@@ -15,51 +15,42 @@ class BobotPrioritasSeeder extends Seeder
     public function run()
     {
         BobotPrioritasModel::insert([
-          [
+            [
                 'bobot_kode' => 'URG',
                 'bobot_nama' => 'Urgent',
-                'skor_min' => 80,
-                'skor_max' => 100,
-                'tindakan' => 'Perbaikan dalam 24 jam',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'skor_min' => 0.8,
+                'skor_max' => 1.0,
+                'tindakan' => 'Perbaikan dalam 24 jam'
             ],
             [
                 'bobot_kode' => 'HIGH',
                 'bobot_nama' => 'High Priority',
-                'skor_min' => 60,
-                'skor_max' => 79,
-                'tindakan' => 'Perbaikan dalam 48 jam',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'skor_min' => 0.6,
+                'skor_max' => 0.79,
+                'tindakan' => 'Perbaikan dalam 48 jam'
             ],
             [
                 'bobot_kode' => 'MED',
                 'bobot_nama' => 'Medium Priority',
-                'skor_min' => 40,
-                'skor_max' => 59,
-                'tindakan' => 'Perbaikan dalam 72 jam',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'skor_min' => 0.4,
+                'skor_max' => 0.59,
+                'tindakan' => 'Perbaikan dalam 72 jam'
             ],
             [
                 'bobot_kode' => 'LOW',
                 'bobot_nama' => 'Low Priority',
-                'skor_min' => 20,
-                'skor_max' => 39,
-                'tindakan' => 'Perbaikan dalam 1 minggu',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'skor_min' => 0.2,
+                'skor_max' => 0.39,
+                'tindakan' => 'Perbaikan dalam 1 minggu'
             ],
             [
                 'bobot_kode' => 'MINOR',
                 'bobot_nama' => 'Minor Issue',
                 'skor_min' => 0,
-                'skor_max' => 19,
-                'tindakan' => 'Perbaikan dalam 2 minggu',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
+                'skor_max' => 0.19,
+                'tindakan' => 'Perbaikan dalam 2 minggu'
+            ]
+
         ]);
     }
 }

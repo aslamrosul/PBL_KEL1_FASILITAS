@@ -93,6 +93,7 @@
                 myModal.show();
             });
         }
+        
 
         $(document).ready(function() {
             var dataLaporan = $('#table_laporan').DataTable({

@@ -27,7 +27,7 @@ class PeriodeSeeder extends Seeder
                 'periode_nama' => 'Semester Genap 2024/2025',
                 'tanggal_mulai' => Carbon::create(2025, 2, 1),
                 'tanggal_selesai' => Carbon::create(2025, 6, 30),
-                'is_aktif' => false,
+                'is_aktif' => true,
                  'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],

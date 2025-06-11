@@ -29,6 +29,7 @@
 
 
 @push('js')
+
     <script>
         function modalAction(url = '') {
             jQuery('#myModal').load(url, function () {

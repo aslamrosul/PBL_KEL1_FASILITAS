@@ -40,8 +40,7 @@
                         <div>
                             <a href="{{ route('pelapor.feedback.edit', $laporan->laporan_id) }}"
                                 class="btn btn-warning me-2">Edit</a>
-                            <a href="{{ route('pelapor.feedback.confirm', $laporan->laporan_id) }}"
-                                class="btn btn-danger">Hapus</a>
+                        
                         </div>
                     </div>
                 </div>

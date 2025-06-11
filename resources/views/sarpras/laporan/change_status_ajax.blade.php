@@ -1,4 +1,5 @@
-<form action="{{ url('/sarpras/laporan/' . $laporan->laporan_id . '/update_status') }}" method="POST" id="form-change-status">
+<form action="{{ url('/sarpras/laporan/' . $laporan->laporan_id . '/update_status') }}" method="POST"
+    id="form-change-status">
     @csrf
     @method('PUT') {{-- Gunakan metode PUT untuk update --}}
     <div class="modal-dialog modal-lg" role="document">
@@ -24,6 +25,14 @@
                     </select>
                     <small id="error-status" class="error-text form-text text-danger"></small>
                 </div>
+                <div class="form-group mb-3" id="alasan_penolakan_group"
+                  >
+                    <label for="alasan_penolakan">Alasan Penolakan</label>
+                    <textarea class="form-control" id="alasan_penolakan" name="alasan_penolakan"
+                        rows="3">{{ $laporan->alasan_penolakan }}</textarea>
+                    <small id="error-alasan_penolakan" class="error-text form-text text-danger"></small>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">Batal</button>
@@ -33,8 +42,8 @@
     </div>
 </form>
 <script>
-    $(document).ready(function() {
-        $("#form-change-status").on('submit', function(e) {
+    $(document).ready(function () {
+        $("#form-change-status").on('submit', function (e) {
             e.preventDefault();
             var form = this;
             var formData = new FormData(form);
@@ -44,7 +53,7 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     if (response.status) {
                         $('.modal').modal('hide');
                         alert(response.message); // Ganti dengan SweetAlert jika ada
@@ -55,18 +64,18 @@
                     } else {
                         $('.error-text').text('');
                         if (response.msgField) {
-                            $.each(response.msgField, function(prefix, val) {
+                            $.each(response.msgField, function (prefix, val) {
                                 $('#error-' + prefix).text(val[0]);
                             });
                         }
                         alert('Gagal: ' + response.message); // Ganti dengan SweetAlert jika ada
                     }
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     var errors = xhr.responseJSON.errors;
                     $('.error-text').text('');
                     if (errors) {
-                        $.each(errors, function(prefix, val) {
+                        $.each(errors, function (prefix, val) {
                             $('#error-' + prefix).text(val[0]);
                         });
                     }

@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\KriteriaModel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Carbon\Carbon;
 
 class KriteriaSeeder extends Seeder
 {
@@ -13,37 +16,45 @@ class KriteriaSeeder extends Seeder
      */
     public function run()
     {
-        KriteriaModel::insert([
+        // Kosongkan tabel dulu jika ada data lama
+         KriteriaModel::insert([
             [
-                'kriteria_kode' => 'FREK',
-                'kriteria_nama' => 'Frekuensi Laporan',
-                'bobot' => 0.4,
-                'kriteria_jenis' => 'benefit'
+                'kriteria_kode' => 'frekuensi',
+                'kriteria_nama' => 'Frekuensi Laporan Kerusakan',
+                'kriteria_jenis' => 'benefit',
+                'bobot' => 0.30,
+              
             ],
             [
-                'kriteria_kode' => 'USIA',
+                'kriteria_kode' => 'usia',
                 'kriteria_nama' => 'Usia Fasilitas',
-                'bobot' => 0.3,
-                'kriteria_jenis' => 'cost'
+                'kriteria_jenis' => 'cost',
+                'bobot' => 0.25,
+             
             ],
             [
-                'kriteria_kode' => 'KLASIFIKASI',
-                'kriteria_nama' => 'Prioritas Klasifikasi',
-                'bobot' => 0.2,
-                'kriteria_jenis' => 'benefit'
-            ],
-            [
-                'kriteria_kode' => 'KATEGORI',
-                'kriteria_nama' => 'Kategori Fasilitas',
-                'bobot' => 0.1,
-                'kriteria_jenis' => 'benefit'
-            ],
-            [
-                'kriteria_kode' => 'KONDISI',
+                'kriteria_kode' => 'kondisi',
                 'kriteria_nama' => 'Kondisi Fasilitas',
-                'bobot' => 0.5,
-                'kriteria_jenis' => 'benefit'
-            ]
-        ]);
+                'kriteria_jenis' => 'benefit',
+                'bobot' => 0.20,
+              
+            ],
+            [
+                'kriteria_kode' => 'barang',
+                'kriteria_nama' => 'Prioritas Jenis Barang',
+                'kriteria_jenis' => 'benefit',
+                'bobot' => 0.15,
+              
+            ],
+            [
+                'kriteria_kode' => 'klasifikasi',
+                'kriteria_nama' => 'Klasifikasi Fasilitas',
+                'kriteria_jenis' => 'benefit',
+                'bobot' => 0.10,
+               
+            ],
+           ]);
+
+       
     }
 }

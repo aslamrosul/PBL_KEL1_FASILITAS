@@ -19,6 +19,11 @@ class FeedbackController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
+        if ($laporan->status !== 'selesai') {
+            return redirect()->route('pelapor.riwayat.index', $laporan_id)
+                ->with('error', 'Umpan balik hanya dapat diberikan untuk laporan yang sudah selesai.');
+        }
+
         // Check if feedback already exists
         if ($laporan->feedback) {
             return redirect()->route('pelapor.laporan.show', $laporan_id)
@@ -47,6 +52,11 @@ class FeedbackController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
+        if ($laporan->status !== 'selesai') {
+            return redirect()->route('pelapor.riwayat.index', $laporan_id)
+                ->with('error', 'Umpan balik hanya dapat diberikan untuk laporan yang sudah selesai.');
+        }
+
         // Check if feedback already exists
         if ($laporan->feedback) {
             return redirect()->route('pelapor.laporan.show', $laporan_id)
@@ -71,9 +81,14 @@ class FeedbackController extends Controller
         $laporan = LaporanModel::where('laporan_id', $laporan_id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+        if ($laporan->status !== 'selesai') {
+            return redirect()->route('pelapor.riwayat.index', $laporan_id)
+                ->with('error', 'Umpan balik hanya bisa dilihat oleh laporan yang sudah selesai.');
+        }
+
 
         if (!$laporan->feedback) {
-            return redirect()->route('pelapor.laporan.show', $laporan_id)
+            return redirect()->route('pelapor.riwayat.index', $laporan_id)
                 ->with('error', 'Belum ada umpan balik untuk laporan ini.');
         }
 
@@ -94,11 +109,8 @@ class FeedbackController extends Controller
             ->where('user_id', Auth::id())
             ->with('feedback')
             ->firstOrFail();
-
-        if (!$laporan->feedback) {
-            return redirect()->route('pelapor.laporan.show', $laporan_id)
-                ->with('error', 'Belum ada umpan balik untuk laporan ini.');
-        }
+ 
+ 
 
         $breadcrumb = (object)[
             'title' => 'Edit Umpan Balik',

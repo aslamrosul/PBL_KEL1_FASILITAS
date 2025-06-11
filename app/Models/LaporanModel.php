@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon; // Ensure Carbon is imported for type hinting if needed
 
 class LaporanModel extends Model
 {
     use HasFactory;
 
-    protected $table = 't_laporan';
+    protected $table = 't_laporan'; // Your laporan table name
     protected $primaryKey = 'laporan_id';
     protected $fillable = [
         'user_id',
@@ -18,15 +19,13 @@ class LaporanModel extends Model
         'judul',
         'deskripsi',
         'foto_path',
-        'gedung',
-        'lantai',
-        'ruang',
-        'barang',
+        'bobot_id', // Based on your migration, it's 'bobot_id'
         'status',
         'alasan_penolakan',
-        'tanggal_selesai'
+        'tanggal_selesai',
     ];
 
+    // Define direct relationships as per your migration
     public function user()
     {
         return $this->belongsTo(UserModel::class, 'user_id');
@@ -44,27 +43,8 @@ class LaporanModel extends Model
 
     public function bobotPrioritas()
     {
+        // Relationship for bobot_id
         return $this->belongsTo(BobotPrioritasModel::class, 'bobot_id');
-    }
-
-    public function Gedung()
-    {
-        return $this->belongsTo(GedungModel::class, 'gedung_id');
-    }
-
-    public function Ruang()
-    {
-        return $this->belongsTo(RuangModel::class, 'ruang_id');
-    }
-
-    public function Lantai()
-    {
-        return $this->belongsTo(LantaiModel::class, 'lantai_id');
-    }
-
-    public function Barang()
-    {
-        return $this->belongsTo(BarangModel::class, 'barang_id');
     }
 
     public function histories()
@@ -82,7 +62,13 @@ class LaporanModel extends Model
         return $this->hasOne(FeedbackModel::class, 'laporan_id');
     }
 
+    public function rekomendasi()
+    {
+        return $this->hasOne(RekomendasiModel::class, 'laporan_id');
+    }
+
     protected $casts = [
         'tanggal_lapor' => 'datetime',
+        'tanggal_selesai' => 'datetime', // Uncomment if you want to cast this too
     ];
 }

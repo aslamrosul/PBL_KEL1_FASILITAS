@@ -49,3 +49,32 @@
             </div>
         </div>
     </section>
+    @endsection
+
+@push('css')
+<style>
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    .rating > input {
+        display: none;
+    }
+    .rating > label {
+        position: relative;
+        width: 1.5em;
+        font-size: 2rem;
+        cursor: pointer;
+    }
+    .rating > label i {
+        color: #ccc !important; /* Warna abu-abu untuk bintang kosong */
+        transition: color 0.2s ease; /* Efek transisi halus */
+    }
+    .rating > input:checked ~ label i,
+    .rating > label:hover i,
+    .rating > label:hover ~ label i {
+        color: #ffc107 !important; /* Warna kuning saat dipilih atau hover */
+    }
+</style>
+@endpush

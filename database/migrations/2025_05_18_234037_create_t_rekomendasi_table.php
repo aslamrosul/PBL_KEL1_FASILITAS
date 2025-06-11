@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('rekom_mahasiswa')->nullable(); // {skor: 85, kriteria: {...}}
             $table->json('rekom_dosen')->nullable();
             $table->json('rekom_tendik')->nullable();
-            $table->decimal('skor_final', 8, 2);
+            $table->decimal('skor_final', 8, 2)->nullable();
             $table->unsignedBigInteger(column: 'bobot_id');
             $table->timestamps();
 
