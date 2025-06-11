@@ -49,12 +49,12 @@ class LaporanSarprasController extends Controller
 
     public function list(Request $request)
     {
-        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])
+        $laporan = LaporanModel::with(['user', 'fasilitas', 'bobotPrioritas', 'user'])
             ->select('t_laporan.*');
 
         // Filter berdasarkan periode
-        if ($request->periode_id) {
-            $laporan->where('periode_id', $request->periode_id);
+        if ($request->user_Id) {
+            $laporan->where('user_id', $request->user_id);
         }
 
         // Filter berdasarkan fasilitas
