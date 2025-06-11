@@ -5,9 +5,9 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/pelapor/laporan/create_ajax') }}')" class="btn btn-success">
+                <a href="{{ url('/pelapor/laporan/create') }}" class="btn btn-success">
                     <i class="fa fa-plus"></i> Tambah Laporan
-                </button>
+                </a>
             </div>
         </div>
         <div class="card-body">
@@ -43,17 +43,9 @@
 
 @push('js')
     <script>
-        function modalAction(url = '') {
-            jQuery('#myModal').load(url, function() {
-                var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
-                    keyboard: false,
-                    backdrop: 'static'
-                });
-                myModal.show();
-            });
-        }
 
-        jQuery(document).ready(function() {
+
+        jQuery(document).ready(function () {
             window.dataLaporan = jQuery('#table_laporan').DataTable({
                 serverSide: true,
                 ajax: {
@@ -68,7 +60,7 @@
                     { data: "judul", className: "", orderable: true, searchable: true },
                     { data: "periode.periode_nama", className: "", orderable: true, searchable: true },
                     { data: "fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true },
-                     {
+                    {
                         data: "status", render: function (data) {
                             return renderStatusBadge(data);
                         },

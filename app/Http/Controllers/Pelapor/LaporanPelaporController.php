@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Pelapor;
 
 use App\Http\Controllers\Controller;
+use App\Models\BarangModel;
 use App\Models\LaporanModel;
 use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
+use App\Models\GedungModel;
+use App\Models\LantaiModel;
+use App\Models\RuangModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -41,7 +45,7 @@ class LaporanPelaporController extends Controller
     {
         if ($request->ajax()) {
             $laporan = LaporanModel::where('user_id', Auth::id())
-                ->where('status', '!=', 'selesai') // hindari laporan yang sudah selesai
+                ->whereNotIn('status',  ['selesai', 'ditolak']) // hindari laporan yang sudah selesai
                 ->with(['periode', 'fasilitas', 'bobotPrioritas'])
                 ->select('t_laporan.*');
 
@@ -49,7 +53,7 @@ class LaporanPelaporController extends Controller
                 ->addIndexColumn()
                 ->addColumn('aksi', function ($laporan) {
                     $showUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/show_ajax');
-                    $editUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/edit_ajax');
+                    $editUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/edit');
                     $deleteUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/confirm_ajax');
 
                     $buttons = '
@@ -59,11 +63,11 @@ class LaporanPelaporController extends Controller
                 ';
 
                     // Tampilkan Edit dan Hapus hanya jika status bukan "diproses"
-                    if ($laporan->status !== 'diproses') {
+                    if ($laporan->status !== 'diproses' && $laporan->status !== 'diterima') {
                         $buttons .= '
-                        <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
-                            <i class="fa fa-edit"></i>  
-                        </button>
+                       <a href="' . $editUrl . '" class="btn btn-warning btn-sm">
+    <i class="fa fa-edit"></i>
+</a>
                         <button onclick="modalAction(\'' . $deleteUrl . '\')" class="btn btn-danger btn-sm">
                             <i class="fa fa-trash"></i>  
                         </button>
@@ -77,142 +81,145 @@ class LaporanPelaporController extends Controller
         }
     }
 
-    public function create_ajax()
+    public function create()
     {
-        $periode = PeriodeModel::select('periode_id', 'periode_nama')->get();
-        $fasilitas = FasilitasModel::select('fasilitas_id', 'fasilitas_nama')->get();
-        $bobot = BobotPrioritasModel::select('bobot_id', 'bobot_nama')->get();
-        return view('pelapor.laporan.create_ajax', compact('periode', 'fasilitas', 'bobot'));
+        $gedungs = GedungModel::all();
+
+        return view('pelapor.laporan.create', compact('gedungs'));
     }
 
-    public function store_ajax(Request $request)
+    public function store(Request $request)
     {
-        if ($request->ajax()) {
-            $validator = Validator::make($request->all(), [
-                'judul' => 'required|string|max:100',
-                'deskripsi' => 'required|string',
-                'periode_id' => 'required|exists:m_periode,periode_id',
-                'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
-                'bobot_id' => 'nullable|exists:m_bobot_prioritas,bobot_id',
-                'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            ]);
+        $request->validate([
+            'judul' => 'required|string|min:3',
+            'deskripsi' => 'required|string|min:10',
+            'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
+            'foto_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi gagal',
-                    'msgField' => $validator->errors()
-                ]);
+        try {
+            $periode = PeriodeModel::where('is_aktif', true)->first();
+
+            $data = [
+                'user_id' => Auth::id(),
+                'periode_id' => $periode->periode_id,
+                'fasilitas_id' => $request->fasilitas_id,
+                'judul' => $request->judul,
+                'deskripsi' => $request->deskripsi,
+                'status' => 'Menunggu',
+                'tanggal_lapor' => now(),
+            ];
+
+            if ($request->hasFile('foto_path')) {
+                $data['foto_path'] = $request->file('foto_path')->store('laporan_photos', 'public');
             }
 
-            try {
-                $data = [
-                    'user_id' => Auth::id(),
-                    'periode_id' => $request->periode_id,
-                    'fasilitas_id' => $request->fasilitas_id,
-                    'judul' => $request->judul,
-                    'deskripsi' => $request->deskripsi,
-                    'bobot_id' => $request->bobot_id,
-                    'status' => 'menunggu',
-                ];
+            LaporanModel::create($data);
 
-                if ($request->hasFile('foto')) {
-                    $data['foto_path'] = $request->file('foto')->store('laporan_fotos', 'public');
+            return redirect()->route('pelapor.laporan.index')->with('success', 'Laporan berhasil disimpan');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan laporan: ' . $e->getMessage());
+        }
+    }
+    public function edit($id)
+    {
+        $laporan = LaporanModel::with(['fasilitas.ruang.lantai.gedung'])->findOrFail($id);
+        $gedungs = GedungModel::all();
+        $lantais = LantaiModel::where('gedung_id', $laporan->fasilitas->ruang->lantai->gedung_id)->get();
+        $ruangs = RuangModel::where('lantai_id', $laporan->fasilitas->ruang->lantai_id)->get();
+        $barangs = BarangModel::whereHas('fasilitas', function ($query) use ($laporan) {
+            $query->where('ruang_id', $laporan->fasilitas->ruang_id);
+        })->get();
+        $fasilitas = FasilitasModel::where('ruang_id', $laporan->fasilitas->ruang_id)
+            ->where('barang_id', $laporan->fasilitas->barang_id)
+            ->get();
+
+        $current_gedung_id = $laporan->fasilitas->ruang->lantai->gedung_id;
+        $current_lantai_id = $laporan->fasilitas->ruang->lantai_id;
+        $current_ruang_id = $laporan->fasilitas->ruang_id;
+        $current_barang_id = $laporan->fasilitas->barang_id;
+
+
+
+        $page = (object) [
+            'title' => 'Daftar laporan yang dibuat oleh pelapor'
+        ];
+        return view('pelapor.laporan.edit', compact(
+            'laporan',
+            'gedungs',
+            'lantais',
+            'ruangs',
+            'barangs',
+            'fasilitas',
+            'current_gedung_id',
+            'current_lantai_id',
+            'current_ruang_id',
+            'current_barang_id',
+            'page',
+
+        ));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $laporan = LaporanModel::findOrFail($id);
+
+        $request->validate([
+            'judul' => 'required|string|min:3',
+            'deskripsi' => 'required|string|min:10',
+            'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
+            'foto_path' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+        ]);
+
+        try {
+
+            $data = [
+                'fasilitas_id' => $request->fasilitas_id,
+                'judul' => $request->judul,
+                'deskripsi' => $request->deskripsi,
+            ];
+
+            if ($request->hasFile('foto_path')) {
+                if ($laporan->foto_path) {
+                    Storage::disk('public')->delete($laporan->foto_path);
                 }
-
-                $laporan = LaporanModel::create($data);
-
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Laporan berhasil ditambahkan',
-                    'id' => $laporan->laporan_id,
-                    'judul' => $laporan->judul
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Gagal menambah laporan: ' . $e->getMessage()
-                ]);
+                $data['foto_path'] = $request->file('foto_path')->store('laporan_photos', 'public');
             }
+
+            $laporan->update($data);
+
+            return redirect()->route('pelapor.laporan.index')->with('success', 'Laporan berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui laporan: ' . $e->getMessage());
         }
     }
 
-    public function edit_ajax($id)
+    public function getLantai($gedung_id)
     {
-        $laporan = LaporanModel::find($id);
-        if (!$laporan) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Data tidak ditemukan'
-            ]);
-        }
-        $periode = PeriodeModel::select('periode_id', 'periode_nama')->get();
-        $fasilitas = FasilitasModel::select('fasilitas_id', 'fasilitas_nama')->get();
-        $bobot = BobotPrioritasModel::select('bobot_id', 'bobot_nama')->get();
-        return view('pelapor.laporan.edit_ajax', compact('laporan', 'periode', 'fasilitas', 'bobot'));
+        $lantais = LantaiModel::where('gedung_id', $gedung_id)->get(['lantai_id', 'lantai_nomor']);
+        return response()->json($lantais);
     }
 
-    public function update_ajax(Request $request, $id)
+    public function getRuang($lantai_id)
     {
-        if ($request->ajax()) {
-            $validator = Validator::make($request->all(), [
-                'judul' => 'required|string|max:100',
-                'deskripsi' => 'required|string',
-                'periode_id' => 'required|exists:m_periode,periode_id',
-                'fasilitas_id' => 'required|exists:m_fasilitas,fasilitas_id',
-                'bobot_id' => 'nullable|exists:m_bobot_prioritas,bobot_id',
-                'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi gagal',
-                    'msgField' => $validator->errors()
-                ]);
-            }
-
-            $laporan = LaporanModel::find($id);
-            if (!$laporan) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data tidak ditemukan'
-                ]);
-            }
-
-            try {
-                $data = [
-                    'periode_id' => $request->periode_id,
-                    'fasilitas_id' => $request->fasilitas_id,
-                    'judul' => $request->judul,
-                    'deskripsi' => $request->deskripsi,
-                    'bobot_id' => $request->bobot_id,
-                ];
-
-                if ($request->hasFile('foto')) {
-                    if ($laporan->foto_path) {
-                        Storage::disk('public')->delete($laporan->foto_path);
-                    }
-                    $data['foto_path'] = $request->file('foto')->store('laporan_fotos', 'public');
-                }
-
-                $laporan->update($data);
-
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Laporan berhasil diupdate',
-                    'id' => $laporan->laporan_id,
-                    'judul' => $laporan->judul
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Gagal mengupdate laporan: ' . $e->getMessage()
-                ]);
-            }
-        }
+        $ruangs = RuangModel::where('lantai_id', $lantai_id)->get(['ruang_id', 'ruang_nama']);
+        return response()->json($ruangs);
     }
 
+    public function getBarang($ruang_id)
+    {
+        $barangs = BarangModel::whereHas('fasilitas', function ($query) use ($ruang_id) {
+            $query->where('ruang_id', $ruang_id);
+        })->get(['barang_id', 'barang_nama']);
+        return response()->json($barangs);
+    }
+
+    public function getFasilitas($barang_id)
+    {
+        $fasilitas = FasilitasModel::where('barang_id', $barang_id)->get(['fasilitas_id', 'fasilitas_nama']);
+        return response()->json($fasilitas);
+    }
+    
     public function confirm_ajax($id)
     {
         $laporan = LaporanModel::find($id);
@@ -248,7 +255,7 @@ class LaporanPelaporController extends Controller
 
     public function show_ajax($id)
     {
-        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])->find($id);
+        $laporan = LaporanModel::with(['periode', 'fasilitas', 'user',])->find($id);
         if (!$laporan) {
             return response()->json([
                 'status' => false,
@@ -298,7 +305,7 @@ class LaporanPelaporController extends Controller
                             'judul' => trim($value['C']),
                             'deskripsi' => trim($value['D']),
                             'bobot_id' => trim($value['E']) ?: null,
-                            'status' => 'menunggu',
+                            'status' => 'z',
                             'created_at' => now(),
                         ];
                     }
@@ -393,5 +400,4 @@ class LaporanPelaporController extends Controller
 
         return $pdf->stream('Data Laporan ' . date('Y-m-d H-i-s') . '.pdf');
     }
-
 }
