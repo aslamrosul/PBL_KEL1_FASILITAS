@@ -3,7 +3,7 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="{{ url('/admin') }}"><span class="brand-text fw-bold fs-2">Fix<span
+                    <a href="{{ url('/') }}"><span class="brand-text fw-bold fs-2">Fix<span
                                 class="text-info fw-bold fs-2">IT</span></span></a>
                 </div>
                 <style>
