@@ -8,8 +8,10 @@ use App\Models\FasilitasModel;
 use App\Models\KriteriaModel;
 use App\Models\BobotPrioritasModel;
 use App\Models\RekomendasiModel;
+use App\Services\TopsisService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -37,27 +39,27 @@ class RekomendasiController extends Controller
     }
 
     // Index untuk rekomendasi mahasiswa
-  // Contoh untuk rekomendasi mahasiswa
-public function indexMahasiswa()
-{
-    $breadcrumb = (object) [
-        'title' => 'Rekomendasi Mahasiswa',
-        'list' => ['Home', 'Rekomendasi', 'Mahasiswa']
-    ];
+    // Contoh untuk rekomendasi mahasiswa
+    public function indexMahasiswa()
+    {
+        $breadcrumb = (object) [
+            'title' => 'Rekomendasi Mahasiswa',
+            'list' => ['Home', 'Rekomendasi', 'Mahasiswa']
+        ];
 
-    $page = (object) [
-        'title' => 'Daftar rekomendasi prioritas perbaikan dari mahasiswa'
-    ];
+        $page = (object) [
+            'title' => 'Daftar rekomendasi prioritas perbaikan dari mahasiswa'
+        ];
 
-    $activeMenu = 'rekomendasi-mahasiswa';
+        $activeMenu = 'rekomendasi-mahasiswa';
 
-    return view('sarpras.rekomendasi.index', [ // Gunakan view yang sama
-        'breadcrumb' => $breadcrumb,
-        'page' => $page,
-        'activeMenu' => $activeMenu,
-        'userLevel' => 2 // Filter untuk mahasiswa
-    ]);
-}
+        return view('sarpras.rekomendasi.index', [ // Gunakan view yang sama
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'activeMenu' => $activeMenu,
+            'userLevel' => 2 // Filter untuk mahasiswa
+        ]);
+    }
 
     // Index untuk rekomendasi dosen
     public function indexDosen()
@@ -116,7 +118,7 @@ public function indexMahasiswa()
                     <i class="fa fa-eye"></i> 
                 </button>';
 
-               
+
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
                     $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
@@ -143,11 +145,11 @@ public function indexMahasiswa()
         return DataTables::of($laporans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                 $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-mahasiswa/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-mahasiswa/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
-               
+
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
                     $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
@@ -174,11 +176,11 @@ public function indexMahasiswa()
         return DataTables::of($laporans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                 $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-dosen/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-dosen/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
-               
+
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
                     $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
@@ -205,11 +207,11 @@ public function indexMahasiswa()
         return DataTables::of($laporans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                 $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-tendik/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-tendik/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
-               
+
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
                     $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
@@ -243,85 +245,106 @@ public function indexMahasiswa()
     // Show AHP and TOPSIS calculation details
     // app/Http/Controllers/Sarpras/RekomendasiController.php
 
-  public function showDetailPerhitungan($id)
+    public function showDetailPerhitungan($id)
     {
-        $laporan = LaporanModel::with([
-            'rekomendasi', 
-            'fasilitas', 
-            'fasilitas.barang', 
-            'fasilitas.barang.klasifikasi',
-            'user.level'
-        ])->find($id);
-
-        if (!$laporan || !$laporan->rekomendasi) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Data laporan atau rekomendasi tidak ditemukan'
-            ], 404);
-        }
-
-        $batchLaporans = LaporanModel::with('rekomendasi')
+        $laporan = LaporanModel::with(['fasilitas.barang.klasifikasi', 'rekomendasi'])->findOrFail($id);
+        $batchLaporans = LaporanModel::with(['fasilitas.barang.klasifikasi', 'rekomendasi'])
             ->where('periode_id', $laporan->periode_id)
             ->where('status', 'diterima')
-            ->whereHas('rekomendasi')
             ->get();
 
-        $data = [
+        if ($batchLaporans->isEmpty()) {
+            Log::warning('No accepted laporan found for periode_id: ' . $laporan->periode_id);
+            return view('sarpras.rekomendasi.detail_perhitungan', [
+                'laporan' => $laporan,
+                'kriteria' => KriteriaModel::all(),
+                'matriks_keputusan' => [],
+                'matriks_normalisasi' => [],
+                'matriks_terbobot' => [],
+                'solusi_ideal_positif' => [],
+                'solusi_ideal_negatif' => [],
+                'hasil_akhir' => [],
+                'bobot_prioritas' => BobotPrioritasModel::all()->keyBy('bobot_id')
+            ]);
+        }
+
+        $matriksKeputusan = $this->buildMatriksKeputusan($batchLaporans);
+        $matriksNormalisasi = $this->buildMatriksNormalisasi($matriksKeputusan);
+        $matriksTerbobot = $this->buildMatriksTerbobot($matriksNormalisasi);
+        $solusiIdeal = $this->buildSolusiIdeal($matriksTerbobot);
+        $hasilAkhir = $this->buildHasilAkhir(
+            $matriksTerbobot,
+            $solusiIdeal['positif'],
+            $solusiIdeal['negatif'],
+            $matriksKeputusan
+        );
+
+        return view('sarpras.rekomendasi.detail_perhitungan', [
             'laporan' => $laporan,
             'kriteria' => KriteriaModel::all(),
-            'nilai_kriteria' => $laporan->rekomendasi->nilai_kriteria,
-            'matriks_keputusan' => $this->buildMatriksKeputusan($batchLaporans),
-            'matriks_normalisasi' => $this->buildMatriksNormalisasi($batchLaporans),
-            'matriks_terbobot' => $this->buildMatriksTerbobot($batchLaporans),
-            'solusi_ideal' => $this->buildSolusiIdeal($batchLaporans),
-            'hasil_akhir' => $this->buildHasilAkhir($batchLaporans)
-        ];
-
-        return view('sarpras.rekomendasi.detail_perhitungan', $data);
+            'matriks_keputusan' => $matriksKeputusan,
+            'matriks_normalisasi' => $matriksNormalisasi,
+            'matriks_terbobot' => $matriksTerbobot,
+            'solusi_ideal_positif' => $solusiIdeal['positif'],
+            'solusi_ideal_negatif' => $solusiIdeal['negatif'],
+            'hasil_akhir' => $hasilAkhir,
+            'bobot_prioritas' => BobotPrioritasModel::all()->keyBy('bobot_id')
+        ]);
     }
 
     private function buildMatriksKeputusan($laporans)
     {
+        $kriteria = KriteriaModel::all()->pluck('kriteria_kode')->map(fn($kode) => strtolower($kode))->toArray();
         $matriks = [];
         foreach ($laporans as $lap) {
-            $nilai = $lap->rekomendasi->nilai_kriteria;
-            $matriks[] = array_merge(['laporan_id' => $lap->laporan_id, 'judul' => $lap->judul], $nilai);
+            if (!$lap instanceof LaporanModel) {
+                Log::error('Invalid laporan type in buildMatriksKeputusan', [
+                    'type' => gettype($lap),
+                    'value' => is_array($lap) ? json_encode($lap) : $lap
+                ]);
+                continue;
+            }
+            $skor = TopsisService::hitungSkorPrioritas($lap);
+            $nilai = $skor['nilai_kriteria'] ?? array_fill_keys($kriteria, 0);
+            $matriks[] = array_merge([
+                'laporan_id' => $lap->laporan_id,
+                'judul' => $lap->judul
+            ], $nilai);
         }
         return $matriks;
     }
 
-    private function buildMatriksNormalisasi($laporans)
+    private function buildMatriksNormalisasi($matriksKeputusan)
     {
-        $matriks = $this->buildMatriksKeputusan($laporans);
         $kriteria = KriteriaModel::all();
         $normalized = [];
 
         foreach ($kriteria as $k) {
             $kode = strtolower($k->kriteria_kode);
-            $kolom = array_column($matriks, $kode);
+            $kolom = array_column($matriksKeputusan, $kode);
             $sumSquares = sqrt(array_sum(array_map(fn($x) => $x * $x, $kolom)));
-
-            foreach ($matriks as $i => $row) {
-                $normalized[$i][$kode] = $sumSquares != 0 ? $row[$kode] / $sumSquares : 0;
+            if ($sumSquares == 0) {
+                Log::warning("Sum of squares is zero for criteria $kode");
+                foreach ($matriksKeputusan as $i => $row) {
+                    $normalized[$i][$kode] = 0;
+                }
+                continue;
             }
-        }
-
-        foreach ($matriks as $i => $row) {
-            $normalized[$i]['laporan_id'] = $row['laporan_id'];
-            $normalized[$i]['judul'] = $row['judul'];
+            foreach ($matriksKeputusan as $i => $row) {
+                $normalized[$i][$kode] = $row[$kode] / $sumSquares;
+            }
         }
 
         return $normalized;
     }
 
-    private function buildMatriksTerbobot($laporans)
+    private function buildMatriksTerbobot($matriksNormalisasi)
     {
-        $normalized = $this->buildMatriksNormalisasi($laporans);
         $kriteria = KriteriaModel::all();
         $terbobot = [];
 
-        foreach ($normalized as $i => $row) {
-            $terbobot[$i] = ['laporan_id' => $row['laporan_id'], 'judul' => $row['judul']];
+        foreach ($matriksNormalisasi as $i => $row) {
+            $terbobot[$i] = [];
             foreach ($kriteria as $k) {
                 $kode = strtolower($k->kriteria_kode);
                 $terbobot[$i][$kode] = $row[$kode] * $k->bobot;
@@ -331,16 +354,31 @@ public function indexMahasiswa()
         return $terbobot;
     }
 
-    private function buildSolusiIdeal($laporans)
+    private function buildSolusiIdeal($matriksTerbobot)
     {
-        $terbobot = $this->buildMatriksTerbobot($laporans);
         $kriteria = KriteriaModel::all();
         $positif = [];
         $negatif = [];
 
+        if (empty($matriksTerbobot)) {
+            Log::warning('Empty matriksTerbobot in buildSolusiIdeal');
+            foreach ($kriteria as $k) {
+                $kode = strtolower($k->kriteria_kode);
+                $positif[$kode] = 0;
+                $negatif[$kode] = 0;
+            }
+            return ['positif' => $positif, 'negatif' => $negatif];
+        }
+
         foreach ($kriteria as $k) {
             $kode = strtolower($k->kriteria_kode);
-            $kolom = array_column($terbobot, $kode);
+            $kolom = array_column($matriksTerbobot, $kode);
+            if (empty($kolom)) {
+                Log::warning("Empty column for criteria $kode in buildSolusiIdeal");
+                $positif[$kode] = 0;
+                $negatif[$kode] = 0;
+                continue;
+            }
             $positif[$kode] = $k->kriteria_jenis == 'benefit' ? max($kolom) : min($kolom);
             $negatif[$kode] = $k->kriteria_jenis == 'benefit' ? min($kolom) : max($kolom);
         }
@@ -348,31 +386,34 @@ public function indexMahasiswa()
         return ['positif' => $positif, 'negatif' => $negatif];
     }
 
-    private function buildHasilAkhir($laporans)
+    private function buildHasilAkhir($matriksTerbobot, $solusiIdealPositif, $solusiIdealNegatif, $matriksKeputusan)
     {
-        $terbobot = $this->buildMatriksTerbobot($laporans);
-        $solusiIdeal = $this->buildSolusiIdeal($laporans);
         $hasil = [];
+        if (empty($matriksTerbobot) || empty($matriksKeputusan)) {
+            Log::warning('Empty matriksTerbobot or matriksKeputusan in buildHasilAkhir', [
+                'matriksTerbobot_count' => count($matriksTerbobot),
+                'matriksKeputusan_count' => count($matriksKeputusan)
+            ]);
+            return $hasil;
+        }
 
-        foreach ($terbobot as $i => $row) {
+        foreach ($matriksTerbobot as $i => $row) {
             $jarakPositif = 0;
             $jarakNegatif = 0;
-
             foreach ($row as $kode => $nilai) {
-                if ($kode == 'laporan_id' || $kode == 'judul') continue;
-                $jarakPositif += pow($nilai - $solusiIdeal['positif'][$kode], 2);
-                $jarakNegatif += pow($nilai - $solusiIdeal['negatif'][$kode], 2);
+                $jarakPositif += pow($nilai - $solusiIdealPositif[$kode], 2);
+                $jarakNegatif += pow($nilai - $solusiIdealNegatif[$kode], 2);
             }
-
             $jarakPositif = sqrt($jarakPositif);
             $jarakNegatif = sqrt($jarakNegatif);
+            $skor = ($jarakPositif + $jarakNegatif) != 0 ? $jarakNegatif / ($jarakPositif + $jarakNegatif) : 0;
 
             $hasil[] = [
-                'laporan_id' => $row['laporan_id'],
-                'judul' => $row['judul'],
+                'laporan_id' => $matriksKeputusan[$i]['laporan_id'],
+                'judul' => $matriksKeputusan[$i]['judul'],
                 'jarak_positif' => $jarakPositif,
                 'jarak_negatif' => $jarakNegatif,
-                'skor_akhir' => $jarakNegatif / ($jarakPositif + $jarakNegatif)
+                'skor_akhir' => $skor
             ];
         }
 

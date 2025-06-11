@@ -141,6 +141,15 @@
 
             </div>
             <div class="modal-footer">
+                 @if($laporan->status === 'selesai' && !$laporan->feedback && $laporan->user_id == Auth::id())Add commentMore actions
+                <a href="{{ route('pelapor.feedback.create', $laporan->laporan_id) }}" class="btn btn-primary">
+                    <i class="bi bi-star-fill me-1"></i> Beri Umpan Balik
+                </a>
+            @elseif($laporan->status === 'selesai' && $laporan->feedback)
+                <a href="{{ route('pelapor.feedback.show', $laporan->laporan_id) }}" class="btn btn-outline-primary">
+                    <i class="bi bi-star-fill me-1"></i> Lihat Umpan Balik
+                </a>
+            @endif
                 <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Tutup</button>
             </div>
         </div>

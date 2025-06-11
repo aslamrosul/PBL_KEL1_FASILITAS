@@ -11,6 +11,10 @@ class RekomendasiModel extends Model
     use HasFactory;
     protected $table = 't_rekomendasi'; 
     protected $primaryKey = 'rekomendasi_id'; 
+    protected $casts = [
+        'nilai_kriteria' => 'array', // Cast 'nilai_kriteria' ke array/JSON
+        'skor_total' => 'decimal:4', // Cast 'skor_total' ke desimal dengan 4 tempat desimal
+    ];
     protected $fillable = [
         'laporan_id',
         'nilai_kriteria',
@@ -18,10 +22,6 @@ class RekomendasiModel extends Model
         'bobot_id',
     ];
 
-    protected $casts = [
-        'nilai_kriteria' => 'array', // Cast 'nilai_kriteria' ke array/JSON
-        'skor_total' => 'decimal:4', // Cast 'skor_total' ke desimal dengan 4 tempat desimal
-    ];
 
  
     public function laporan(): BelongsTo

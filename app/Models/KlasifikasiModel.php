@@ -14,8 +14,8 @@ class KlasifikasiModel extends Model
 
     protected $fillable = ['klasifikasi_kode', 'klasifikasi_nama'];
     protected $casts = [
-    'bobot_prioritas' => 'decimal:2', // agar otomatis format 2 angka desimal
-];
+'bobot_prioritas' => 'decimal:4', // Match migration precision
+    ];
 
     public function barangs()
 {

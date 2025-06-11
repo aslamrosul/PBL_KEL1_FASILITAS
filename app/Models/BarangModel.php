@@ -13,7 +13,7 @@ class BarangModel extends Model
     protected $primaryKey = 'barang_id';
     protected $fillable = ['kategori_id','klasifikasi_id', 'barang_kode', 'barang_nama','bara'];
  protected $casts = [
-    'bobot_prioritas' => 'decimal:2', // agar otomatis format 2 angka desimal
+'bobot_prioritas' => 'decimal:4', // Match migration precision
 ];
     
     public function kategori()

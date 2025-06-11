@@ -12,6 +12,7 @@ use App\Models\PerbaikanModel;
 use App\Models\RekomendasiModel;
 use App\Models\RiwayatPenugasanModel;
 use App\Models\UserModel;
+use App\Services\TopsisService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -200,7 +201,7 @@ class LaporanSarprasController extends Controller
 
     private function hitungKondisiFasilitas($status)
     {
-        return ['rusak berat' => 3, 'rusak sedang' => 2, 'rusak ringan' => 1, 'baik' => 1 ][$status] ?? 0;
+        return ['rusak berat' => 4, 'rusak sedang' => 3, 'rusak ringan' => 2, 'baik' => 5 ][$status] ?? 0;
     }
 
     private function tentukanBobotPrioritas($skor)
@@ -210,241 +211,11 @@ class LaporanSarprasController extends Controller
         return 3; // Rendah
     }
 
-   private function hitungSkorPrioritas($laporan)
+
+private function hitungSkorPrioritas($laporan)
 {
-    $kriteria = KriteriaModel::all();
-    $fasilitas = $laporan->fasilitas;
-
-    if (!$fasilitas || !$fasilitas->barang || !$fasilitas->barang->klasifikasi) {
-        Log::error('Fasilitas atau data terkait tidak lengkap untuk laporan_id: ' . $laporan->laporan_id);
-        return [
-            'nilai_kriteria' => [
-                'frekuensi' => 0,
-                'usia' => 0,
-                'kondisi' => 0,
-                'barang' => 0,
-                'klasifikasi' => 0
-            ],
-            'skor_total' => 0,
-            'max_values' => []
-        ];
-    }
-
-    // Ambil laporan lain dalam periode yang sama
-    $batchLaporans = LaporanModel::with(['fasilitas.barang.klasifikasi'])
-        ->where('periode_id', $laporan->periode_id)
-        ->where('status', 'diterima')
-        ->get();
-
-    if ($batchLaporans->isEmpty()) {
-        Log::warning('Tidak ada laporan lain dalam periode untuk laporan_id: ' . $laporan->laporan_id);
-        return [
-            'nilai_kriteria' => [
-                'frekuensi' => 0,
-                'usia' => 0,
-                'kondisi' => 0,
-                'barang' => 0,
-                'klasifikasi' => 0
-            ],
-            'skor_total' => 0,
-            'max_values' => []
-        ];
-    }
-
-    // Bangun matriks keputusan
-    $matriks = [];
-    foreach ($batchLaporans as $lap) {
-        $nilaiKriteria = [
-            'frekuensi' => $this->hitungFrekuensiLaporan($lap->fasilitas->fasilitas_id),
-            'usia' => $this->hitungUsiaFasilitas($lap->fasilitas->tahun_pengadaan),
-            'kondisi' => $this->hitungKondisiFasilitas($lap->fasilitas->status),
-            'barang' => (float)($lap->fasilitas->barang->bobot_prioritas ?? 0),
-            'klasifikasi' => (float)($lap->fasilitas->barang->klasifikasi->bobot_prioritas ?? 0)
-        ];
-        $matriks[] = array_merge(['laporan_id' => $lap->laporan_id], $nilaiKriteria);
-    }
-
-    // Normalisasi (TOPSIS)
-    $normalized = [];
-    foreach ($kriteria as $k) {
-        $kode = strtolower($k->kriteria_kode);
-        $kolom = array_column($matriks, $kode);
-        $sumSquares = sqrt(array_sum(array_map(fn($x) => $x * $x, $kolom)));
-
-        if ($sumSquares == 0) {
-            Log::warning("Sum of squares is zero for criteria $kode in periode_id: {$laporan->periode_id}", [
-                'kolom' => $kolom
-            ]);
-            foreach ($matriks as $i => $row) {
-                $normalized[$i][$kode] = 0;
-            }
-            continue;
-        }
-
-        foreach ($matriks as $i => $row) {
-            $normalized[$i][$kode] = $row[$kode] / $sumSquares;
-        }
-    }
-
-    // Matriks terbobot
-    $terbobot = [];
-    foreach ($normalized as $i => $row) {
-        foreach ($kriteria as $k) {
-            $kode = strtolower($k->kriteria_kode);
-            $terbobot[$i][$kode] = $row[$kode] * $k->bobot;
-        }
-    }
-
-    // Solusi ideal
-    $positif = [];
-    $negatif = [];
-    foreach ($kriteria as $k) {
-        $kode = strtolower($k->kriteria_kode);
-        $kolom = array_column($terbobot, $kode);
-        $positif[$kode] = $k->kriteria_jenis == 'benefit' ? max($kolom) : min($kolom);
-        $negatif[$kode] = $k->kriteria_jenis == 'benefit' ? min($kolom) : max($kolom);
-    }
-
-    // Hitung skor TOPSIS
-    foreach ($terbobot as $i => $row) {
-        $jarakPositif = 0;
-        $jarakNegatif = 0;
-
-        foreach ($row as $kode => $nilai) {
-            $jarakPositif += pow($nilai - $positif[$kode], 2);
-            $jarakNegatif += pow($nilai - $negatif[$kode], 2);
-        }
-
-        $jarakPositif = sqrt($jarakPositif);
-        $jarakNegatif = sqrt($jarakNegatif);
-        $skor = ($jarakPositif + $jarakNegatif) != 0 ? $jarakNegatif / ($jarakPositif + $jarakNegatif) : 0;
-
-        if ($matriks[$i]['laporan_id'] == $laporan->laporan_id) {
-            return [
-                'nilai_kriteria' => [
-                    'frekuensi' => $normalized[$i]['frekuensi'] ?? 0,
-                    'usia' => $normalized[$i]['usia'] ?? 0,
-                    'kondisi' => $normalized[$i]['kondisi'] ?? 0,
-                    'barang' => $normalized[$i]['barang'] ?? 0,
-                    'klasifikasi' => $normalized[$i]['klasifikasi'] ?? 0
-                ],
-                'skor_total' => $skor,
-                'max_values' => []
-            ];
-        }
-    }
-
-    return [
-        'nilai_kriteria' => [
-            'frekuensi' => 0,
-            'usia' => 0,
-            'kondisi' => 0,
-            'barang' => 0,
-            'klasifikasi' => 0
-        ],
-        'skor_total' => 0,
-        'max_values' => []
-    ];
+    return TopsisService::hitungSkorPrioritas($laporan);
 }
-
-    public function changeStatus($id)
-    {
-        $laporan = LaporanModel::find($id);
-
-        if (!$laporan) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Data tidak ditemukan'
-            ], 404);
-        }
-
-        $validator = Validator::make(request()->all(), [
-            'status' => 'required|in:diterima,ditolak',
-            'alasan_penolakan' => 'required_if:status,ditolak'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $data = [
-            'status' => request()->status,
-            'alasan_penolakan' => request()->alasan_penolakan
-        ];
-
-        if (request()->status == 'diterima') {
-            try {
-                $skor = $this->hitungSkorPrioritas($laporan);
-                $bobotId = $this->tentukanBobotPrioritas($skor['skor_total']);
-
-                if (!$bobotId) {
-                    throw new \Exception("Tidak dapat menentukan bobot prioritas");
-                }
-
-                $data['bobot_id'] = $bobotId;
-
-                $nilaiKriteria = $skor['nilai_kriteria'] ?? [
-                    'frekuensi' => 0,
-                    'usia' => 0,
-                    'kondisi' => 0,
-                    'barang' => 0,
-                    'klasifikasi' => 0
-                ];
-                $skorTotal = $skor['skor_total'] ?? 0;
-
-                $jsonKriteria = json_encode($nilaiKriteria);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    Log::error('JSON encoding failed for nilai_kriteria', [
-                        'nilai_kriteria' => $nilaiKriteria,
-                        'error' => json_last_error_msg()
-                    ]);
-                    throw new \Exception('Gagal mengencode nilai_kriteria: ' . json_last_error_msg());
-                }
-
-                Log::info('Data to be saved for laporan_id: ' . $laporan->laporan_id, [
-                    'nilai_kriteria' => $nilaiKriteria,
-                    'skor_total' => $skorTotal,
-                    'bobot_id' => $bobotId
-                ]);
-
-                $rekomendasi = RekomendasiModel::updateOrCreate(
-                    ['laporan_id' => $laporan->laporan_id],
-                    [
-                        'nilai_kriteria' => $jsonKriteria,
-                        'skor_total' => $skorTotal,
-                        'bobot_id' => $bobotId
-                    ]
-                );
-
-                Log::info('Rekomendasi saved for laporan_id: ' . $laporan->laporan_id, [
-                    'rekomendasi_id' => $rekomendasi->rekomendasi_id,
-                    'nilai_kriteria' => $rekomendasi->nilai_kriteria,
-                    'skor_total' => $rekomendasi->skor_total,
-                    'bobot_id' => $rekomendasi->bobot_id
-                ]);
-            } catch (\Exception $e) {
-                Log::error('Gagal menghitung skor prioritas untuk laporan_id: ' . $laporan->laporan_id, [
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Gagal menghitung skor prioritas: ' . $e->getMessage()
-                ], 500);
-            }
-        }
-
-        $laporan->update($data);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Status laporan berhasil diupdate'
-        ], 200);
-    }
 
     public function recalculateRecommendations(Request $request, $level_id = null)
     {
