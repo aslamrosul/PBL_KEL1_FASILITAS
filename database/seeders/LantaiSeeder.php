@@ -2,41 +2,61 @@
 
 namespace Database\Seeders;
 
-use App\Models\LantaiModel;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class LantaiSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        LantaiModel::insert([
-            [
-                'gedung_id' => 1,
-                'lantai_nomor' => 'Lantai 1',
+        $gedungs = DB::table('m_gedung')->get()->keyBy('gedung_kode');
+
+        $lantaiData = [];
+
+        // Gedung Sipil - 8 Lantai
+        for ($i = 1; $i <= 8; $i++) {
+            $lantaiData[] = [
+                'lantai_nomor' => "Lantai $i",
+                'gedung_id' => $gedungs['GDG-SPL']->gedung_id ?? null,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'gedung_id' => 1,
-                'lantai_nomor' => 'Lantai 2',
+                'updated_at' => now()
+            ];
+        }
+
+
+        // Gedung Akuntansi - 3 Lantai
+        for ($i = 1; $i <= 3; $i++) {
+            $lantaiData[] = [
+                'lantai_nomor' => "Lantai $i",
+                'gedung_id' => $gedungs['GDG-AKT']->gedung_id ?? null,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'gedung_id' => 2,
-                'lantai_nomor' => 'Lantai 3',
+                'updated_at' => now()
+            ];
+        }
+
+        // Gedung Mesin - 5 Lantai
+        for ($i = 1; $i <= 5; $i++) {
+            $lantaiData[] = [
+                'lantai_nomor' => "Lantai $i",
+                'gedung_id' => $gedungs['GDG-MSN']->gedung_id ?? null,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'gedung_id' => 2,
-                'lantai_nomor' => 'Lantai 4',
+                'updated_at' => now()
+            ];
+        }
+
+        // Gedung Administrasi Niaga - 4 Lantai
+        for ($i = 1; $i <= 4; $i++) {
+            $lantaiData[] = [
+                'lantai_nomor' => "Lantai $i",
+                'gedung_id' => $gedungs['GDG-ADM']->gedung_id ?? null,
                 'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+                'updated_at' => now()
+            ];
+        }
+
+        // Filter data yang punya gedung_id valid
+        $lantaiData = array_filter($lantaiData, fn($item) => $item['gedung_id'] !== null);
+
+        DB::table('m_lantai')->insert($lantaiData);
     }
 }
