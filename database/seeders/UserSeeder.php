@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
         // 4 Admin users
         $users[] = [
             'nama' => 'Budi Santoso',
-            'username' => 'admin1',
+            'username' => 'admin',
             'password' => Hash::make('admin123'),
             'email' => 'budi.santoso@polinema.ac.id',
             'level_id' => 1,
@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
 
         // 100 Mahasiswa users
         $mahasiswa = [
-            ['nama' => 'Ahmad Fauzi', 'username' => 'ahmadfauzi1', 'email' => 'ahmad.fauzi1@polinema.ac.id'],
+            ['nama' => 'Ahmad Fauzi', 'username' => 'sarpras', 'email' => 'ahmad.fauzi1@polinema.ac.id'],
             ['nama' => 'Dewi Lestari', 'username' => 'dewilelstari1', 'email' => 'dewi.lestari1@polinema.ac.id'],
             ['nama' => 'Rizki Pratama', 'username' => 'rizkipratama1', 'email' => 'rizki.pratama1@polinema.ac.id'],
             ['nama' => 'Fitri Rahayu', 'username' => 'fitrirahayu1', 'email' => 'fitri.rahayu1@polinema.ac.id'],
@@ -171,7 +171,7 @@ class UserSeeder extends Seeder
 
         // 50 Dosen users
         $dosen = [
-            ['nama' => 'Dr. Bambang Suharto', 'username' => 'bambangsuharto1', 'email' => 'bambang.suharto1@polinema.ac.id'],
+            ['nama' => 'Dr. Bambang Suharto', 'username' => 'dosen', 'email' => 'bambang.suharto1@polinema.ac.id'],
             ['nama' => 'Dr. Ani Rahmawati', 'username' => 'anirahmawati1', 'email' => 'ani.rahmawati1@polinema.ac.id'],
             ['nama' => 'Dr. Joko Widodo', 'username' => 'jokowidodo1', 'email' => 'joko.widodo1@polinema.ac.id'],
             ['nama' => 'Dr. Sri Hartati', 'username' => 'srihartati1', 'email' => 'sri.hartati1@polinema.ac.id'],
@@ -237,7 +237,7 @@ class UserSeeder extends Seeder
 
         // 30 Tendik users
         $tendik = [
-            ['nama' => 'Rudi Hermawan', 'username' => 'rudihermawan3', 'email' => 'rudi.hermawan3@example.com'],
+            ['nama' => 'Rudi Hermawan', 'username' => 'tendik', 'email' => 'rudi.hermawan3@example.com'],
             ['nama' => 'Siti Fatimah', 'username' => 'sitifatimah3', 'email' => 'siti.fatimah3@example.com'],
             ['nama' => 'Eko Susilo', 'username' => 'ekosusilo3', 'email' => 'eko.susilo3@example.com'],
             ['nama' => 'Ayu Lestari', 'username' => 'ayulestari3', 'email' => 'ayu.lestari3@example.com'],
@@ -283,7 +283,7 @@ class UserSeeder extends Seeder
 
         // 30 Sarpras users
         $sarpras = [
-            ['nama' => 'Andi Prasetyo', 'username' => 'andiprasetyo4', 'email' => 'andi.prasetyo4@example.com'],
+            ['nama' => 'Andi Prasetyo', 'username' => 'sarpras', 'email' => 'andi.prasetyo4@example.com'],
             ['nama' => 'Sari Indah', 'username' => 'sariindah4', 'email' => 'sari.indah4@example.com'],
             ['nama' => 'Budi Hartono', 'username' => 'budihartono4', 'email' => 'budi.hartono4@example.com'],
             ['nama' => 'Rina Wulandari', 'username' => 'rinawulandari4', 'email' => 'rina.wulandari4@example.com'],
@@ -329,7 +329,7 @@ class UserSeeder extends Seeder
 
         // 20 Teknisi users
         $teknisi = [
-            ['nama' => 'Rudi Pratama', 'username' => 'rudipratama5', 'email' => 'rudi.pratama5@polinema.ac.id'],
+            ['nama' => 'Rudi Pratama', 'username' => 'teknisi', 'email' => 'rudi.pratama5@polinema.ac.id'],
             ['nama' => 'Siti Rahayu', 'username' => 'sitirahayu5', 'email' => 'siti.rahayu5@polinema.ac.id'],
             ['nama' => 'Eko Wahyudi', 'username' => 'ekowahyudi5', 'email' => 'eko.wahyudi5@polinema.ac.id'],
             ['nama' => 'Ayu Permata', 'username' => 'ayupermata5', 'email' => 'ayu.permata5@polinema.ac.id'],
