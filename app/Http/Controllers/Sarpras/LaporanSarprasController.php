@@ -189,7 +189,7 @@ class LaporanSarprasController extends Controller
     //  * @return \Illuminate\Http\JsonResponse
     //  */
 
-    public function changeStatus(Request $request, $id)
+    public function update_Status(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:diterima,ditolak,selesai',
