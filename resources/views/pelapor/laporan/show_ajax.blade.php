@@ -141,7 +141,7 @@
 
             </div>
             <div class="modal-footer">
-                 @if($laporan->status === 'selesai' && !$laporan->feedback && $laporan->user_id == Auth::id())Add commentMore actions
+                 @if($laporan->status === 'selesai' && !$laporan->feedback && $laporan->user_id == Auth::id())
                 <a href="{{ route('pelapor.feedback.create', $laporan->laporan_id) }}" class="btn btn-primary">
                     <i class="bi bi-star-fill me-1"></i> Beri Umpan Balik
                 </a>

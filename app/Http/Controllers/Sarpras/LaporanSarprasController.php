@@ -189,19 +189,39 @@ class LaporanSarprasController extends Controller
     //  * @return \Illuminate\Http\JsonResponse
     //  */
 
-    private function hitungFrekuensiLaporan($fasilitasId)
+    public function changeStatus(Request $request, $id)
     {
-        return LaporanModel::where('fasilitas_id', $fasilitasId)->count();
-    }
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:diterima,ditolak,selesai',
+            'alasan_penolakan' => 'nullable|string|max:255'
+        ]);
 
-    private function hitungUsiaFasilitas($tahunPengadaan)
-    {
-        return now()->year - $tahunPengadaan;
-    }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
 
-    private function hitungKondisiFasilitas($status)
-    {
-        return ['rusak berat' => 4, 'rusak sedang' => 3, 'rusak ringan' => 2, 'baik' => 5 ][$status] ?? 0;
+        try {
+            $laporan = LaporanModel::findOrFail($id);
+            $laporan->update([
+                'status' => $request->status,
+                'alasan_penolakan' => $request->alasan_penolakan
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Status laporan berhasil diubah',
+                'laporan_id' => $laporan->laporan_id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal mengubah status laporan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     private function tentukanBobotPrioritas($skor)
