@@ -35,6 +35,18 @@ class GedungSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now()
             ],
+            [
+                'gedung_kode' => 'GDG-KMA',
+                'gedung_nama' => 'Gedung Kimia',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'gedung_kode' => 'GDG-ELK',
+                'gedung_nama' => 'Gedung Elektronika',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
         ]);
     }
 }
