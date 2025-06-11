@@ -3,11 +3,11 @@
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="modal-title">{{ $page->title }}</h4>
+            <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/pelapor/laporan/create_ajax') }}')" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Tambah Laporan
-                </button>
+                <a href="{{ url('/pelapor/laporan/create') }}" class="btn btn-success">
+                    <i class="fa fa-plus"></i> Tambah Laporan
+                </a>
             </div>
         </div>
         <div class="card-body">
@@ -42,61 +42,33 @@
 @endpush
 
 @push('js')
-<script>
-    function renderStatusBadge(status) {
-        let badgeClass = '';
-        switch (status) {
-            case 'menunggu':
-                badgeClass = 'badge bg-warning';
-                break;
-            case 'diproses':
-                badgeClass = 'badge bg-primary';
-                break;
-            case 'selesai':
-                badgeClass = 'badge bg-success';
-                break;
-            default:
-                badgeClass = 'badge bg-secondary';
-        }
-        return `<span class="${badgeClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
-    }
+    <script>
 
-    function modalAction(url = '') {
-        jQuery('#myModal').load(url, function() {
-            var myModal = new bootstrap.Modal(document.getElementById('myModal'), {
-                keyboard: false,
-                backdrop: 'static'
-            });
-            myModal.show();
-        });
-    }
 
-    jQuery(document).ready(function() {
-        window.dataLaporan = jQuery('#table_laporan').DataTable({
-            serverSide: true,
-            processing: true,
-            ajax: {
-                url: "{{ url('pelapor/laporan/list') }}",
-                type: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                }
-            },
-            columns: [
-                { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
-                { data: "judul", className: "", orderable: true, searchable: true },
-                { data: "periode.periode_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
-                { data: "fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true, defaultContent: '-' },
-                {
-                    data: "status",
-                    render: function(data) {
-                        return renderStatusBadge(data);
-                    },
-                    className: "text-center", orderable: true, searchable: true
+        jQuery(document).ready(function () {
+            window.dataLaporan = jQuery('#table_laporan').DataTable({
+                serverSide: true,
+                ajax: {
+                    url: "{{ url('pelapor/laporan/list') }}",
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    }
                 },
-                { data: "aksi", className: "text-center", orderable: false, searchable: false }
-            ]
+                columns: [
+                    { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
+                    { data: "judul", className: "", orderable: true, searchable: true },
+                    { data: "periode.periode_nama", className: "", orderable: true, searchable: true },
+                    { data: "fasilitas.fasilitas_nama", className: "", orderable: true, searchable: true },
+                    {
+                        data: "status", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
+                    { data: "aksi", className: "text-center", orderable: false, searchable: false }
+                ]
+            });
         });
-    });
-</script>
+    </script>
 @endpush

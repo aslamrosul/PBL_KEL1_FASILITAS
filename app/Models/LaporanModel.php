@@ -18,10 +18,6 @@ class LaporanModel extends Model
         'judul',
         'deskripsi',
         'foto_path',
-        'gedung_id',
-        'lantai_id',
-        'ruang_id',
-        'barang_id',
         'status',
         'alasan_penolakan',
         'tanggal_selesai'
