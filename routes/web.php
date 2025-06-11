@@ -386,6 +386,9 @@ Route::middleware(['authorize:SPR'])->group(function () {
         });
     });
 
+    Route::get('/sarpras/kriteria/pairwise', [KriteriaController::class, 'showPairwiseForm'])->name('kriteria.pairwise');
+    Route::post('/sarpras/kriteria/pairwise', [KriteriaController::class, 'updatePairwise'])->name('kriteria.updatePairwise');
+
     // Route untuk rekomendasi
     // Route untuk rekomendasi
     Route::prefix('sarpras/rekomendasi')->group(function () {
@@ -395,6 +398,7 @@ Route::middleware(['authorize:SPR'])->group(function () {
         Route::get('/{id}/detail-perhitungan', [RekomendasiController::class, 'showDetailPerhitungan'])->name('sarpras.rekomendasi.detail-perhitungan');
         Route::get('/export_excel', [RekomendasiController::class, 'export_excel'])->name('sarpras.rekomendasi.export_excel');
         Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf'])->name('sarpras.rekomendasi.export_pdf');
+        Route::post('/recalculate', [LaporanSarprasController::class, 'recalculateRecommendations'])->name('sarpras.rekomendasi.recalculate');
     });
 
     // Route untuk rekomendasi mahasiswa
@@ -404,6 +408,7 @@ Route::middleware(['authorize:SPR'])->group(function () {
         Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show'])->name('sarpras.rekomendasi-mahasiswa.show');
         Route::get('/export_excel', [RekomendasiController::class, 'export_excel_mahasiswa'])->name('sarpras.rekomendasi-mahasiswa.export_excel');
         Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf_mahasiswa'])->name('sarpras.rekomendasi-mahasiswa.export_pdf');
+        Route::post('/recalculate', [LaporanSarprasController::class, 'recalculateRecommendations'])->name('sarpras.rekomendasi-mahasiswa.recalculate');
     });
 
     // Route untuk rekomendasi dosen
@@ -413,6 +418,7 @@ Route::middleware(['authorize:SPR'])->group(function () {
         Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show'])->name('sarpras.rekomendasi-dosen.show');
         Route::get('/export_excel', [RekomendasiController::class, 'export_excel_dosen'])->name('sarpras.rekomendasi-dosen.export_excel');
         Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf_dosen'])->name('sarpras.rekomendasi-dosen.export_pdf');
+        Route::post('/recalculate', [LaporanSarprasController::class, 'recalculateRecommendations'])->name('sarpras.rekomendasi-dosen.recalculate');
     });
 
     // Route untuk rekomendasi tendik
@@ -422,6 +428,7 @@ Route::middleware(['authorize:SPR'])->group(function () {
         Route::get('/{id}/show_ajax', [RekomendasiController::class, 'show'])->name('sarpras.rekomendasi-tendik.show');
         Route::get('/export_excel', [RekomendasiController::class, 'export_excel_tendik'])->name('sarpras.rekomendasi-tendik.export_excel');
         Route::get('/export_pdf', [RekomendasiController::class, 'export_pdf_tendik'])->name('sarpras.rekomendasi-tendik.export_pdf');
+        Route::post('/recalculate', [LaporanSarprasController::class, 'recalculateRecommendations'])->name('sarpras.rekomendasi-tendik.recalculate');
     });
 
     //Bobot Prioritas edit skor

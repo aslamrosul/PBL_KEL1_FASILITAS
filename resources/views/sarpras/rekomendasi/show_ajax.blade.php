@@ -34,7 +34,7 @@
                     </tr>
                     <tr>
                         <th>Prioritas Barang</th>
-                        <td>{{ $laporan->fasilitas->barang->prioritas_barang ?? 'Tidak tersedia' }}</td>
+                        <td>{{ $laporan->fasilitas->barang->bobot_prioritas ?? 'Tidak tersedia' }}</td>
                     </tr>
                     <tr>
                         <th>Klasifikasi Fasilitas</th>

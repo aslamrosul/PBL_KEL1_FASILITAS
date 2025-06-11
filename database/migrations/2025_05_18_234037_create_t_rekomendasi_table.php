@@ -13,16 +13,14 @@ return new class extends Migration
     {
         Schema::create('t_rekomendasi', function (Blueprint $table) {
             $table->id('rekomendasi_id');
-            $table->unsignedBigInteger(column: 'laporan_id');
-            $table->json('rekom_mahasiswa')->nullable(); // {skor: 85, kriteria: {...}}
-            $table->json('rekom_dosen')->nullable();
-            $table->json('rekom_tendik')->nullable();
-            $table->decimal('skor_final', 8, 2)->nullable();
-            $table->unsignedBigInteger(column: 'bobot_id');
+            $table->unsignedBigInteger('laporan_id');
+            $table->json('nilai_kriteria')->nullable(); // Kriteria dan nilai perhitungan
+            $table->decimal('skor_total', 8, 4)->nullable(); // Skor akhir
+            $table->unsignedBigInteger('bobot_id'); // Prioritas
             $table->timestamps();
 
-            $table->foreign(columns: 'laporan_id')->references(columns: 'laporan_id')->on('t_laporan')->onDelete('cascade');
-            $table->foreign(columns: 'bobot_id')->references(columns: 'bobot_id')->on('m_bobot_prioritas')->onDelete('restrict');
+            $table->foreign('laporan_id')->references('laporan_id')->on('t_laporan')->onDelete('cascade');
+            $table->foreign('bobot_id')->references('bobot_id')->on('m_bobot_prioritas');
         });
     }
 

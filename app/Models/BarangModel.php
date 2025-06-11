@@ -11,8 +11,10 @@ class BarangModel extends Model
 
     protected $table = 'm_barang';
     protected $primaryKey = 'barang_id';
-    protected $fillable = ['kategori_id','klasifikasi_id', 'barang_kode', 'barang_nama'];
-
+    protected $fillable = ['kategori_id','klasifikasi_id', 'barang_kode', 'barang_nama','bara'];
+ protected $casts = [
+    'bobot_prioritas' => 'decimal:2', // agar otomatis format 2 angka desimal
+];
     
     public function kategori()
     {

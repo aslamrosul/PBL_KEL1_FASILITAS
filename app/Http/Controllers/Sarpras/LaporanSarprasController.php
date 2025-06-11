@@ -71,14 +71,14 @@ class LaporanSarprasController extends Controller
         if ($request->bobot_id) {
             $laporan->where('bobot_id', $request->bobot_id);
         }
-            $laporan->where('status', '!=', 'diterima');
+        $laporan->where('status', '!=', 'diterima');
 
         return DataTables::of($laporan)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
                 $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1"><i class="fa fa-eye"></i></button>';
 
-               
+
 
                 // Tombol Ubah Status (jika status bukan 'selesai' atau 'ditolak')
                 if (!in_array($laporan->status, ['diterima', 'ditolak', 'selesai'])) {
@@ -188,6 +188,165 @@ class LaporanSarprasController extends Controller
     //  * @return \Illuminate\Http\JsonResponse
     //  */
 
+    private function hitungFrekuensiLaporan($fasilitasId)
+    {
+        return LaporanModel::where('fasilitas_id', $fasilitasId)->count();
+    }
+
+    private function hitungUsiaFasilitas($tahunPengadaan)
+    {
+        return now()->year - $tahunPengadaan;
+    }
+
+    private function hitungKondisiFasilitas($status)
+    {
+        return ['rusak berat' => 3, 'rusak sedang' => 2, 'rusak ringan' => 1, 'baik' => 1 ][$status] ?? 0;
+    }
+
+    private function tentukanBobotPrioritas($skor)
+    {
+        if ($skor >= 0.7) return 1; // Tinggi
+        if ($skor >= 0.4) return 2; // Sedang
+        return 3; // Rendah
+    }
+
+   private function hitungSkorPrioritas($laporan)
+{
+    $kriteria = KriteriaModel::all();
+    $fasilitas = $laporan->fasilitas;
+
+    if (!$fasilitas || !$fasilitas->barang || !$fasilitas->barang->klasifikasi) {
+        Log::error('Fasilitas atau data terkait tidak lengkap untuk laporan_id: ' . $laporan->laporan_id);
+        return [
+            'nilai_kriteria' => [
+                'frekuensi' => 0,
+                'usia' => 0,
+                'kondisi' => 0,
+                'barang' => 0,
+                'klasifikasi' => 0
+            ],
+            'skor_total' => 0,
+            'max_values' => []
+        ];
+    }
+
+    // Ambil laporan lain dalam periode yang sama
+    $batchLaporans = LaporanModel::with(['fasilitas.barang.klasifikasi'])
+        ->where('periode_id', $laporan->periode_id)
+        ->where('status', 'diterima')
+        ->get();
+
+    if ($batchLaporans->isEmpty()) {
+        Log::warning('Tidak ada laporan lain dalam periode untuk laporan_id: ' . $laporan->laporan_id);
+        return [
+            'nilai_kriteria' => [
+                'frekuensi' => 0,
+                'usia' => 0,
+                'kondisi' => 0,
+                'barang' => 0,
+                'klasifikasi' => 0
+            ],
+            'skor_total' => 0,
+            'max_values' => []
+        ];
+    }
+
+    // Bangun matriks keputusan
+    $matriks = [];
+    foreach ($batchLaporans as $lap) {
+        $nilaiKriteria = [
+            'frekuensi' => $this->hitungFrekuensiLaporan($lap->fasilitas->fasilitas_id),
+            'usia' => $this->hitungUsiaFasilitas($lap->fasilitas->tahun_pengadaan),
+            'kondisi' => $this->hitungKondisiFasilitas($lap->fasilitas->status),
+            'barang' => (float)($lap->fasilitas->barang->bobot_prioritas ?? 0),
+            'klasifikasi' => (float)($lap->fasilitas->barang->klasifikasi->bobot_prioritas ?? 0)
+        ];
+        $matriks[] = array_merge(['laporan_id' => $lap->laporan_id], $nilaiKriteria);
+    }
+
+    // Normalisasi (TOPSIS)
+    $normalized = [];
+    foreach ($kriteria as $k) {
+        $kode = strtolower($k->kriteria_kode);
+        $kolom = array_column($matriks, $kode);
+        $sumSquares = sqrt(array_sum(array_map(fn($x) => $x * $x, $kolom)));
+
+        if ($sumSquares == 0) {
+            Log::warning("Sum of squares is zero for criteria $kode in periode_id: {$laporan->periode_id}", [
+                'kolom' => $kolom
+            ]);
+            foreach ($matriks as $i => $row) {
+                $normalized[$i][$kode] = 0;
+            }
+            continue;
+        }
+
+        foreach ($matriks as $i => $row) {
+            $normalized[$i][$kode] = $row[$kode] / $sumSquares;
+        }
+    }
+
+    // Matriks terbobot
+    $terbobot = [];
+    foreach ($normalized as $i => $row) {
+        foreach ($kriteria as $k) {
+            $kode = strtolower($k->kriteria_kode);
+            $terbobot[$i][$kode] = $row[$kode] * $k->bobot;
+        }
+    }
+
+    // Solusi ideal
+    $positif = [];
+    $negatif = [];
+    foreach ($kriteria as $k) {
+        $kode = strtolower($k->kriteria_kode);
+        $kolom = array_column($terbobot, $kode);
+        $positif[$kode] = $k->kriteria_jenis == 'benefit' ? max($kolom) : min($kolom);
+        $negatif[$kode] = $k->kriteria_jenis == 'benefit' ? min($kolom) : max($kolom);
+    }
+
+    // Hitung skor TOPSIS
+    foreach ($terbobot as $i => $row) {
+        $jarakPositif = 0;
+        $jarakNegatif = 0;
+
+        foreach ($row as $kode => $nilai) {
+            $jarakPositif += pow($nilai - $positif[$kode], 2);
+            $jarakNegatif += pow($nilai - $negatif[$kode], 2);
+        }
+
+        $jarakPositif = sqrt($jarakPositif);
+        $jarakNegatif = sqrt($jarakNegatif);
+        $skor = ($jarakPositif + $jarakNegatif) != 0 ? $jarakNegatif / ($jarakPositif + $jarakNegatif) : 0;
+
+        if ($matriks[$i]['laporan_id'] == $laporan->laporan_id) {
+            return [
+                'nilai_kriteria' => [
+                    'frekuensi' => $normalized[$i]['frekuensi'] ?? 0,
+                    'usia' => $normalized[$i]['usia'] ?? 0,
+                    'kondisi' => $normalized[$i]['kondisi'] ?? 0,
+                    'barang' => $normalized[$i]['barang'] ?? 0,
+                    'klasifikasi' => $normalized[$i]['klasifikasi'] ?? 0
+                ],
+                'skor_total' => $skor,
+                'max_values' => []
+            ];
+        }
+    }
+
+    return [
+        'nilai_kriteria' => [
+            'frekuensi' => 0,
+            'usia' => 0,
+            'kondisi' => 0,
+            'barang' => 0,
+            'klasifikasi' => 0
+        ],
+        'skor_total' => 0,
+        'max_values' => []
+    ];
+}
+
     public function changeStatus($id)
     {
         $laporan = LaporanModel::find($id);
@@ -217,39 +376,55 @@ class LaporanSarprasController extends Controller
             'alasan_penolakan' => request()->alasan_penolakan
         ];
 
-        // Jika diterima, hitung skor prioritas
         if (request()->status == 'diterima') {
             try {
                 $skor = $this->hitungSkorPrioritas($laporan);
                 $bobotId = $this->tentukanBobotPrioritas($skor['skor_total']);
 
-                // Pastikan bobotId tidak null
                 if (!$bobotId) {
                     throw new \Exception("Tidak dapat menentukan bobot prioritas");
                 }
 
                 $data['bobot_id'] = $bobotId;
 
-                // Validasi nilai_kriteria sebelum encode
-                if (empty($skor['nilai_kriteria']) || !isset($skor['nilai_kriteria']['frekuensi']) || !isset($skor['nilai_kriteria']['usia'])) {
-                    throw new \Exception("Nilai kriteria tidak lengkap");
+                $nilaiKriteria = $skor['nilai_kriteria'] ?? [
+                    'frekuensi' => 0,
+                    'usia' => 0,
+                    'kondisi' => 0,
+                    'barang' => 0,
+                    'klasifikasi' => 0
+                ];
+                $skorTotal = $skor['skor_total'] ?? 0;
+
+                $jsonKriteria = json_encode($nilaiKriteria);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    Log::error('JSON encoding failed for nilai_kriteria', [
+                        'nilai_kriteria' => $nilaiKriteria,
+                        'error' => json_last_error_msg()
+                    ]);
+                    throw new \Exception('Gagal mengencode nilai_kriteria: ' . json_last_error_msg());
                 }
 
-                // Simpan rekomendasi
+                Log::info('Data to be saved for laporan_id: ' . $laporan->laporan_id, [
+                    'nilai_kriteria' => $nilaiKriteria,
+                    'skor_total' => $skorTotal,
+                    'bobot_id' => $bobotId
+                ]);
+
                 $rekomendasi = RekomendasiModel::updateOrCreate(
                     ['laporan_id' => $laporan->laporan_id],
                     [
-                        'nilai_kriteria' => json_encode($skor['nilai_kriteria']),
-                        'skor_total' => $skor['skor_total'] ?? 0,
+                        'nilai_kriteria' => $jsonKriteria,
+                        'skor_total' => $skorTotal,
                         'bobot_id' => $bobotId
                     ]
                 );
 
-                // Log untuk debugging
                 Log::info('Rekomendasi saved for laporan_id: ' . $laporan->laporan_id, [
-                    'nilai_kriteria' => $skor['nilai_kriteria'],
-                    'skor_total' => $skor['skor_total'],
-                    'bobot_id' => $bobotId
+                    'rekomendasi_id' => $rekomendasi->rekomendasi_id,
+                    'nilai_kriteria' => $rekomendasi->nilai_kriteria,
+                    'skor_total' => $rekomendasi->skor_total,
+                    'bobot_id' => $rekomendasi->bobot_id
                 ]);
             } catch (\Exception $e) {
                 Log::error('Gagal menghitung skor prioritas untuk laporan_id: ' . $laporan->laporan_id, [
@@ -271,144 +446,95 @@ class LaporanSarprasController extends Controller
         ], 200);
     }
 
-    private function hitungSkorPrioritas($laporan)
+    public function recalculateRecommendations(Request $request, $level_id = null)
     {
-        $kriteria = KriteriaModel::all();
-        $fasilitas = $laporan->fasilitas;
+        try {
+            $laporans = LaporanModel::with(['fasilitas', 'fasilitas.barang', 'fasilitas.barang.klasifikasi'])
+                ->where('status', 'diterima')
+                ->when($level_id, function ($query, $level_id) {
+                    $query->whereHas('user', function ($q) use ($level_id) {
+                        $q->where('level_id', $level_id);
+                    });
+                })
+                ->get();
 
-        // 1. Definisikan nilai maksimum untuk setiap kriteria
-        $maxValues = [
-            'frekuensi' => max(10, $this->hitungFrekuensiLaporan($fasilitas->fasilitas_id) + 1),
-            'usia' => max(10, $this->hitungUsiaFasilitas($fasilitas->tahun_pengadaan) + 1),
-            'kondisi' => 3, // 1=baik, 2=rusak ringan, 3=rusak berat
-            'barang' => 1.0, // asumsi sudah dinormalisasi 0-1
-            'klasifikasi' => 1.0 // asumsi sudah dinormalisasi 0-1
-        ];
-
-        // 2. Hitung nilai mentah dan normalisasi
-        $nilaiKriteria = [
-            'frekuensi' => $this->hitungFrekuensiLaporan($fasilitas->fasilitas_id) / $maxValues['frekuensi'],
-            'usia' => $this->hitungUsiaFasilitas($fasilitas->tahun_pengadaan) / $maxValues['usia'],
-            'kondisi' => $this->hitungKondisiFasilitas($fasilitas->status) / $maxValues['kondisi'],
-            'barang' => (float)$fasilitas->barang->prioritas_barang,
-            'klasifikasi' => (float)$fasilitas->barang->klasifikasi->bobot_prioritas
-        ];
-
-        // 3. Hitung skor total dengan bobot kriteria
-        $skorTotal = 0;
-        foreach ($kriteria as $k) {
-            $kode = strtolower($k->kriteria_kode);
-
-            // Untuk kriteria cost (usia), gunakan 1 - nilai normalisasi
-            if ($k->kriteria_jenis == 'cost') {
-                $skorTotal += (1 - $nilaiKriteria[$kode]) * $k->bobot;
-            } else {
-                $skorTotal += $nilaiKriteria[$kode] * $k->bobot;
+            if ($laporans->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada laporan dengan status diterima untuk dihitung ulang'
+                ], 404);
             }
-        }
 
-        // 4. Pastikan skor antara 0-1
-        $skorTotal = max(0, min(1, $skorTotal));
+            $results = [];
+            foreach ($laporans as $laporan) {
+                $skor = $this->hitungSkorPrioritas($laporan);
+                $bobotId = $this->tentukanBobotPrioritas($skor['skor_total']);
 
-        return [
-            'nilai_kriteria' => $nilaiKriteria,
-            'skor_total' => $skorTotal,
-            'max_values' => $maxValues // untuk debugging
-        ];
-    }
+                $nilaiKriteria = $skor['nilai_kriteria'] ?? [
+                    'frekuensi' => 0,
+                    'usia' => 0,
+                    'kondisi' => 0,
+                    'barang' => 0,
+                    'klasifikasi' => 0
+                ];
+                $skorTotal = $skor['skor_total'] ?? 0;
 
-    private function hitungFrekuensiLaporan($fasilitasId)
-    {
-        return LaporanModel::where('fasilitas_id', $fasilitasId)
-            ->where('status', 'diterima')
-            ->count();
-    }
+                $jsonKriteria = json_encode($nilaiKriteria);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    Log::error('JSON encoding failed for nilai_kriteria', [
+                        'nilai_kriteria' => $nilaiKriteria,
+                        'error' => json_last_error_msg()
+                    ]);
+                    throw new \Exception('Gagal mengencode nilai_kriteria: ' . json_last_error_msg());
+                }
 
-    private function hitungUsiaFasilitas($tahunPengadaan)
-    {
-        return max(1, date('Y') - $tahunPengadaan); // Minimal 1 tahun
-    }
+                Log::info('Data to be saved for laporan_id: ' . $laporan->laporan_id, [
+                    'nilai_kriteria' => $nilaiKriteria,
+                    'skor_total' => $skorTotal,
+                    'bobot_id' => $bobotId
+                ]);
 
-    private function hitungKondisiFasilitas($status)
-    {
-        switch ($status) {
-            case 'baik':
-                return 1;
-            case 'rusak_ringan':
-                return 2;
-            case 'rusak_berat':
-                return 3;
-            default:
-                return 1;
-        }
-    }
+                $rekomendasi = RekomendasiModel::updateOrCreate(
+                    ['laporan_id' => $laporan->laporan_id],
+                    [
+                        'nilai_kriteria' => $jsonKriteria,
+                        'skor_total' => $skorTotal,
+                        'bobot_id' => $bobotId
+                    ]
+                );
 
-    private function tentukanBobotPrioritas($skor)
-    {
-        $bobot = BobotPrioritasModel::orderBy('skor_min', 'desc')->get();
+                Log::info('Rekomendasi saved for laporan_id: ' . $laporan->laporan_id, [
+                    'rekomendasi_id' => $rekomendasi->rekomendasi_id,
+                    'nilai_kriteria' => $rekomendasi->nilai_kriteria,
+                    'skor_total' => $rekomendasi->skor_total,
+                    'bobot_id' => $rekomendasi->bobot_id
+                ]);
 
-        foreach ($bobot as $b) {
-            if ($skor >= $b->skor_min && $skor <= $b->skor_max) {
-                return $b->bobot_id;
+                $laporan->update(['bobot_id' => $bobotId]);
+
+                $results[] = [
+                    'laporan_id' => $laporan->laporan_id,
+                    'skor_total' => $skorTotal,
+                    'prioritas' => BobotPrioritasModel::find($bobotId)->bobot_nama ?? 'Tidak diketahui'
+                ];
             }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Rekomendasi berhasil dihitung ulang',
+                'data' => $results
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Gagal menghitung ulang rekomendasi', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal menghitung ulang rekomendasi: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Log jika bobot tidak ditemukan
-        Log::warning('Tidak ada bobot prioritas untuk skor', ['skor' => $skor]);
-        $defaultBobot = BobotPrioritasModel::orderBy('skor_min', 'asc')->first();
-        return $defaultBobot ? $defaultBobot->bobot_id : null;
     }
-
-    public function prosesBatch(Request $request)
-{
-    $laporanIds = $request->input('laporan_ids');
-    
-    // Dapatkan semua data sekaligus untuk efisiensi
-    $laporans = LaporanModel::with(['fasilitas', 'fasilitas.barang', 'fasilitas.barang.klasifikasi'])
-        ->whereIn('laporan_id', $laporanIds)
-        ->get();
-    
-    $results = [];
-    
-    foreach ($laporans as $laporan) {
-        $skor = $this->hitungSkorPrioritas($laporan);
-        
-        $bobotId = $this->tentukanBobotPrioritas($skor['skor_total']);
-        
-        // Simpan hasil
-        RekomendasiModel::updateOrCreate(
-            ['laporan_id' => $laporan->laporan_id],
-            [
-                'nilai_kriteria' => json_encode($skor['nilai_kriteria']),
-                'skor_total' => $skor['skor_total'],
-                'bobot_id' => $bobotId
-            ]
-        );
-        
-        // Update laporan
-        $laporan->update([
-            'status' => 'diterima',
-            'bobot_id' => $bobotId
-        ]);
-        
-        $results[] = [
-            'laporan_id' => $laporan->laporan_id,
-            'skor_total' => $skor['skor_total'],
-            'prioritas' => BobotPrioritasModel::find($bobotId)->bobot_nama
-        ];
-    }
-    
-    // Urutkan berdasarkan skor tertinggi
-    usort($results, function($a, $b) {
-        return $b['skor_total'] <=> $a['skor_total'];
-    });
-    
-    return response()->json([
-        'status' => true,
-        'data' => $results
-    ]);
-}
-
     // Fungsi-fungsi helper sama seperti di RekomendasiController
     public function assign_ajax($id)
     {

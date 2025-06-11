@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Sarpras;
 
 use App\Http\Controllers\Controller;
 use App\Models\KriteriaModel;
+use App\Models\PairwiseKriteriaModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -296,4 +298,45 @@ class KriteriaController extends Controller
 
         return $pdf->stream('Data Kriteria ' . date('Y-m-d H-i-s') . '.pdf');
     }
+
+
+    public function showPairwiseForm()
+    {
+        $kriteria = KriteriaModel::all();
+        $pairwise = PairwiseKriteriaModel::all()->keyBy(function ($item) {
+            return $item->kriteria_id_1 . '-' . $item->kriteria_id_2;
+        });
+
+        return view('sarpras.kriteria.pairwise', compact('kriteria', 'pairwise'));
+    }
+
+    public function updatePairwise(Request $request)
+    {
+        $request->validate([
+            'pairwise.*.*' => 'required|numeric|between:0.1,9',
+        ]);
+
+        try {
+            $kriteria = KriteriaModel::all();
+            foreach ($kriteria as $i => $k1) {
+                for ($j = $i + 1; $j < $kriteria->count(); $j++) {
+                    $k2 = $kriteria[$j];
+                    $nilai = $request->input("pairwise.{$k1->kriteria_id}.{$k2->kriteria_id}");
+                    PairwiseKriteriaModel::updateOrCreate(
+                        ['kriteria_id_1' => $k1->kriteria_id, 'kriteria_id_2' => $k2->kriteria_id],
+                        ['nilai' => $nilai]
+                    );
+                }
+            }
+
+            // Calculate AHP weights
+            KriteriaModel::calculateAHPWeights();
+
+            return redirect()->back()->with('success', 'Pairwise comparisons updated and weights calculated.');
+        } catch (\Exception $e) {
+            Log::error('Failed to update pairwise comparisons', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Failed to update: ' . $e->getMessage());
+        }
+    }
+
 }

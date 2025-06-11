@@ -37,25 +37,27 @@ class RekomendasiController extends Controller
     }
 
     // Index untuk rekomendasi mahasiswa
-    public function indexMahasiswa()
-    {
-        $breadcrumb = (object) [
-            'title' => 'Rekomendasi Mahasiswa',
-            'list' => ['Home', 'Rekomendasi', 'Mahasiswa']
-        ];
+  // Contoh untuk rekomendasi mahasiswa
+public function indexMahasiswa()
+{
+    $breadcrumb = (object) [
+        'title' => 'Rekomendasi Mahasiswa',
+        'list' => ['Home', 'Rekomendasi', 'Mahasiswa']
+    ];
 
-        $page = (object) [
-            'title' => 'Daftar rekomendasi prioritas perbaikan dari mahasiswa'
-        ];
+    $page = (object) [
+        'title' => 'Daftar rekomendasi prioritas perbaikan dari mahasiswa'
+    ];
 
-        $activeMenu = 'rekomendasi-mahasiswa';
+    $activeMenu = 'rekomendasi-mahasiswa';
 
-        return view('sarpras.rekomendasi.mahasiswa', [
-            'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'activeMenu' => $activeMenu
-        ]);
-    }
+    return view('sarpras.rekomendasi.index', [ // Gunakan view yang sama
+        'breadcrumb' => $breadcrumb,
+        'page' => $page,
+        'activeMenu' => $activeMenu,
+        'userLevel' => 2 // Filter untuk mahasiswa
+    ]);
+}
 
     // Index untuk rekomendasi dosen
     public function indexDosen()
@@ -241,29 +243,33 @@ class RekomendasiController extends Controller
     // Show AHP and TOPSIS calculation details
     // app/Http/Controllers/Sarpras/RekomendasiController.php
 
-    public function showDetailPerhitungan($id)
+  public function showDetailPerhitungan($id)
     {
-        $laporan = LaporanModel::with(['rekomendasi', 'fasilitas', 'fasilitas.barang', 'fasilitas.barang.klasifikasi'])->find($id);
+        $laporan = LaporanModel::with([
+            'rekomendasi', 
+            'fasilitas', 
+            'fasilitas.barang', 
+            'fasilitas.barang.klasifikasi',
+            'user.level'
+        ])->find($id);
 
         if (!$laporan || !$laporan->rekomendasi) {
             return response()->json([
                 'status' => false,
-                'message' => 'Data rekomendasi tidak ditemukan'
-            ]);
+                'message' => 'Data laporan atau rekomendasi tidak ditemukan'
+            ], 404);
         }
 
-        // Ambil semua laporan yang diproses bersamaan untuk matriks perbandingan
-        $batchLaporans = LaporanModel::where('created_at', '>=', $laporan->created_at->subHour())
-            ->where('created_at', '<=', $laporan->created_at->addHour())
+        $batchLaporans = LaporanModel::with('rekomendasi')
+            ->where('periode_id', $laporan->periode_id)
             ->where('status', 'diterima')
-            ->with(['rekomendasi', 'fasilitas'])
+            ->whereHas('rekomendasi')
             ->get();
 
-        // Bangun data untuk ditampilkan
         $data = [
             'laporan' => $laporan,
             'kriteria' => KriteriaModel::all(),
-            'nilai_kriteria' => json_decode($laporan->rekomendasi->nilai_kriteria, true),
+            'nilai_kriteria' => $laporan->rekomendasi->nilai_kriteria,
             'matriks_keputusan' => $this->buildMatriksKeputusan($batchLaporans),
             'matriks_normalisasi' => $this->buildMatriksNormalisasi($batchLaporans),
             'matriks_terbobot' => $this->buildMatriksTerbobot($batchLaporans),
@@ -274,32 +280,18 @@ class RekomendasiController extends Controller
         return view('sarpras.rekomendasi.detail_perhitungan', $data);
     }
 
-    // Fungsi-fungsi pembantu untuk membangun data tampilan
     private function buildMatriksKeputusan($laporans)
     {
         $matriks = [];
-        $kriteria = KriteriaModel::all();
-
-        foreach ($laporans as $laporan) {
-            $nilai = json_decode($laporan->rekomendasi->nilai_kriteria, true);
-            $row = [
-                'id' => $laporan->laporan_id,
-                'judul' => $laporan->judul
-            ];
-
-            foreach ($kriteria as $k) {
-                $row[strtolower($k->kriteria_kode)] = $nilai[strtolower($k->kriteria_kode)] ?? 0;
-            }
-
-            $matriks[] = $row;
+        foreach ($laporans as $lap) {
+            $nilai = $lap->rekomendasi->nilai_kriteria;
+            $matriks[] = array_merge(['laporan_id' => $lap->laporan_id, 'judul' => $lap->judul], $nilai);
         }
-
         return $matriks;
     }
 
     private function buildMatriksNormalisasi($laporans)
     {
-        // Implementasi normalisasi sesuai dengan metode TOPSIS
         $matriks = $this->buildMatriksKeputusan($laporans);
         $kriteria = KriteriaModel::all();
         $normalized = [];
@@ -307,13 +299,16 @@ class RekomendasiController extends Controller
         foreach ($kriteria as $k) {
             $kode = strtolower($k->kriteria_kode);
             $kolom = array_column($matriks, $kode);
-            $sumSquares = sqrt(array_sum(array_map(function ($x) {
-                return $x * $x;
-            }, $kolom)));
+            $sumSquares = sqrt(array_sum(array_map(fn($x) => $x * $x, $kolom)));
 
             foreach ($matriks as $i => $row) {
                 $normalized[$i][$kode] = $sumSquares != 0 ? $row[$kode] / $sumSquares : 0;
             }
+        }
+
+        foreach ($matriks as $i => $row) {
+            $normalized[$i]['laporan_id'] = $row['laporan_id'];
+            $normalized[$i]['judul'] = $row['judul'];
         }
 
         return $normalized;
@@ -326,6 +321,7 @@ class RekomendasiController extends Controller
         $terbobot = [];
 
         foreach ($normalized as $i => $row) {
+            $terbobot[$i] = ['laporan_id' => $row['laporan_id'], 'judul' => $row['judul']];
             foreach ($kriteria as $k) {
                 $kode = strtolower($k->kriteria_kode);
                 $terbobot[$i][$kode] = $row[$kode] * $k->bobot;
@@ -345,14 +341,8 @@ class RekomendasiController extends Controller
         foreach ($kriteria as $k) {
             $kode = strtolower($k->kriteria_kode);
             $kolom = array_column($terbobot, $kode);
-
-            if ($k->kriteria_jenis == 'benefit') {
-                $positif[$kode] = max($kolom);
-                $negatif[$kode] = min($kolom);
-            } else {
-                $positif[$kode] = min($kolom);
-                $negatif[$kode] = max($kolom);
-            }
+            $positif[$kode] = $k->kriteria_jenis == 'benefit' ? max($kolom) : min($kolom);
+            $negatif[$kode] = $k->kriteria_jenis == 'benefit' ? min($kolom) : max($kolom);
         }
 
         return ['positif' => $positif, 'negatif' => $negatif];
@@ -369,6 +359,7 @@ class RekomendasiController extends Controller
             $jarakNegatif = 0;
 
             foreach ($row as $kode => $nilai) {
+                if ($kode == 'laporan_id' || $kode == 'judul') continue;
                 $jarakPositif += pow($nilai - $solusiIdeal['positif'][$kode], 2);
                 $jarakNegatif += pow($nilai - $solusiIdeal['negatif'][$kode], 2);
             }
@@ -377,22 +368,17 @@ class RekomendasiController extends Controller
             $jarakNegatif = sqrt($jarakNegatif);
 
             $hasil[] = [
-                'laporan_id' => $laporans[$i]->laporan_id,
-                'judul' => $laporans[$i]->judul,
+                'laporan_id' => $row['laporan_id'],
+                'judul' => $row['judul'],
                 'jarak_positif' => $jarakPositif,
                 'jarak_negatif' => $jarakNegatif,
                 'skor_akhir' => $jarakNegatif / ($jarakPositif + $jarakNegatif)
             ];
         }
 
-        // Urutkan berdasarkan skor akhir
-        usort($hasil, function ($a, $b) {
-            return $b['skor_akhir'] <=> $a['skor_akhir'];
-        });
-
+        usort($hasil, fn($a, $b) => $b['skor_akhir'] <=> $a['skor_akhir']);
         return $hasil;
     }
-
     public function export_excel()
     {
         return $this->generateExcel(null, 'Data_Rekomendasi');

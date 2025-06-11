@@ -31,10 +31,7 @@ class DatabaseSeeder extends Seeder
             PerbaikanDetailSeeder::class,
             FeedbackSeeder::class,
             KriteriaSeeder::class,
-            RekomendasiMahasiswaSeeder::class,
-            RekomendasiDosenSeeder::class,
-            RekomendasiTendikSeeder::class,
-            RekomendasiSeeder::class,
+          
         ]);
         // \App\Models\User::factory(10)->create();
 

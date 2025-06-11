@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('klasifikasi_id');
             $table->string('barang_kode', 10);
             $table->string('barang_nama', 100);
-            $table->decimal('prioritas_barang', 4, 2)->default(0.0);
+            $table->decimal('bobot_prioritas', 4, 2)->default(0.0);
             $table->timestamps();
 
             $table->foreign('kategori_id')->references('kategori_id')->on('m_kategori')->onDelete('cascade');
