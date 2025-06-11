@@ -57,7 +57,7 @@ class UserSeeder extends Seeder
 
         // 100 Mahasiswa users
         $mahasiswa = [
-            ['nama' => 'Ahmad Fauzi', 'username' => 'sarpras', 'email' => 'ahmad.fauzi1@polinema.ac.id'],
+            ['nama' => 'Ahmad Fauzi', 'username' => 'mahasiswa', 'email' => 'ahmad.fauzi1@polinema.ac.id'],
             ['nama' => 'Dewi Lestari', 'username' => 'dewilelstari1', 'email' => 'dewi.lestari1@polinema.ac.id'],
             ['nama' => 'Rizki Pratama', 'username' => 'rizkipratama1', 'email' => 'rizki.pratama1@polinema.ac.id'],
             ['nama' => 'Fitri Rahayu', 'username' => 'fitrirahayu1', 'email' => 'fitri.rahayu1@polinema.ac.id'],
