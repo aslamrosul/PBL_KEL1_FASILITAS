@@ -15,6 +15,20 @@
                     <td>{{ $laporan->deskripsi }}</td>
                 </tr>
                 <tr>
+                    <th>Foto</th>
+                    <td>
+                        @if($laporan->foto_path)
+                            <a href="{{ asset('storage/' . $laporan->foto_path) }}" target="_blank">
+                                <img src="{{ asset('storage/' . $laporan->foto_path) }}" alt="Foto Laporan"
+                                     style="max-width: 200px; height: auto; border: 1px solid #ccc; padding: 4px;">
+                            </a>
+                            <p class="text-muted mt-1" style="font-size: 0.85em;">Klik untuk memperbesar</p>
+                        @else
+                            <span class="text-muted">Tidak ada foto</span>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
                     <th>Pelapor</th>
                     <td>{{ $laporan->user->nama }}</td>
                 </tr>
