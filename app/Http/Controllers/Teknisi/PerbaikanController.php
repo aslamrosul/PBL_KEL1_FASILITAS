@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Teknisi;
 
 use App\Http\Controllers\Controller;
 use App\Models\LaporanModel;
+use App\Models\NotifikasiModel;
 use App\Models\PerbaikanModel;
 use App\Models\PerbaikanDetailModel;
 use App\Models\RiwayatPenugasanModel;
+use App\Models\UserModel;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -76,15 +79,15 @@ class PerbaikanController extends Controller
                 return $btn;
             })
             ->editColumn('status', function ($perbaikan) {
-                return $this->getStatusBadge($perbaikan->status);
+                 return $perbaikan->status;
             })
             ->editColumn('laporan.judul', function ($perbaikan) {
-                return $perbaikan->laporan->judul;
+                 return $perbaikan->laporan->judul;
             })
             ->editColumn('laporan.fasilitas.fasilitas_nama', function ($perbaikan) {
-                return $perbaikan->laporan->fasilitas->fasilitas_nama ?? '-';
+                 return $perbaikan->laporan->fasilitas->fasilitas_nama ?? '-';
             })
-            ->rawColumns(['aksi', 'status'])
+             ->rawColumns(['aksi', 'status'])
             ->make(true);
     }
 
@@ -255,7 +258,34 @@ class PerbaikanController extends Controller
 
             // Update laporan status
             $laporanStatus = $request->status === 'selesai' ? 'selesai' : 'diproses';
-            LaporanModel::find($perbaikan->laporan_id)->update(['status' => $laporanStatus]);
+            $laporan = LaporanModel::find($perbaikan->laporan_id);
+            $laporan->update(['status' => $laporanStatus]);
+
+            // Notify Sarpras about status_penugasan
+            $sarprasUsers = UserModel::whereHas('level', function ($query) {
+                $query->where('level_kode', 'SPR');
+            })->get();
+
+            foreach ($sarprasUsers as $sarpras) {
+                NotifikasiModel::create([
+                    'judul' => 'Perubahan Status Penugasan',
+                    'pesan' => "Status penugasan untuk laporan '{$laporan->judul}' telah diubah menjadi '{$statusPenugasan}'.",
+                    'user_id' => $sarpras->user_id,
+                    'laporan_id' => $perbaikan->laporan_id,
+                    'tipe' => 'status_penugasan',
+                    'dibaca' => false,
+                ]);
+            }
+
+            // Notify Pelapor about status laporan
+            NotifikasiModel::create([
+                'judul' => 'Perubahan Status Laporan',
+                'pesan' => "Status laporan '{$laporan->judul}' telah diubah menjadi '{$laporanStatus}'.",
+                'user_id' => $laporan->user_id,
+                'laporan_id' => $perbaikan->laporan_id,
+                'tipe' => 'status_laporan',
+                'dibaca' => false,
+            ]);
 
             DB::commit();
 

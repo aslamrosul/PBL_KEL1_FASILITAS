@@ -8,6 +8,7 @@ use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
 use App\Models\KriteriaModel;
+use App\Models\NotifikasiModel;
 use App\Models\PerbaikanModel;
 use App\Models\RekomendasiModel;
 use App\Models\RiwayatPenugasanModel;
@@ -96,7 +97,23 @@ class LaporanSarprasController extends Controller
 
     public function show_ajax($id)
     {
-        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])->find($id);
+        $laporan = LaporanModel::with([
+            'periode',
+            'fasilitas',
+            'fasilitas.ruang',
+            'fasilitas.ruang.lantai',
+            'fasilitas.ruang.lantai.gedung',
+            'fasilitas.barang',
+            'bobotPrioritas',
+            'user',
+            'perbaikans.teknisi',
+            'perbaikans.details'
+        ])->find($id);
+
+        if (!$laporan) {
+            return view('sarpras.laporan.show_ajax', ['laporan' => null]);
+        }
+
         return view('sarpras.laporan.show_ajax', compact('laporan'));
     }
 
@@ -189,19 +206,50 @@ class LaporanSarprasController extends Controller
     //  * @return \Illuminate\Http\JsonResponse
     //  */
 
-    private function hitungFrekuensiLaporan($fasilitasId)
+    public function changeStatus(Request $request, $id)
     {
-        return LaporanModel::where('fasilitas_id', $fasilitasId)->count();
-    }
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:diterima,ditolak,selesai',
+            'alasan_penolakan' => 'nullable|string|max:255'
+        ]);
 
-    private function hitungUsiaFasilitas($tahunPengadaan)
-    {
-        return now()->year - $tahunPengadaan;
-    }
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
 
-    private function hitungKondisiFasilitas($status)
-    {
-        return ['rusak berat' => 4, 'rusak sedang' => 3, 'rusak ringan' => 2, 'baik' => 5 ][$status] ?? 0;
+        try {
+            $laporan = LaporanModel::findOrFail($id);
+            $laporan->update([
+                'status' => $request->status,
+                'alasan_penolakan' => $request->alasan_penolakan
+            ]);
+
+            // Notify the pelapor
+            NotifikasiModel::create([
+                'judul' => 'Perubahan Status Laporan',
+                'pesan' => "Status laporan '{$laporan->judul}' telah diubah menjadi '{$request->status}'." .
+                    ($request->alasan_penolakan ? " Alasan: {$request->alasan_penolakan}" : ""),
+                'user_id' => $laporan->user_id,
+                'laporan_id' => $laporan->laporan_id,
+                'tipe' => 'status_laporan',
+                'dibaca' => false,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Status laporan berhasil diubah',
+                'laporan_id' => $laporan->laporan_id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal mengubah status laporan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     private function tentukanBobotPrioritas($skor)
@@ -212,10 +260,10 @@ class LaporanSarprasController extends Controller
     }
 
 
-private function hitungSkorPrioritas($laporan)
-{
-    return TopsisService::hitungSkorPrioritas($laporan);
-}
+    private function hitungSkorPrioritas($laporan)
+    {
+        return TopsisService::hitungSkorPrioritas($laporan);
+    }
 
     public function recalculateRecommendations(Request $request, $level_id = null)
     {
@@ -342,7 +390,8 @@ private function hitungSkorPrioritas($laporan)
             ]);
 
             // Update status laporan
-            LaporanModel::find($id)->update(['status' => 'diproses']);
+            $laporan = LaporanModel::find($id);
+            $laporan->update(['status' => 'diproses']);
 
             // Buat riwayat penugasan
             RiwayatPenugasanModel::create([
@@ -352,6 +401,16 @@ private function hitungSkorPrioritas($laporan)
                 'tanggal_penugasan' => now(),
                 'status_penugasan' => 'ditugaskan',
                 'catatan' => $request->catatan
+            ]);
+
+            // Notify the technician
+            NotifikasiModel::create([
+                'judul' => 'Penugasan Perbaikan',
+                'pesan' => "Anda telah ditugaskan untuk memperbaiki laporan '{$laporan->judul}'.",
+                'user_id' => $request->teknisi_id,
+                'laporan_id' => $id,
+                'tipe' => 'penugasan',
+                'dibaca' => false,
             ]);
 
             return response()->json([

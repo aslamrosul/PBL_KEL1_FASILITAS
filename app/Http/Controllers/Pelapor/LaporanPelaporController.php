@@ -10,7 +10,9 @@ use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
 use App\Models\GedungModel;
 use App\Models\LantaiModel;
+use App\Models\NotifikasiModel;
 use App\Models\RuangModel;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -114,7 +116,22 @@ class LaporanPelaporController extends Controller
                 $data['foto_path'] = $request->file('foto_path')->store('laporan_photos', 'public');
             }
 
-            LaporanModel::create($data);
+            $laporan = LaporanModel::create($data);
+            // Notify all Sarpras (SPR) users
+            $sarprasUsers = UserModel::whereHas('level', function ($query) {
+                $query->where('level_kode', 'SPR');
+            })->get();
+
+            foreach ($sarprasUsers as $sarpras) {
+                NotifikasiModel::create([
+                    'judul' => 'Laporan Baru Dibuat',
+                    'pesan' => "Laporan baru dengan judul '{$request->judul}' telah dibuat oleh pelapor.",
+                    'user_id' => $sarpras->user_id,
+                    'laporan_id' => $laporan->laporan_id,
+                    'tipe' => 'laporan_baru',
+                    'dibaca' => false,
+                ]);
+            }
 
             return redirect()->route('pelapor.laporan.index')->with('success', 'Laporan berhasil disimpan');
         } catch (\Exception $e) {
@@ -219,7 +236,7 @@ class LaporanPelaporController extends Controller
         $fasilitas = FasilitasModel::where('barang_id', $barang_id)->get(['fasilitas_id', 'fasilitas_nama']);
         return response()->json($fasilitas);
     }
-    
+
     public function confirm_ajax($id)
     {
         $laporan = LaporanModel::find($id);
