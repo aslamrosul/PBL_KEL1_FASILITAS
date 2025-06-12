@@ -33,6 +33,26 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link active dropdown-toggle text-gray-600" href="#" data-bs-toggle="dropdown"
+                            data-bs-display="static" aria-expanded="false">
+                            <i class='bi bi-bell bi-sub fs-4'></i>
+                            <span class="badge badge-notification bg-danger" id="unread-count">0</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown"
+                            aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">
+                                <h6>Notifications</h6>
+                            </li>
+                            <div id="notification-list">
+                                <!-- Notifications will be loaded here via AJAX -->
+                            </div>
+                            <li>
+                                <p class="text-center py-2 mb-0"><a href="{{ route('notifications.index') }}">See all
+                                        notifications</a></p>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
                 <div class="dropdown">
                     <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
@@ -59,9 +79,12 @@
                         <li><a class="dropdown-item" href="{{ route('profile.index') }}"><i
                                     class="icon-mid bi bi-person me-2"></i> My Profile</a></li>
                         {{-- <li><a class="dropdown-item"
+                        {{-- <li><a class="dropdown-item"
                                 href="javascript:modalAction('{{ route('profile.edit_ajax') }}')"><i
                                     class="icon-mid bi bi-pencil-square me-2"></i> Edit Profile</a></li>
 
+
+                        <li> --}}
 
                         <li> --}}
                             <hr class="dropdown-divider">
