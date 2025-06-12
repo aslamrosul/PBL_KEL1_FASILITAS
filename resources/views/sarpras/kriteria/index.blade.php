@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/sarpras/kriteria/import') }}')" class="btn btn-info">Import Kriteria</button>
-                <a href="{{ url('/sarpras/kriteria/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
-                <a href="{{ url('/sarpras/kriteria/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
-                <button onclick="modalAction('{{ url('/sarpras/kriteria/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ secure_url('/sarpras/kriteria/import') }}')" class="btn btn-info">Import Kriteria</button>
+                <a href="{{ secure_url('/sarpras/kriteria/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
+                <a href="{{ secure_url('/sarpras/kriteria/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
+                <button onclick="modalAction('{{ secure_url('/sarpras/kriteria/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>

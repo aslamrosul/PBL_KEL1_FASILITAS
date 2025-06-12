@@ -6,11 +6,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         
-        <form action="{{ url('/fasilitas/import_ajax') }}" method="POST" id="form-import" enctype="multipart/form-data">
+        <form action="{{ secure_url('/fasilitas/import_ajax') }}" method="POST" id="form-import" enctype="multipart/form-data">
             <div class="modal-body">
                 <div class="mb-3">
                     <label class="form-label">Download Template</label>
-                    <a href="{{ asset('template_fasilitas.xlsx') }}" class="btn btn-info btn-sm" download>
+                    <a href="{{ secure_asset('template_fasilitas.xlsx') }}" class="btn btn-info btn-sm" download>
                         <i class="bi bi-file-excel"></i> Download
                     </a>
                 </div>

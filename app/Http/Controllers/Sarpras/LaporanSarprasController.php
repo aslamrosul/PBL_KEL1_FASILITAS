@@ -8,6 +8,7 @@ use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
 use App\Models\BobotPrioritasModel;
 use App\Models\KriteriaModel;
+use App\Models\NotifikasiModel;
 use App\Models\PerbaikanModel;
 use App\Models\RekomendasiModel;
 use App\Models\RiwayatPenugasanModel;
@@ -77,13 +78,13 @@ class LaporanSarprasController extends Controller
         return DataTables::of($laporan)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1"><i class="fa fa-eye"></i></button>';
+                $btn = '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1"><i class="fa fa-eye"></i></button>';
 
 
 
                 // Tombol Ubah Status (jika status bukan 'selesai' atau 'ditolak')
                 if (!in_array($laporan->status, ['diterima', 'ditolak', 'selesai'])) {
-                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/change_status_ajax') . '\')" class="btn btn-primary btn-sm">
+                    $btn .= '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/change_status_ajax') . '\')" class="btn btn-primary btn-sm">
                     <i class="fa fa-edit"></i>
                 </button>';
                 }
@@ -96,7 +97,23 @@ class LaporanSarprasController extends Controller
 
     public function show_ajax($id)
     {
-        $laporan = LaporanModel::with(['periode', 'fasilitas', 'bobotPrioritas', 'user'])->find($id);
+        $laporan = LaporanModel::with([
+            'periode',
+            'fasilitas',
+            'fasilitas.ruang',
+            'fasilitas.ruang.lantai',
+            'fasilitas.ruang.lantai.gedung',
+            'fasilitas.barang',
+            'bobotPrioritas',
+            'user',
+            'perbaikans.teknisi',
+            'perbaikans.details'
+        ])->find($id);
+
+        if (!$laporan) {
+            return view('sarpras.laporan.show_ajax', ['laporan' => null]);
+        }
+
         return view('sarpras.laporan.show_ajax', compact('laporan'));
     }
 
@@ -211,6 +228,17 @@ class LaporanSarprasController extends Controller
                 'alasan_penolakan' => $request->alasan_penolakan
             ]);
 
+            // Notify the pelapor
+            NotifikasiModel::create([
+                'judul' => 'Perubahan Status Laporan',
+                'pesan' => "Status laporan '{$laporan->judul}' telah diubah menjadi '{$request->status}'." .
+                    ($request->alasan_penolakan ? " Alasan: {$request->alasan_penolakan}" : ""),
+                'user_id' => $laporan->user_id,
+                'laporan_id' => $laporan->laporan_id,
+                'tipe' => 'status_laporan',
+                'dibaca' => false,
+            ]);
+
             return response()->json([
                 'status' => true,
                 'message' => 'Status laporan berhasil diubah',
@@ -232,10 +260,10 @@ class LaporanSarprasController extends Controller
     }
 
 
-private function hitungSkorPrioritas($laporan)
-{
-    return TopsisService::hitungSkorPrioritas($laporan);
-}
+    private function hitungSkorPrioritas($laporan)
+    {
+        return TopsisService::hitungSkorPrioritas($laporan);
+    }
 
     public function recalculateRecommendations(Request $request, $level_id = null)
     {
@@ -362,7 +390,8 @@ private function hitungSkorPrioritas($laporan)
             ]);
 
             // Update status laporan
-            LaporanModel::find($id)->update(['status' => 'diproses']);
+            $laporan = LaporanModel::find($id);
+            $laporan->update(['status' => 'diproses']);
 
             // Buat riwayat penugasan
             RiwayatPenugasanModel::create([
@@ -372,6 +401,16 @@ private function hitungSkorPrioritas($laporan)
                 'tanggal_penugasan' => now(),
                 'status_penugasan' => 'ditugaskan',
                 'catatan' => $request->catatan
+            ]);
+
+            // Notify the technician
+            NotifikasiModel::create([
+                'judul' => 'Penugasan Perbaikan',
+                'pesan' => "Anda telah ditugaskan untuk memperbaiki laporan '{$laporan->judul}'.",
+                'user_id' => $request->teknisi_id,
+                'laporan_id' => $id,
+                'tipe' => 'penugasan',
+                'dibaca' => false,
             ]);
 
             return response()->json([

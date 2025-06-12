@@ -8,12 +8,12 @@
 
 @font-face {
   font-family: "dripicons";
-  src: url('dripicons.eot');
-  src: url('dripicons.eot?#iefix') format('eot'),
+  src: secure_url('dripicons.eot');
+  src: secure_url('dripicons.eot?#iefix') format('eot'),
 
-    url('dripicons.woff') format('woff'),
-    url('dripicons.ttf') format('truetype'),
-    url('dripicons.svg#dripicons') format('svg');
+    secure_url('dripicons.woff') format('woff'),
+    secure_url('dripicons.ttf') format('truetype'),
+    secure_url('dripicons.svg#dripicons') format('svg');
 }
 
 .dripicons {

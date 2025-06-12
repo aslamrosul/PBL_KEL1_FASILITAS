@@ -1,4 +1,4 @@
-<form action="{{ url('/ruang/import_ajax') }}" method="POST" enctype="multipart/form-data" id="form-import-ruang">
+<form action="{{ secure_url('/ruang/import_ajax') }}" method="POST" enctype="multipart/form-data" id="form-import-ruang">
     @csrf
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

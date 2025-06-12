@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/periode/import') }}')" class="btn btn-info">Import Periode</button>
-                <a href="{{ url('/periode/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Periode</a>
-                <a href="{{ url('/periode/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Periode</a>
-                <button onclick="modalAction('{{ url('/periode/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ secure_url('/periode/import') }}')" class="btn btn-info">Import Periode</button>
+                <a href="{{ secure_url('/periode/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Periode</a>
+                <a href="{{ secure_url('/periode/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Periode</a>
+                <button onclick="modalAction('{{ secure_url('/periode/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -61,7 +61,7 @@
             window.dataPeriode = $('#table_periode').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('periode/list') }}",
+                    url: "{{ secure_url('periode/list') }}",
                     type: "POST"
                 },
                 columns: [

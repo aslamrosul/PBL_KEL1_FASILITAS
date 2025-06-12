@@ -16,35 +16,35 @@ class LaporanSeeder extends Seeder
         
         // Sample data for randomization
         $users = range(5, 20); // User IDs (students and lecturers)
-        $fasilitas = [1, 2, 3, 4]; // Facility IDs
+        $fasilitas = range(1, 135); // Facility IDs (1 to 135)
         $statuses = ['menunggu', 'diproses', 'diterima', 'selesai'];
         $issues = [
-            1 => [
-                ['judul' => 'Komputer Tidak Menyala', 'deskripsi' => 'Komputer di Lab {lab} tidak bisa menyala saat dinyalakan'],
-                ['judul' => 'Komputer Lambat', 'deskripsi' => 'Komputer di Lab {lab} berjalan sangat lambat'],
-                ['judul' => 'Keyboard Rusak', 'deskripsi' => 'Keyboard di Lab {lab} tidak berfungsi dengan baik'],
-                ['judul' => 'Monitor Mati', 'deskripsi' => 'Monitor di Lab {lab} tidak menampilkan gambar'],
+            'komputer' => [
+                ['judul' => 'Komputer Tidak Menyala', 'deskripsi' => 'Komputer tidak bisa menyala saat dinyalakan'],
+                ['judul' => 'Komputer Lambat', 'deskripsi' => 'Komputer berjalan sangat lambat'],
+                ['judul' => 'Keyboard Rusak', 'deskripsi' => 'Keyboard tidak berfungsi dengan baik'],
+                ['judul' => 'Monitor Mati', 'deskripsi' => 'Monitor tidak menampilkan gambar'],
             ],
-            2 => [
-                ['judul' => 'Proyektor Tidak Menyala', 'deskripsi' => 'Proyektor di ruang {room} tidak menyala saat digunakan'],
-                ['judul' => 'Proyektor Buram', 'deskripsi' => 'Tampilan proyektor di ruang {room} buram dan sulit dibaca'],
-                ['judul' => 'Kabel Proyektor Hilang', 'deskripsi' => 'Kabel proyektor di ruang {room} tidak ditemukan'],
-                ['judul' => 'Remote Proyektor Rusak', 'deskripsi' => 'Remote proyektor di ruang {room} tidak berfungsi'],
+            'proyektor' => [
+                ['judul' => 'Proyektor Tidak Menyala', 'deskripsi' => 'Proyektor tidak menyala saat digunakan'],
+                ['judul' => 'Proyektor Buram', 'deskripsi' => 'Tampilan proyektor buram dan sulit dibaca'],
+                ['judul' => 'Kabel Proyektor Hilang', 'deskripsi' => 'Kabel proyektor tidak ditemukan'],
+                ['judul' => 'Remote Proyektor Rusak', 'deskripsi' => 'Remote proyektor tidak berfungsi'],
             ],
-            3 => [
-                ['judul' => 'Kursi Rusak', 'deskripsi' => 'Kursi di ruang {room} patah pada bagian {part}'],
-                ['judul' => 'AC Berisik', 'deskripsi' => 'AC di ruang {room} mengeluarkan suara berisik'],
-                ['judul' => 'Lampu Mati', 'deskripsi' => 'Lampu di ruang {room} tidak menyala'],
-                ['judul' => 'AC Tidak Dingin', 'deskripsi' => 'AC di ruang {room} tidak mengeluarkan udara dingin'],
+            'furnitur' => [
+                ['judul' => 'Kursi Rusak', 'deskripsi' => 'Kursi patah pada bagian {part}'],
+                ['judul' => 'AC Berisik', 'deskripsi' => 'AC mengeluarkan suara berisik'],
+                ['judul' => 'Lampu Mati', 'deskripsi' => 'Lampu tidak menyala'],
+                ['judul' => 'AC Tidak Dingin', 'deskripsi' => 'AC tidak mengeluarkan udara dingin'],
             ],
-            4 => [
-                ['judul' => 'Papan Tulis Rusak', 'deskripsi' => 'Papan tulis di ruang {room} sulit dihapus'],
-                ['judul' => 'Meja Retak', 'deskripsi' => 'Meja di ruang {room} memiliki retakan besar'],
-                ['judul' => 'Jendela Macet', 'deskripsi' => 'Jendela di ruang {room} tidak bisa dibuka'],
-                ['judul' => 'Pintu Berderit', 'deskripsi' => 'Pintu di ruang {room} berderit saat dibuka'],
+            'ruangan' => [
+                ['judul' => 'Papan Tulis Rusak', 'deskripsi' => 'Papan tulis sulit dihapus'],
+                ['judul' => 'Meja Retak', 'deskripsi' => 'Meja memiliki retakan besar'],
+                ['judul' => 'Jendela Macet', 'deskripsi' => 'Jendela tidak bisa dibuka'],
+                ['judul' => 'Pintu Berderit', 'deskripsi' => 'Pintu berderit saat dibuka'],
             ],
         ];
-        $rooms = ['A-101', 'A-102', 'B-203', 'B-204', 'C-104', 'C-105', 'Lab Komputer 1', 'Lab Komputer 2', 'Ruang Seminar', 'Ruang Dosen'];
+        $issueCategories = array_keys($issues); // ['komputer', 'proyektor', 'furnitur', 'ruangan']
         $parts = ['sandaran', 'kaki', 'dudukan', 'lengan'];
 
         // Generate random number of reports per month with significant variation
@@ -81,14 +81,14 @@ class LaporanSeeder extends Seeder
         // Generate reports for each month
         foreach ($reportsPerMonth as $month => $count) {
             for ($i = 0; $i < $count; $i++) {
-                $fasilitas_id = $fasilitas[array_rand($fasilitas)];
-                $issue = $issues[$fasilitas_id][array_rand($issues[$fasilitas_id])];
-                $room = $rooms[array_rand($rooms)];
+                $fasilitas_id = $fasilitas[array_rand($fasilitas)]; // Random facility ID (1-135)
+                $category = $issueCategories[array_rand($issueCategories)]; // Random issue category
+                $issue = $issues[$category][array_rand($issues[$category])]; // Random issue from category
                 $part = $parts[array_rand($parts)];
                 
                 // Replace placeholders in judul and deskripsi
-                $judul = str_replace('{lab}', 'Komputer ' . rand(1, 5), $issue['judul']);
-                $deskripsi = str_replace(['{lab}', '{room}', '{part}'], ['Komputer ' . rand(1, 5), $room, $part], $issue['deskripsi']);
+                $judul = $issue['judul'];
+                $deskripsi = str_replace('{part}', $part, $issue['deskripsi']);
                 
                 $status = $statuses[array_rand($statuses)];
                 $created_at = Carbon::create(2025, $month, rand(1, 28), rand(0, 23), rand(0, 59), rand(0, 59));
@@ -100,6 +100,7 @@ class LaporanSeeder extends Seeder
                     'judul' => $judul,
                     'deskripsi' => $deskripsi,
                     'foto_path' => null,
+                    'tanggal_lapor' => $created_at,
                     'bobot_id' => null,
                     'status' => $status,
                     'alasan_penolakan' => ($status == 'selesai' && rand(0, 4) == 0) ? 'Kerusakan dianggap minor dan tidak memerlukan perbaikan segera' : null,

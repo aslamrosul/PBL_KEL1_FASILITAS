@@ -4,7 +4,7 @@
             <h5 class="modal-title">Proses Perbaikan</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <form action="{{ url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/update_ajax') }}" method="POST"
+        <form action="{{ secure_url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/update_ajax') }}" method="POST"
             id="form-edit-perbaikan" enctype="multipart/form-data">
             @csrf
             @method('PUT')

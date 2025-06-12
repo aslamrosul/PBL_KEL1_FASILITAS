@@ -39,9 +39,9 @@ class KlasifikasiController extends Controller
         return DataTables::of($klasifikasis)
             ->addIndexColumn()
             ->addColumn('aksi', function ($klasifikasi) {
-                $showUrl = url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/show_ajax');
-                $editUrl = url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/edit_ajax');
-                $deleteUrl = url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/delete_ajax');
+                $showUrl = secure_url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/show_ajax');
+                $editUrl = secure_url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/edit_ajax');
+                $deleteUrl = secure_url('/klasifikasi/' . $klasifikasi->klasifikasi_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

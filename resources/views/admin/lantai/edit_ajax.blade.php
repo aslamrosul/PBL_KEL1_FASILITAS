@@ -11,7 +11,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/lantai/' . $lantai->lantai_id . '/update_ajax') }}" method="POST" id="form-edit-lantai">
+    <form action="{{ secure_url('/lantai/' . $lantai->lantai_id . '/update_ajax') }}" method="POST" id="form-edit-lantai">
         @csrf
         @method('PUT')
         <div class="modal-dialog modal-lg" role="document">

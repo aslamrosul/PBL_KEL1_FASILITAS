@@ -5,14 +5,14 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="recalculateRecommendations('{{ url('/sarpras/rekomendasi/recalculate') }}')"
+                <button onclick="recalculateRecommendations('{{ secure_url('/sarpras/rekomendasi/recalculate') }}')"
                     class="btn btn-success">
                     <i class="bi bi-arrow-repeat"></i> Hitung Ulang Rekomendasi
                 </button>
-                <a href="{{ url('/sarpras/rekomendasi/export_excel') }}" class="btn btn-primary">
+                <a href="{{ secure_url('/sarpras/rekomendasi/export_excel') }}" class="btn btn-primary">
                     <i class="bi bi-file-excel"></i> Export Excel
                 </a>
-                <a href="{{ url('/sarpras/rekomendasi/export_pdf') }}" class="btn btn-warning">
+                <a href="{{ secure_url('/sarpras/rekomendasi/export_pdf') }}" class="btn btn-warning">
                     <i class="bi bi-file-pdf"></i> Export PDF
                 </a>
             </div>
@@ -35,6 +35,8 @@
                             <th>Fasilitas</th>
                             <th>Prioritas</th>
                             <th>Status</th>
+                            <th>Skor Total</th>
+
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -62,7 +64,7 @@
             var dataRekomendasi = $('#table_rekomendasi').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('sarpras/rekomendasi/list') }}",
+                    url: "{{ secure_url('sarpras/rekomendasi/list') }}",
                     type: "POST"
                 },
                 columns: [
@@ -80,33 +82,34 @@
                             return renderStatusBadge(data);
                         }
                     },
+                    { data: "rekomendasi.skor_total", className: "", orderable: true, searchable: false },
                     { data: "aksi", className: "", orderable: false, searchable: false }
                 ]
             });
         });
     </script>
     <script>
-    function recalculateRecommendations(url) {
-        if (confirm('Apakah Anda yakin ingin menghitung ulang semua rekomendasi?')) {
-            $.ajax({
-                url: url,
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    if (response.status) {
-                        alert(response.message);
-                        $('#table_rekomendasi').DataTable().ajax.reload();
-                    } else {
-                        alert('Gagal: ' + response.message);
+        function recalculateRecommendations(url) {
+            if (confirm('Apakah Anda yakin ingin menghitung ulang semua rekomendasi?')) {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            alert(response.message);
+                            $('#table_rekomendasi').DataTable().ajax.reload();
+                        } else {
+                            alert('Gagal: ' + response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        alert('Terjadi kesalahan: ' + xhr.responseJSON.message);
                     }
-                },
-                error: function(xhr) {
-                    alert('Terjadi kesalahan: ' + xhr.responseJSON.message);
-                }
-            });
+                });
+            }
         }
-    }
-</script>
+    </script>
 @endpush

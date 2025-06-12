@@ -106,8 +106,8 @@ class LaporanAdminController extends Controller
                     return $laporan->barang->barang_nama ?? '-'; // Asumsi kolom nama di BarangModel adalah 'barang_nama'
                 })
                 ->addColumn('aksi', function ($laporan) {
-                    $showUrl = url('/laporan-admin/' . $laporan->laporan_id . '/show_ajax');
-                    $editUrl = url('/laporan-admin/' . $laporan->laporan_id . '/edit_ajax');
+                    $showUrl = secure_url('/laporan-admin/' . $laporan->laporan_id . '/show_ajax');
+                    $editUrl = secure_url('/laporan-admin/' . $laporan->laporan_id . '/edit_ajax');
 
                     return '
                         <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Laporan">

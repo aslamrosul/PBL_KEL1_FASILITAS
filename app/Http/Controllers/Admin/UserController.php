@@ -51,9 +51,9 @@ public function list(Request $request)
     return DataTables::of($users)
         ->addIndexColumn()
         ->addColumn('aksi', function ($user) {
-            $showUrl = url('/user/' . $user->user_id . '/show_ajax');
-            $editUrl = url('/user/' . $user->user_id . '/edit_ajax');
-            $deleteUrl = url('/user/' . $user->user_id . '/delete_ajax');
+            $showUrl = secure_url('/user/' . $user->user_id . '/show_ajax');
+            $editUrl = secure_url('/user/' . $user->user_id . '/edit_ajax');
+            $deleteUrl = secure_url('/user/' . $user->user_id . '/delete_ajax');
 
             return '
                 <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">

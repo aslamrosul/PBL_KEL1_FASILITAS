@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <a href="{{ url('/sarpras/laporan/export_excel') }}" class="btn btn-primary">
+                <a href="{{ secure_url('/sarpras/laporan/export_excel') }}" class="btn btn-primary">
                     <i class="bi bi-file-excel"></i> Export Excel
                 </a>
-                <a href="{{ url('/sarpras/laporan/export_pdf') }}" class="btn btn-warning">
+                <a href="{{ secure_url('/sarpras/laporan/export_pdf') }}" class="btn btn-warning">
                     <i class="bi bi-file-pdf"></i> Export PDF
                 </a>
             </div>
@@ -99,7 +99,7 @@
             var dataLaporan = $('#table_laporan').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('sarpras/laporan/list') }}",
+                    url: "{{ secure_url('sarpras/laporan/list') }}",
                     type: "POST",
                     data: function(d) {
                         d.periode_id = $('#periode_id').val();

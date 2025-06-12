@@ -45,9 +45,9 @@ class RuangController extends Controller
                 return $gedung ? $gedung->gedung_nama . ' - Lantai ' . $lantai->lantai_nomor : 'Lantai ' . $lantai->lantai_nomor;
             })
             ->addColumn('aksi', function ($ruang) {
-                $showUrl = url('/ruang/' . $ruang->ruang_id . '/show_ajax');
-                $editUrl = url('/ruang/' . $ruang->ruang_id . '/edit_ajax');
-                $deleteUrl = url('/ruang/' . $ruang->ruang_id . '/delete_ajax');
+                $showUrl = secure_url('/ruang/' . $ruang->ruang_id . '/show_ajax');
+                $editUrl = secure_url('/ruang/' . $ruang->ruang_id . '/edit_ajax');
+                $deleteUrl = secure_url('/ruang/' . $ruang->ruang_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

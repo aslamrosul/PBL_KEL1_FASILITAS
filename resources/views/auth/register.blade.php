@@ -7,9 +7,9 @@
     <title>Register Pengguna - Mazer Admin Dashboard</title>
     
     <link rel="shortcut icon" href="https://siakad.polinema.ac.id/favicon.jpg" type="image/x-icon">
-   <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app-dark.css') }}">
-    <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/auth.css') }}">
+   <link rel="stylesheet" href="{{ secure_asset('dist/assets/compiled/css/app.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('dist/assets/compiled/css/app-dark.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('dist/assets/compiled/css/auth.css') }}">
     <style>
         .auth-logo img {
             height: 60px;
@@ -47,7 +47,7 @@
 </head>
 
 <body>
-    <script src="{{ asset('dist/assets/static/js/initTheme.js') }}"></script>
+    <script src="{{ secure_asset('dist/assets/static/js/initTheme.js') }}"></script>
     <div id="auth">
         <div class="row h-100 justify-content-center">
             <div class="col-lg-5 col-12">
@@ -128,9 +128,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="{{ asset('dist/assets/static/js/components/dark.js') }}"></script>
-    <script src="{{ asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-    <script src="{{ asset('dist/assets/compiled/js/app.js') }}"></script>
+    <script src="{{ secure_asset('dist/assets/static/js/components/dark.js') }}"></script>
+    <script src="{{ secure_asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ secure_asset('dist/assets/compiled/js/app.js') }}"></script>
     
     <!-- Additional scripts -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>

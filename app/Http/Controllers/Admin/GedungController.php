@@ -39,9 +39,9 @@ class GedungController extends Controller
         return DataTables::of($gedungs)
             ->addIndexColumn()
             ->addColumn('aksi', function ($gedung) {
-                $showUrl = url('/gedung/' . $gedung->gedung_id . '/show_ajax');
-                $editUrl = url('/gedung/' . $gedung->gedung_id . '/edit_ajax');
-                $deleteUrl = url('/gedung/' . $gedung->gedung_id . '/delete_ajax');
+                $showUrl = secure_url('/gedung/' . $gedung->gedung_id . '/show_ajax');
+                $editUrl = secure_url('/gedung/' . $gedung->gedung_id . '/edit_ajax');
+                $deleteUrl = secure_url('/gedung/' . $gedung->gedung_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

@@ -80,7 +80,7 @@
                 serverSide: true, // Mengaktifkan mode server-side processing
                 ajax: {
                     // URL untuk mengambil data laporan dari controller
-                    url: "{{ url('laporan-admin/list') }}",
+                    url: "{{ secure_url('laporan-admin/list') }}",
                     type: "POST" // Menggunakan metode POST sesuai konfigurasi DataTables server-side
                 },
                 columns: [

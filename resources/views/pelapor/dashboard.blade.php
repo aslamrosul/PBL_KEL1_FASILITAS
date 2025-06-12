@@ -18,7 +18,7 @@
                                 <p>Total Laporan</p>
                                 <i class="fa fa-file-text-o stat-icon"></i>
                             </div>
-                            <a href="{{ url('pelapor/laporan') }}" class="stat-footer">
+                            <a href="{{ secure_url('pelapor/laporan') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -30,7 +30,7 @@
                                 <p>Menunggu</p>
                                 <i class="fa fa-clock-o stat-icon"></i>
                             </div>
-                            <a href="{{ url('pelapor/laporan?status=menunggu') }}" class="stat-footer">
+                            <a href="{{ secure_url('pelapor/laporan?status=menunggu') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -42,7 +42,7 @@
                                 <p>Diterima</p>
                                 <i class="fa fa-check stat-icon"></i>
                             </div>
-                            <a href="{{ url('pelapor/laporan?status=diterima') }}" class="stat-footer">
+                            <a href="{{ secure_url('pelapor/laporan?status=diterima') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -54,7 +54,7 @@
                                 <p>Ditolak</p>
                                 <i class="fa fa-times stat-icon"></i>
                             </div>
-                            <a href="{{ url('pelapor/laporan?status=ditolak') }}" class="stat-footer">
+                            <a href="{{ secure_url('pelapor/laporan?status=ditolak') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -66,7 +66,7 @@
                                 <p>Diproses</p>
                                 <i class="fa fa-wrench stat-icon"></i>
                             </div>
-                            <a href="{{ url('pelapor/laporan?status=diproses') }}" class="stat-footer">
+                            <a href="{{ secure_url('pelapor/laporan?status=diproses') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -78,7 +78,7 @@
                                 <p>Selesai</p>
                                 <i class="fa fa-check-circle-o stat-icon"></i>
                             </div>
-                            <a href="{{ url('pelapor/laporan?status=selesai') }}" class="stat-footer">
+                            <a href="{{ secure_url('pelapor/laporan?status=selesai') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>

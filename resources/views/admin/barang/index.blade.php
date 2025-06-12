@@ -5,12 +5,12 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/barang/import') }}')" class="btn btn-info">Import Barang</button>
-                <a href="{{ url('/barang/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export
+                <button onclick="modalAction('{{ secure_url('/barang/import') }}')" class="btn btn-info">Import Barang</button>
+                <a href="{{ secure_url('/barang/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export
                     Barang</a>
-                <a href="{{ url('/barang/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export
+                <a href="{{ secure_url('/barang/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export
                     Barang</a>
-                <button onclick="modalAction('{{ url('/barang/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ secure_url('/barang/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -79,7 +79,7 @@
             window.dataBarang = $('#table_barang').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('barang/list') }}",
+                    url: "{{ secure_url('barang/list') }}",
                     type: "POST",
                     data: function (d) {
                         d.kategori_id = $('#kategori_id').val();

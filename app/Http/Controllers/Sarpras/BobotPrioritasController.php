@@ -37,7 +37,7 @@ class BobotPrioritasController extends Controller
         return DataTables::of($bobots)
             ->addIndexColumn()
             ->addColumn('aksi', function ($bobot) {
-                $editUrl = url('/sarpras/bobot-prioritas/' . $bobot->bobot_id . '/edit_ajax');
+                $editUrl = secure_url('/sarpras/bobot-prioritas/' . $bobot->bobot_id . '/edit_ajax');
                 return '
                     <button onclick="modalAction(\'' . $editUrl . '\')" class="btn btn-warning btn-sm">
                         <i class="fa fa-edit"></i>  

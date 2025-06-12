@@ -41,9 +41,9 @@ class KriteriaController extends Controller
         return DataTables::of($kriterias)
             ->addIndexColumn()
             ->addColumn('aksi', function ($kriteria) {
-                $showUrl = url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/show_ajax');
-                $editUrl = url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/edit_ajax');
-                $deleteUrl = url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/delete_ajax');
+                $showUrl = secure_url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/show_ajax');
+                $editUrl = secure_url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/edit_ajax');
+                $deleteUrl = secure_url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             PerbaikanSeeder::class,
             PerbaikanDetailSeeder::class,
             FeedbackSeeder::class,
-            KriteriaSeeder::class,
+            // KriteriaSeeder::class,
           
         ]);
         // \App\Models\User::factory(10)->create();

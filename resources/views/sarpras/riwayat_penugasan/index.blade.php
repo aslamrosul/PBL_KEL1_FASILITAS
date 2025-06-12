@@ -5,9 +5,11 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <a href="{{ route('penugasan.export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
-                <a href="{{ route('penugasan.export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
-              
+                <a href="{{ route('penugasan.export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i>
+                    Export Excel</a>
+                <a href="{{ route('penugasan.export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export
+                    PDF</a>
+
             </div>
         </div>
         <div class="card-body">
@@ -26,7 +28,7 @@
                                 <option value="">- Semua -</option>
                                 <option value="ditugaskan">Ditugaskan</option>
                                 <option value="selesai">Selesai</option>
-                              
+
                             </select>
                             <small class="text-muted">Status Penugasan</small>
                         </div>
@@ -87,7 +89,12 @@
                     { data: "teknisi_nama", className: "", orderable: true, searchable: true },
                     { data: "sarpras_nama", className: "", orderable: true, searchable: true },
                     { data: "tanggal_penugasan", className: "", orderable: true, searchable: true },
-                    { data: "status_penugasan", className: "", orderable: true, searchable: true },
+                    {
+                        data: "status_penugasan", render: function (data) {
+                            return renderStatusBadge(data);
+                        },
+                        className: "", orderable: true, searchable: true
+                    },
                     { data: "aksi", className: "", orderable: false, searchable: false }
                 ]
             });

@@ -43,6 +43,7 @@ use App\Http\Controllers\Sarpras\KriteriaController;
 //Teknisi Controller
 use App\Http\Controllers\DashboardTeknisiController;
 use App\Http\Controllers\Teknisi\PerbaikanController;
+use App\Models\NotifikasiModel;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 
@@ -67,7 +68,7 @@ Route::post('register', [AuthController::class, 'postRegister']);
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
 //logout
-Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 
 
@@ -84,16 +85,59 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
         Route::post('/update_password_ajax', [ProfileController::class, 'update_password_ajax'])->name('profile.update_password_ajax');
     });
 
-    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi');
-    Route::get('/notifikasi/read/{id}', [NotifikasiController::class, 'read'])->name('notifikasi.read');
-    Route::get('/notifikasi/read-all', [NotifikasiController::class, 'readAll'])->name('notifikasi.readAll');
-    Route::get('/notifikasi/unread', [NotifikasiController::class, 'unread'])->name('notifikasi.unread');
-    Route::get('/notifikasi/clear', [NotifikasiController::class, 'clear'])->name('notifikasi.clear');
-    Route::get('/notifikasi/clear-all', [NotifikasiController::class, 'clearAll'])->name('notifikasi.clearAll');
+    //route notifikasi
+    Route::get('/notifications', function () {
+        $notifications = NotifikasiModel::where('user_id', Auth::id())
+            ->with('laporan')
+            ->orderBy('created_at', 'desc')
+            ->take(5) // Limit to 5 notifications
+            ->get();
+
+        $unreadCount = NotifikasiModel::where('user_id', Auth::id())
+            ->where('dibaca', false)
+            ->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount,
+        ]);
+    })->middleware('auth')->name('notifications.fetch');
+
+    Route::post('/notifications/mark-as-read/{id}', function ($id) {
+        $notification = NotifikasiModel::where('user_id', Auth::id())->findOrFail($id);
+        $notification->update(['dibaca' => true]);
+
+        return response()->json(['status' => true, 'message' => 'Notifikasi ditandai sebagai dibaca']);
+    })->middleware('auth')->name('notifications.markAsRead');
 
     Route::get('/', function () {
-        return redirect()->to(url('/beranda'));
+        return redirect()->to(secure_url('/beranda'));
     });
+
+    Route::get('/notifications/index', function () {
+        $breadcrumb = (object) [
+            'title' => 'Daftar Notifikasi',
+            'list' => ['Home', 'Notifikasi']
+        ];
+
+        $page = (object) [
+            'title' => 'Daftar semua notifikasi'
+        ];
+
+        $activeMenu = 'notifications';
+
+        $notifications = NotifikasiModel::where('user_id', Auth::id())
+            ->with('laporan')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('notifications.index', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'activeMenu' => $activeMenu,
+            'notifications' => $notifications
+        ]);
+    })->middleware('auth')->name('notifications.index');
 
     Route::get('/beranda', function () {
         $user = Auth::user();

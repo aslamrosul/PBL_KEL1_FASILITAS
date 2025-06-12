@@ -46,7 +46,7 @@
             var dataRiwayat = $('#table_riwayat').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('teknisi/perbaikan/list-riwayat') }}",
+                    url: "{{ secure_url('teknisi/perbaikan/list-riwayat') }}",
                     type: "POST",
                     data: function(d) {
                         d._token = '{{ csrf_token() }}';

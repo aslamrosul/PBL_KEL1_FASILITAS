@@ -5,12 +5,12 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">Import User</button>
-                <a href="{{ url('/user/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export
+                <button onclick="modalAction('{{ secure_url('/user/import') }}')" class="btn btn-info">Import User</button>
+                <a href="{{ secure_url('/user/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export
                     User</a>
-                <a href="{{ url('/user/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export
+                <a href="{{ secure_url('/user/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export
                     User</a>
-                <button onclick="modalAction('{{ url('/user/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ secure_url('/user/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -85,7 +85,7 @@
             window.dataUser = $('#table_user').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('user/list') }}",
+                    url: "{{ secure_url('user/list') }}",
                     type: "POST",
                     data: function (d) {
                         d.level_id = $('#level_id').val();

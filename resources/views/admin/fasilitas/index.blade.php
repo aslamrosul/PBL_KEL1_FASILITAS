@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ url('/fasilitas/import') }}')" class="btn btn-info">Import Fasilitas</button>
-                <a href="{{ url('/fasilitas/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
-                <a href="{{ url('/fasilitas/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
-                <button onclick="modalAction('{{ url('/fasilitas/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ secure_url('/fasilitas/import') }}')" class="btn btn-info">Import Fasilitas</button>
+                <a href="{{ secure_url('/fasilitas/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
+                <a href="{{ secure_url('/fasilitas/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
+                <button onclick="modalAction('{{ secure_url('/fasilitas/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -76,7 +76,7 @@
             window.dataFasilitas = jQuery('#table_fasilitas').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ url('fasilitas/list') }}",
+                    url: "{{ secure_url('fasilitas/list') }}",
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')

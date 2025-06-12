@@ -37,7 +37,7 @@ class AuthController extends Controller
                 return response()->json([
                     'status' => true,
                     'message' => 'Login Berhasil',
-                    'redirect' => url('/')
+                    'redirect' => secure_url('/')
                 ]);
             }
 
@@ -117,7 +117,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Registrasi Berhasil',
-            'redirect' => url('/')
+            'redirect' => secure_url('/')
         ]);
     }
 }

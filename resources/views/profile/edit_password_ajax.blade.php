@@ -4,7 +4,7 @@
             <h5 class="modal-title">Ubah Password</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form id="formPassword" method="POST" action="{{ url('/profile/update_password_ajax') }}">
+        <form id="formPassword" method="POST" action="{{ secure_url('/profile/update_password_ajax') }}">
             <div class="modal-body">
                 <div class="form-group mb-3">
                     <label for="current_password">Password Saat Ini</label>

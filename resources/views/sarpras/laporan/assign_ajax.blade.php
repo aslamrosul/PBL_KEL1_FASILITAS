@@ -1,4 +1,4 @@
-<form action="{{ url('/sarpras/laporan/' . $laporan->laporan_id . '/assign') }}" method="POST" id="form-assign">
+<form action="{{ secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/assign') }}" method="POST" id="form-assign">
     @csrf
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
