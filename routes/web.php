@@ -70,6 +70,9 @@ Route::post('login', [AuthController::class, 'postlogin']);
 //logout
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
+Route::get('landing', function () {
+    return view('layouts.landing');
+})->name('landing');
 
 
 Route::middleware(['auth'])->group(function () { //artinya semua route di dalam goup ini harus login dulu
@@ -111,7 +114,7 @@ Route::middleware(['auth'])->group(function () { //artinya semua route di dalam 
     })->middleware('auth')->name('notifications.markAsRead');
 
     Route::get('/', function () {
-        return redirect()->to(secure_url('/beranda'));
+        return redirect()->to(url('/beranda'));
     });
 
     Route::get('/notifications/index', function () {

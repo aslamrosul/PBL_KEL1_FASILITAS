@@ -3710,7 +3710,7 @@
             if (urlConverter) {
               url = urlConverter.call(urlConverterScope, url, 'style');
             }
-            return `secure_url('` + url.replace(/\'/g, `\\'`) + `')`;
+            return `url('` + url.replace(/\'/g, `\\'`) + `')`;
           };
           if (css) {
             css = css.replace(/[\u0000-\u001F]/g, '');

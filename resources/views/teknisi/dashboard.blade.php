@@ -21,7 +21,7 @@
                                 <p>Total Perbaikan</p>
                                 <i class="fa fa-wrench stat-icon"></i>
                             </div>
-                            <a href="{{ secure_url('teknisi/perbaikan') }}" class="stat-footer">
+                            <a href="{{ url('teknisi/perbaikan') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -33,7 +33,7 @@
                                 <p>Menunggu</p>
                                 <i class="fa fa-clock-o stat-icon"></i>
                             </div>
-                            <a href="{{ secure_url('teknisi/perbaikan') }}" class="stat-footer">
+                            <a href="{{ url('teknisi/perbaikan') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -45,7 +45,7 @@
                                 <p>Diproses</p>
                                 <i class="fa fa-gears stat-icon"></i>
                             </div>
-                            <a href="{{ secure_url('teknisi/perbaikan') }}" class="stat-footer">
+                            <a href="{{ url('teknisi/perbaikan') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -57,7 +57,7 @@
                                 <p>Selesai</p>
                                 <i class="fa fa-check-circle-o stat-icon"></i>
                             </div>
-                            <a href="{{ secure_url('teknisi/perbaikan/riwayat') }}" class="stat-footer">
+                            <a href="{{ url('teknisi/perbaikan/riwayat') }}" class="stat-footer">
                                 More Info <i class="fa fa-arrow-circle-right"></i>
                             </a>
                         </div>
@@ -103,7 +103,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ secure_url('teknisi/perbaikan/' . $repair->perbaikan_id . '/edit_ajax') }}" 
+                                        <a href="{{ url('teknisi/perbaikan/' . $repair->perbaikan_id . '/edit_ajax') }}" 
                                            class="btn btn-sm btn-primary" 
                                            onclick="modalAction(this.href); return false;">
                                             <i class="fa fa-wrench"></i> Proses
@@ -130,10 +130,10 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ secure_url('teknisi/perbaikan') }}" class="btn btn-primary btn-lg">
+                    <a href="{{ url('teknisi/perbaikan') }}" class="btn btn-primary btn-lg">
                         <i class="fa fa-list me-2"></i> Lihat Semua Perbaikan
                     </a>
-                    <a href="{{ secure_url('teknisi/perbaikan/riwayat') }}" class="btn btn-success btn-lg">
+                    <a href="{{ url('teknisi/perbaikan/riwayat') }}" class="btn btn-success btn-lg">
                         <i class="fa fa-history me-2"></i> Riwayat Perbaikan
                     </a>
                 </div>

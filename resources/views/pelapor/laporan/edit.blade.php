@@ -6,7 +6,7 @@
         <div class="card-header border-bottom-0 d-flex justify-content-between align-items-center">
             <h4 class="card-title mb-0">Form Edit Laporan</h4>
             <div class="card-tools">
-                <a href="{{ secure_url('/pelapor/laporan') }}" class="btn btn-sm btn-outline-secondary"><i
+                <a href="{{ url('/pelapor/laporan') }}" class="btn btn-sm btn-outline-secondary"><i
                         class="bi bi-arrow-left me-2"></i>Kembali</a>
             </div>
         </div>
@@ -24,7 +24,7 @@
                 </div>
             @endif
 
-            <form id="formEditLaporan" action="{{ secure_url('/pelapor/laporan/'.  $laporan->laporan_id.'/update/') }}" method="POST"
+            <form id="formEditLaporan" action="{{ url('/pelapor/laporan/'.  $laporan->laporan_id.'/update/') }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT') {{-- Penting: Gunakan method PUT untuk update --}}
@@ -147,7 +147,7 @@
                                 </div>
                                 <div id="foto_preview" class="text-center p-2 border rounded bg-light">
                                     @if ($laporan->foto_path)
-                                        <img src="{{ secure_url('storage/' . $laporan->foto_path) }}" alt="Foto Laporan Sebelumnya"
+                                        <img src="{{ url('storage/' . $laporan->foto_path) }}" alt="Foto Laporan Sebelumnya"
                                             class="img-fluid rounded" style="max-height: 150px;">
                                         <p class="text-muted mb-0 small mt-2">Foto Laporan Sebelumnya</p>
                                     @else
@@ -312,7 +312,7 @@
                 } else {
                     // Jika input file dikosongkan, kembalikan ke foto lama atau teks default
                     @if ($laporan->foto_path)
-                        $('#foto_preview img').attr('src', '{{ secure_url('storage/' . $laporan->foto_path) }}').show();
+                        $('#foto_preview img').attr('src', '{{ url('storage/' . $laporan->foto_path) }}').show();
                         $('#foto_preview p').text('Foto Laporan Sebelumnya').show();
                     @else
                         $('#foto_preview img').hide().attr('src', '');

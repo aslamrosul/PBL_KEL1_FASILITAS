@@ -39,9 +39,9 @@ class KategoriController extends Controller
         return DataTables::of($kategoris)
             ->addIndexColumn()
             ->addColumn('aksi', function ($kategori) {
-                $showUrl = secure_url('/kategori/' . $kategori->kategori_id . '/show_ajax');
-                $editUrl = secure_url('/kategori/' . $kategori->kategori_id . '/edit_ajax');
-                $deleteUrl = secure_url('/kategori/' . $kategori->kategori_id . '/delete_ajax');
+                $showUrl = url('/kategori/' . $kategori->kategori_id . '/show_ajax');
+                $editUrl = url('/kategori/' . $kategori->kategori_id . '/edit_ajax');
+                $deleteUrl = url('/kategori/' . $kategori->kategori_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

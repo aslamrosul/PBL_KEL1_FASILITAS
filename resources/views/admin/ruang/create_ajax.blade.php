@@ -1,4 +1,4 @@
-<form action="{{ secure_url('/ruang/store_ajax') }}" method="POST" id="form-create-ruang">
+<form action="{{ url('/ruang/store_ajax') }}" method="POST" id="form-create-ruang">
     @csrf
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

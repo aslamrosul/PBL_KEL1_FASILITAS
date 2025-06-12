@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ secure_url('/ruang/import') }}')" class="btn btn-info">Import Ruang</button>
-                <a href="{{ secure_url('/ruang/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Ruang</a>
-                <a href="{{ secure_url('/ruang/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Ruang</a>
-                <button onclick="modalAction('{{ secure_url('/ruang/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ url('/ruang/import') }}')" class="btn btn-info">Import Ruang</button>
+                <a href="{{ url('/ruang/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Ruang</a>
+                <a href="{{ url('/ruang/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Ruang</a>
+                <button onclick="modalAction('{{ url('/ruang/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -59,7 +59,7 @@
             window.dataRuang = $('#table_ruang').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('ruang/list') }}",
+                    url: "{{ url('ruang/list') }}",
                     type: "POST"
                 },
                 columns: [

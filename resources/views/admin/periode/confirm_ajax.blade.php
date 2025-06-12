@@ -11,7 +11,7 @@
         </div>
     </div>
 @else
-    <form action="{{ secure_url('/periode/' . $periode->periode_id . '/delete_ajax') }}" method="POST" id="form-delete-periode">
+    <form action="{{ url('/periode/' . $periode->periode_id . '/delete_ajax') }}" method="POST" id="form-delete-periode">
         @csrf
         @method('DELETE')
         <div class="modal-dialog modal-lg" role="document">

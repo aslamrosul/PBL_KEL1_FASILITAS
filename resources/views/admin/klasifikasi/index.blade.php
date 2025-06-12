@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="modalAction('{{ secure_url('/klasifikasi/import') }}')" class="btn btn-info">Import Klasifikasi</button>
-                <a href="{{ secure_url('/klasifikasi/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
-                <a href="{{ secure_url('/klasifikasi/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
-                <button onclick="modalAction('{{ secure_url('/klasifikasi/create_ajax') }}')" class="btn btn-success">
+                <button onclick="modalAction('{{ url('/klasifikasi/import') }}')" class="btn btn-info">Import Klasifikasi</button>
+                <a href="{{ url('/klasifikasi/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Excel</a>
+                <a href="{{ url('/klasifikasi/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export PDF</a>
+                <button onclick="modalAction('{{ url('/klasifikasi/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -58,7 +58,7 @@
             window.dataKlasifikasi = $('#table_klasifikasi').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('klasifikasi/list') }}",
+                    url: "{{ url('klasifikasi/list') }}",
                     type: "POST"
                 },
                 columns: [

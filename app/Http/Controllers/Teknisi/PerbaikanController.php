@@ -70,10 +70,10 @@ class PerbaikanController extends Controller
         return DataTables::of($perbaikans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($perbaikan) {
-                $btn = '<button onclick="modalAction(\'' . secure_url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/edit_ajax') . '\')" class="btn btn-primary btn-sm mr-1 title="Proses Perbaikan">
+                $btn = '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/edit_ajax') . '\')" class="btn btn-primary btn-sm mr-1 title="Proses Perbaikan">
                         <i class="fa fa-wrench"></i>
                         </button>';
-                $btn .= '<button onclick="modalAction(\'' . secure_url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm title="Lihat Detail Perbaikan">
+                $btn .= '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm title="Lihat Detail Perbaikan">
                             <i class="fa fa-eye"></i> 
                         </button>';
                 return $btn;
@@ -101,7 +101,7 @@ class PerbaikanController extends Controller
         return DataTables::of($perbaikans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($perbaikan) {
-                return '<button onclick="modalAction(\'' . secure_url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">
+                return '<button onclick="modalAction(\'' . url('/teknisi/perbaikan/' . $perbaikan->perbaikan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">
                             <i class="fa fa-eye"></i>  
                         </button>';
             })
@@ -292,7 +292,7 @@ class PerbaikanController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Status perbaikan berhasil diupdate',
-                'redirect' => secure_url('/teknisi/perbaikan')
+                'redirect' => url('/teknisi/perbaikan')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

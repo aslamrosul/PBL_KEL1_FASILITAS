@@ -9300,7 +9300,7 @@
                   blob: _blob
                 });
               } else {
-                var imgURI = canvas.toDatasecure_url('image/png');
+                var imgURI = canvas.toDataurl('image/png');
                 resolve({
                   imgURI: imgURI
                 });

@@ -114,14 +114,14 @@ class RekomendasiController extends Controller
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
                 // Tombol Detail
-                $btn = '<button onclick="modalAction(\'' . secure_url('/sarpras/rekomendasi/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
 
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
-                    $btn .= '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
+                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
                         <i class="fa fa-briefcase"></i> 
                     </button>';
                 }
@@ -145,14 +145,14 @@ class RekomendasiController extends Controller
         return DataTables::of($laporans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\'' . secure_url('/sarpras/rekomendasi-mahasiswa/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-mahasiswa/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
 
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
-                    $btn .= '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
+                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
                         <i class="fa fa-briefcase"></i> 
                     </button>';
                 }
@@ -176,14 +176,14 @@ class RekomendasiController extends Controller
         return DataTables::of($laporans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\'' . secure_url('/sarpras/rekomendasi-dosen/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-dosen/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
 
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
-                    $btn .= '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
+                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
                         <i class="fa fa-briefcase"></i> 
                     </button>';
                 }
@@ -207,14 +207,14 @@ class RekomendasiController extends Controller
         return DataTables::of($laporans)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\'' . secure_url('/sarpras/rekomendasi-tendik/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/rekomendasi-tendik/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1">
                     <i class="fa fa-eye"></i> 
                 </button>';
 
 
                 // Tombol Assign (hanya jika status == 'diterima')
                 if ($laporan->status == 'diterima') {
-                    $btn .= '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
+                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/assign_ajax') . '\')" class="btn btn-success btn-sm me-1">
                         <i class="fa fa-briefcase"></i> 
                     </button>';
                 }

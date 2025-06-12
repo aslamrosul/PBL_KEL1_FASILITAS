@@ -1,4 +1,4 @@
-<form action="{{ secure_url('/lantai/store_ajax') }}" method="POST" id="form-create-lantai">
+<form action="{{ url('/lantai/store_ajax') }}" method="POST" id="form-create-lantai">
     @csrf
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

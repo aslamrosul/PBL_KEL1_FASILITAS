@@ -7,7 +7,7 @@
         <meta name="author" content="" />
         <title>FixIT</title>
         <!-- Core theme CSS (includes Bootstrap)-->
-            <link rel="stylesheet" href="{{ secure_asset('landing-page/css/style.css') }}">
+            <link rel="stylesheet" href="{{ asset('landing-page/css/style.css') }}">
         
     </head>
     <body id="page-top">

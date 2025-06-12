@@ -45,7 +45,7 @@ class RiwayatPenugasanController extends Controller
                 return $item->sarpras->nama ?? '-';
             })
             ->addColumn('aksi', function ($item) {
-                $showUrl = secure_url('/sarpras/penugasan/' . $item->riwayat_penugasan_id . '/show_ajax');
+                $showUrl = url('/sarpras/penugasan/' . $item->riwayat_penugasan_id . '/show_ajax');
               
                 return '
                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat">

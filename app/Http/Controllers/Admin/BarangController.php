@@ -55,9 +55,9 @@ class BarangController extends Controller
         return DataTables::of($barangs)
             ->addIndexColumn()
             ->addColumn('aksi', function ($barang) {
-                $showUrl = secure_url('/barang/' . $barang->barang_id . '/show_ajax');
-                $editUrl = secure_url('/barang/' . $barang->barang_id . '/edit_ajax');
-                $deleteUrl = secure_url('/barang/' . $barang->barang_id . '/delete_ajax');
+                $showUrl = url('/barang/' . $barang->barang_id . '/show_ajax');
+                $editUrl = url('/barang/' . $barang->barang_id . '/edit_ajax');
+                $deleteUrl = url('/barang/' . $barang->barang_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

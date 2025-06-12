@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                {{-- <button onclick="modalAction('{{ secure_url('/lantai/import') }}')" class="btn btn-info">Import Lantai</button>
-                <a href="{{ secure_url('/lantai/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Lantai</a>
-                <a href="{{ secure_url('/lantai/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Lantai</a> --}}
-                <button onclick="modalAction('{{ secure_url('/lantai/create_ajax') }}')" class="btn btn-success">
+                {{-- <button onclick="modalAction('{{ url('/lantai/import') }}')" class="btn btn-info">Import Lantai</button>
+                <a href="{{ url('/lantai/export_excel') }}" class="btn btn-primary"><i class="bi bi-file-excel"></i> Export Lantai</a>
+                <a href="{{ url('/lantai/export_pdf') }}" class="btn btn-warning"><i class="bi bi-file-pdf"></i> Export Lantai</a> --}}
+                <button onclick="modalAction('{{ url('/lantai/create_ajax') }}')" class="btn btn-success">
                     Tambah Ajax
                 </button>
             </div>
@@ -58,7 +58,7 @@
             window.dataLantai = $('#table_lantai').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('lantai/list') }}",
+                    url: "{{ url('lantai/list') }}",
                     type: "POST"
                 },
                 columns: [

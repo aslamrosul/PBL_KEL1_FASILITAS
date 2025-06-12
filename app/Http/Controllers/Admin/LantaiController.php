@@ -43,9 +43,9 @@ class LantaiController extends Controller
                 return $lantai->gedung->gedung_nama ?? '-';
             })
             ->addColumn('aksi', function ($lantai) {
-                $showUrl = secure_url('/lantai/' . $lantai->lantai_id . '/show_ajax');
-                $editUrl = secure_url('/lantai/' . $lantai->lantai_id . '/edit_ajax');
-                $deleteUrl = secure_url('/lantai/' . $lantai->lantai_id . '/delete_ajax');
+                $showUrl = url('/lantai/' . $lantai->lantai_id . '/show_ajax');
+                $editUrl = url('/lantai/' . $lantai->lantai_id . '/edit_ajax');
+                $deleteUrl = url('/lantai/' . $lantai->lantai_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

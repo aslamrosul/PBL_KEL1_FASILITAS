@@ -54,9 +54,9 @@ class LaporanPelaporController extends Controller
             return DataTables::of($laporan)
                 ->addIndexColumn()
                 ->addColumn('aksi', function ($laporan) {
-                    $showUrl = secure_url('/pelapor/laporan/' . $laporan->laporan_id . '/show_ajax');
-                    $editUrl = secure_url('/pelapor/laporan/' . $laporan->laporan_id . '/edit');
-                    $deleteUrl = secure_url('/pelapor/laporan/' . $laporan->laporan_id . '/confirm_ajax');
+                    $showUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/show_ajax');
+                    $editUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/edit');
+                    $deleteUrl = url('/pelapor/laporan/' . $laporan->laporan_id . '/confirm_ajax');
 
                     $buttons = '
                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm">

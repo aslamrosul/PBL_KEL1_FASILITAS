@@ -11,7 +11,7 @@
         </div>
     </div>
 @else
-    <form action="{{ secure_url('/user/' . $user->user_id . '/update_ajax') }}" method="POST" id="form-edit-user"
+    <form action="{{ url('/user/' . $user->user_id . '/update_ajax') }}" method="POST" id="form-edit-user"
         enctype="multipart/form-data">
         @csrf
         @method('PUT')

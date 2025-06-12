@@ -39,9 +39,9 @@ class PeriodeController extends Controller
         return DataTables::of($periodes)
             ->addIndexColumn()
             ->addColumn('aksi', function ($periode) {
-                $showUrl = secure_url('/periode/' . $periode->periode_id . '/show_ajax');
-                $editUrl = secure_url('/periode/' . $periode->periode_id . '/edit_ajax');
-                $deleteUrl = secure_url('/periode/' . $periode->periode_id . '/delete_ajax');
+                $showUrl = url('/periode/' . $periode->periode_id . '/show_ajax');
+                $editUrl = url('/periode/' . $periode->periode_id . '/edit_ajax');
+                $deleteUrl = url('/periode/' . $periode->periode_id . '/delete_ajax');
 
                 return '
                     <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

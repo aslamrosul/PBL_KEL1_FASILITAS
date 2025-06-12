@@ -104,7 +104,7 @@
                         <tr>
                             <th>Foto</th>
                             <td>
-                                <a href="{{ secure_asset('storage/' . $laporan->foto_path) }}" target="_blank">Lihat Foto</a>
+                                <a href="{{ asset('storage/' . $laporan->foto_path) }}" target="_blank">Lihat Foto</a>
                             </td>
                         </tr>
                     @endif
@@ -123,7 +123,7 @@
                                 {{-- Perbaikan: Cek apakah tanggal_perbaikan tidak null sebelum memformat --}}
                                 {{ $perbaikan->tanggal_mulai ? $perbaikan->tanggal_mulai->format('d-m-Y H:i') : '-' }}<br>
                                 @if ($perbaikan->foto_perbaikan)
-                                    <strong>Foto Perbaikan:</strong> <a href="{{ secure_asset('storage/' . $perbaikan->foto_perbaikan) }}" target="_blank">Lihat Foto</a>
+                                    <strong>Foto Perbaikan:</strong> <a href="{{ asset('storage/' . $perbaikan->foto_perbaikan) }}" target="_blank">Lihat Foto</a>
                                 @endif
                             </li>
                         @endforeach

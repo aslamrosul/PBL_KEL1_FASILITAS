@@ -5,7 +5,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <a href="{{ secure_url('/pelapor/laporan/create') }}" class="btn btn-success">
+                <a href="{{ url('/pelapor/laporan/create') }}" class="btn btn-success">
                     <i class="fa fa-plus"></i> Tambah Laporan
                 </a>
             </div>
@@ -49,7 +49,7 @@
             window.dataLaporan = jQuery('#table_laporan').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('pelapor/laporan/list') }}",
+                    url: "{{ url('pelapor/laporan/list') }}",
                     type: "POST",
                     headers: {
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')

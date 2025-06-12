@@ -58,7 +58,7 @@
             </table>
         </div>
         <div class="modal-footer">
-            <a href="{{ secure_url('/sarpras/rekomendasi/' . $laporan->laporan_id . '/detail-perhitungan') }}"
+            <a href="{{ url('/sarpras/rekomendasi/' . $laporan->laporan_id . '/detail-perhitungan') }}"
                 class="btn btn-primary me-2">Lihat Detail AHP & TOPSIS</a>
             <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Tutup</button>
         </div>

@@ -11,7 +11,7 @@
         </div>
     </div>
 @else
-    <form action="{{ secure_url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/update_ajax') }}" method="POST" id="form-edit-kriteria">
+    <form action="{{ url('/sarpras/kriteria/' . $kriteria->kriteria_id . '/update_ajax') }}" method="POST" id="form-edit-kriteria">
         @csrf
         @method('PUT')
         <div class="modal-dialog modal-lg" role="document">

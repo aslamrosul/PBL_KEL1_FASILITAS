@@ -5,11 +5,11 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a href="{{ secure_url('/sarpras/laporan') }}" class="btn btn-sm btn-default">Kembali</a>
+                <a href="{{ url('/sarpras/laporan') }}" class="btn btn-sm btn-default">Kembali</a>
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ secure_url('/sarpras/laporan/'.$laporan->laporan_id) }}">
+            <form method="POST" action="{{ url('/sarpras/laporan/'.$laporan->laporan_id) }}">
                 @csrf
                 @method('PUT')
                 

@@ -17,7 +17,7 @@
                 </div>
             @endif
 
-            <form id="formCreateLaporan" action="{{ secure_url('/pelapor/laporan/store') }}" method="POST"
+            <form id="formCreateLaporan" action="{{ url('/pelapor/laporan/store') }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
 
@@ -28,7 +28,7 @@
                                 &
                                 Barang Bermasalah</h5>
                             <div class="card-tools">
-                                <a href="{{ secure_url('/pelapor/laporan') }}" class="btn btn-sm btn-outline-secondary me-2"><i
+                                <a href="{{ url('/pelapor/laporan') }}" class="btn btn-sm btn-outline-secondary me-2"><i
                                         class="bi bi-arrow-left me-2"></i>Kembali</a>
                             </div>
                         </div>

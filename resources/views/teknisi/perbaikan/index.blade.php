@@ -52,7 +52,7 @@
             var dataPerbaikan = $('#table_perbaikan').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('teknisi/perbaikan/list') }}",
+                    url: "{{ url('teknisi/perbaikan/list') }}",
                     type: "POST",
                     data: function(d) {
                         d._token = '{{ csrf_token() }}';

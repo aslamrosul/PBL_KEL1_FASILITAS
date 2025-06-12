@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <a href="{{ secure_url('/sarpras/laporan/export_excel') }}" class="btn btn-primary">
+                <a href="{{ url('/sarpras/laporan/export_excel') }}" class="btn btn-primary">
                     <i class="bi bi-file-excel"></i> Export Excel
                 </a>
-                <a href="{{ secure_url('/sarpras/laporan/export_pdf') }}" class="btn btn-warning">
+                <a href="{{ url('/sarpras/laporan/export_pdf') }}" class="btn btn-warning">
                     <i class="bi bi-file-pdf"></i> Export PDF
                 </a>
             </div>
@@ -33,10 +33,10 @@
                             </select>
                         </div>
                         <div class="col-2">
-                            <select class="form-control" id="fasilitas_id" name="fasilitas_id">
-                                <option value="">- Semua Fasilitas -</option>
-                                @foreach($fasilitas as $item)
-                                    <option value="{{ $item->fasilitas_id }}">{{ $item->fasilitas_nama }}</option>
+                            <select class="form-control" id="barang_id" name="barang_id">
+                                <option value="">- Semua Barang -</option>
+                                @foreach($barangs as $item)
+                                    <option value="{{ $item->barang_id }}">{{ $item->barang_nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -99,7 +99,7 @@
             var dataLaporan = $('#table_laporan').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('sarpras/laporan/list') }}",
+                    url: "{{ url('sarpras/laporan/list') }}",
                     type: "POST",
                     data: function(d) {
                         d.periode_id = $('#periode_id').val();
@@ -124,7 +124,7 @@
                 ]
             });
 
-            $('#periode_id, #fasilitas_id, #bobot_id, #status').on('change', function() {
+            $('#periode_id, #barang_id, #bobot_id, #status').on('change', function() {
                 dataLaporan.ajax.reload();
             });
         });

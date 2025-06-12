@@ -2722,7 +2722,7 @@
           var url = new URL(
             window.location.href.replace(window.location.hash, '')
           ).href;
-          mask = mask.replace(/url\(\#/g, 'secure_url(' + url + '#');
+          mask = mask.replace(/url\(\#/g, 'url(' + url + '#');
         }
 
         SVGMaskUniqueId++;

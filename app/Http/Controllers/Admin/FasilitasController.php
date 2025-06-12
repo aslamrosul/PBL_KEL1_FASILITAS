@@ -48,9 +48,9 @@ class FasilitasController extends Controller
                 return $fasilitas->barang ? $fasilitas->barang->barang_nama : '-';
             })
             ->addColumn('aksi', function ($fasilitas) {
-                $showUrl = secure_url('/fasilitas/' . $fasilitas->fasilitas_id . '/show_ajax');
-                $editUrl = secure_url('/fasilitas/' . $fasilitas->fasilitas_id . '/edit_ajax');
-                $deleteUrl = secure_url('/fasilitas/' . $fasilitas->fasilitas_id . '/delete_ajax');
+                $showUrl = url('/fasilitas/' . $fasilitas->fasilitas_id . '/show_ajax');
+                $editUrl = url('/fasilitas/' . $fasilitas->fasilitas_id . '/edit_ajax');
+                $deleteUrl = url('/fasilitas/' . $fasilitas->fasilitas_id . '/delete_ajax');
 
                 return '
                      <button onclick="modalAction(\'' . $showUrl . '\')" class="btn btn-info btn-sm" title="Lihat Periode">

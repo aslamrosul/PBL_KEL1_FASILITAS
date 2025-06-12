@@ -6,15 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name', 'Mazer Admin Dashboard') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" href="{{ secure_asset('dist/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
-    <link rel="stylesheet" href="{{ secure_asset('dist/assets/compiled/css/app.css') }}">
-    <link rel="stylesheet" href="{{ secure_asset('dist/assets/compiled/css/app-dark.css') }}">
+    <link rel="shortcut icon" href="{{ asset('dist/assets/compiled/svg/favicon.svg') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <!-- DataTables CSS -->
     <link rel="stylesheet"
-        href="{{ secure_asset('dist/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
+        href="{{ asset('dist/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ secure_asset('dist/assets/css/pages/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('dist/assets/css/pages/datatables.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
    
@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <script src="{{ secure_asset('dist/assets/static/js/initTheme.js') }}"></script>
+    <script src="{{ asset('dist/assets/static/js/initTheme.js') }}"></script>
 
     <div id="app">
         <!-- Sidebar -->
@@ -50,7 +50,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- jQuery must be loaded first -->
-    <script src="{{ secure_asset('dist/assets/extensions/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('dist/assets/extensions/jquery/jquery.min.js') }}"></script>
 
     <!-- Bootstrap JS -->
     {{-- Harus 2 kali --}}
@@ -62,13 +62,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Other scripts -->
-    <script src="{{ secure_asset('dist/assets/static/js/components/dark.js') }}"></script>
-    <script src="{{ secure_asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-    <script src="{{ secure_asset('dist/assets/compiled/js/app.js') }}"></script>
+    <script src="{{ asset('dist/assets/static/js/components/dark.js') }}"></script>
+    <script src="{{ asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ asset('dist/assets/compiled/js/app.js') }}"></script>
 
     <!-- DataTables JS -->
-    <script src="{{ secure_asset('dist/assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ secure_asset('dist/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('dist/assets/extensions/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('dist/assets/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
 
     <!-- jQuery Validation -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>

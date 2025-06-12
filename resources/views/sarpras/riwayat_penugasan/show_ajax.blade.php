@@ -118,7 +118,7 @@
                                     <th>Foto Bukti Kerusakan</th>
                                     <td>
                                         <div class="text-center">
-                                            <img src="{{ secure_url('storage/' . $laporan->foto_path) }}" class="img-fluid rounded" style="max-height: 300px;">
+                                            <img src="{{ url('storage/' . $laporan->foto_path) }}" class="img-fluid rounded" style="max-height: 300px;">
                                             <p class="text-muted mt-2">Foto bukti kerusakan dari pelapor</p>
                                         </div>
                                     </td>

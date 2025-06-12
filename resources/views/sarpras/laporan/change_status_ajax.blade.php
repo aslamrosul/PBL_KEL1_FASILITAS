@@ -1,4 +1,4 @@
-<form action="{{ secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/update_status') }}" method="POST"
+<form action="{{ url('/sarpras/laporan/' . $laporan->laporan_id . '/update_status') }}" method="POST"
     id="form-change-status">
     @csrf
     @method('PUT') {{-- Gunakan metode PUT untuk update --}}

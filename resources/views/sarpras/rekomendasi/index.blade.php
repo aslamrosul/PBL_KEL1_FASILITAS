@@ -5,14 +5,14 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="card-title">{{ $page->title }}</h4>
             <div class="card-tools">
-                <button onclick="recalculateRecommendations('{{ secure_url('/sarpras/rekomendasi/recalculate') }}')"
+                <button onclick="recalculateRecommendations('{{ url('/sarpras/rekomendasi/recalculate') }}')"
                     class="btn btn-success">
                     <i class="bi bi-arrow-repeat"></i> Hitung Ulang Rekomendasi
                 </button>
-                <a href="{{ secure_url('/sarpras/rekomendasi/export_excel') }}" class="btn btn-primary">
+                <a href="{{ url('/sarpras/rekomendasi/export_excel') }}" class="btn btn-primary">
                     <i class="bi bi-file-excel"></i> Export Excel
                 </a>
-                <a href="{{ secure_url('/sarpras/rekomendasi/export_pdf') }}" class="btn btn-warning">
+                <a href="{{ url('/sarpras/rekomendasi/export_pdf') }}" class="btn btn-warning">
                     <i class="bi bi-file-pdf"></i> Export PDF
                 </a>
             </div>
@@ -64,7 +64,7 @@
             var dataRekomendasi = $('#table_rekomendasi').DataTable({
                 serverSide: true,
                 ajax: {
-                    url: "{{ secure_url('sarpras/rekomendasi/list') }}",
+                    url: "{{ url('sarpras/rekomendasi/list') }}",
                     type: "POST"
                 },
                 columns: [

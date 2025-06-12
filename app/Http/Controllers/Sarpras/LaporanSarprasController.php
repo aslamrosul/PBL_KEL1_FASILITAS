@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sarpras;
 
 use App\Http\Controllers\Controller;
+use App\Models\BarangModel;
 use App\Models\LaporanModel;
 use App\Models\PeriodeModel;
 use App\Models\FasilitasModel;
@@ -38,6 +39,7 @@ class LaporanSarprasController extends Controller
         $periodes = PeriodeModel::all();
         $fasilitas = FasilitasModel::all();
         $prioritas = BobotPrioritasModel::all();
+        $barangs = BarangModel::all();
 
         return view('sarpras.laporan.index', [
             'breadcrumb' => $breadcrumb,
@@ -45,7 +47,9 @@ class LaporanSarprasController extends Controller
             'periodes' => $periodes,
             'fasilitas' => $fasilitas,
             'prioritas' => $prioritas,
+            'barangs' => $barangs,
             'activeMenu' => $activeMenu
+
         ]);
     }
 
@@ -75,16 +79,22 @@ class LaporanSarprasController extends Controller
         }
         $laporan->where('status', '!=', 'diterima');
 
+        //filter berdasarkan barang
+        if ($request->barang_id) {
+            $laporan->whereHas('fasilitas.barang', function ($query) use ($request) {
+                $query->where('barang_id', $request->barang_id);
+            });
+        }
         return DataTables::of($laporan)
             ->addIndexColumn()
             ->addColumn('aksi', function ($laporan) {
-                $btn = '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1"><i class="fa fa-eye"></i></button>';
+                $btn = '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/show_ajax') . '\')" class="btn btn-info btn-sm me-1"><i class="fa fa-eye"></i></button>';
 
 
 
                 // Tombol Ubah Status (jika status bukan 'selesai' atau 'ditolak')
                 if (!in_array($laporan->status, ['diterima', 'ditolak', 'selesai'])) {
-                    $btn .= '<button onclick="modalAction(\'' . secure_url('/sarpras/laporan/' . $laporan->laporan_id . '/change_status_ajax') . '\')" class="btn btn-primary btn-sm">
+                    $btn .= '<button onclick="modalAction(\'' . url('/sarpras/laporan/' . $laporan->laporan_id . '/change_status_ajax') . '\')" class="btn btn-primary btn-sm">
                     <i class="fa fa-edit"></i>
                 </button>';
                 }
