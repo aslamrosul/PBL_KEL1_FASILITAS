@@ -15,10 +15,7 @@ class KriteriaModel extends Model
     protected $primaryKey = 'kriteria_id';
     protected $fillable = ['kriteria_kode', 'kriteria_nama', 'bobot', 'kriteria_jenis'];
 
-    public function alternatifNilai(): HasMany
-    {
-        return $this->hasMany(AlternatifNilaiModel::class, 'kriteria_id');
-    }
+  
 
     public function pairwiseComparisons1(): HasMany
     {

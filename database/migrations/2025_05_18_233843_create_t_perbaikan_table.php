@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('tanggal_selesai')->nullable();
             $table->string('status', 20)->default('dalam_antrian')->comment('dalam_antrian, diproses, selesai');
             $table->text('catatan')->nullable();
+            $table->string('foto_perbaikan')->nullable();
             $table->decimal('total_biaya', 15, 2)->nullable();
             $table->timestamps();
 

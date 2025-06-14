@@ -23,7 +23,6 @@ class LantaiSeeder extends Seeder
             ];
         }
 
-
         // Gedung Akuntansi - 3 Lantai
         for ($i = 1; $i <= 3; $i++) {
             $lantaiData[] = [
@@ -49,6 +48,26 @@ class LantaiSeeder extends Seeder
             $lantaiData[] = [
                 'lantai_nomor' => "Lantai $i",
                 'gedung_id' => $gedungs['GDG-ADM']->gedung_id ?? null,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+
+        // Gedung Kimia - 3 Lantai (added)
+        for ($i = 1; $i <= 3; $i++) {
+            $lantaiData[] = [
+                'lantai_nomor' => "Lantai $i",
+                'gedung_id' => $gedungs['GDG-KMA']->gedung_id ?? null,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+
+        // Gedung Elektronika - 4 Lantai (added)
+        for ($i = 1; $i <= 4; $i++) {
+            $lantaiData[] = [
+                'lantai_nomor' => "Lantai $i",
+                'gedung_id' => $gedungs['GDG-ELK']->gedung_id ?? null,
                 'created_at' => now(),
                 'updated_at' => now()
             ];

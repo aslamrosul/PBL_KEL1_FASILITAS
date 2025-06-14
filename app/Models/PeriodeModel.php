@@ -21,8 +21,5 @@ class PeriodeModel extends Model
         return $this->hasMany(LaporanModel::class, 'periode_id');
     }
 
-          public function alternatifNilai()
-    {
-        return $this->hasMany(AlternatifNilaiModel::class, 'fasilitas_id');
-    }
+   
 }
