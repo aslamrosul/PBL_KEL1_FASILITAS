@@ -17,21 +17,20 @@
                     <input type="text" class="form-control" value="{{ ucfirst($laporan->status) }}" readonly>
                 </div>
                 <div class="form-group mb-3">
-                    <label class="form-label">Ubah Ke Status</label>
-                    <select name="status" id="status" class="form-select" required>
-                        <option value="">- Pilih Status Baru -</option>
-                        <option value="diterima" {{ $laporan->status == 'diterima' ? 'selected' : '' }}>Diterima</option>
-                        <option value="ditolak" {{ $laporan->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-                    </select>
+                    <label class="form-label">Ubah Ke Status</label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="status" id="status_diterima" value="diterima"
+                            {{ $laporan->status == 'diterima' ? 'checked' : '' }} required>
+                        <label class="form-check-label" for="status_diterima">Diterima</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="status" id="status_ditolak" value="ditolak"
+                            {{ $laporan->status == 'ditolak' ? 'checked' : '' }} required>
+                        <label class="form-check-label" for="status_ditolak">Ditolak</label>
+                    </div>
                     <small id="error-status" class="error-text form-text text-danger"></small>
                 </div>
-                <div class="form-group mb-3" id="alasan_penolakan_group"
-                  >
-                    <label for="alasan_penolakan">Alasan Penolakan</label>
-                    <textarea class="form-control" id="alasan_penolakan" name="alasan_penolakan"
-                        rows="3">{{ $laporan->alasan_penolakan }}</textarea>
-                    <small id="error-alasan_penolakan" class="error-text form-text text-danger"></small>
-                </div>
+                
 
             </div>
             <div class="modal-footer">
